@@ -1,5 +1,80 @@
-<p>Hello 大家好</p>
-<p>I am Haoming Xiang，this is my personal website </p>
-<p>很高兴你来到这里, 你可以在以下的网站找到我</p>
-\
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Haoming Xiang 的个人网站</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            display: flex;
+            font-family: Arial, sans-serif;
+        }
+        /* 左侧导航栏 */
+        .sidebar {
+            width: 250px;
+            height: 100vh;
+            background-color: #f4f4f4;
+            padding: 20px;
+            position: fixed;
+            left: 0;
+            top: 0;
+            overflow-y: auto;
+        }
+        .sidebar h2 {
+            margin-bottom: 20px;
+        }
+        .sidebar ul {
+            list-style: none;
+        }
+        .sidebar ul li {
+            margin: 10px 0;
+        }
+        .sidebar ul li a {
+            text-decoration: none;
+            color: #333;
+            display: block;
+            padding: 10px;
+            background: #ddd;
+            border-radius: 5px;
+        }
+        .sidebar ul li a:hover {
+            background: #bbb;
+        }
+        /* 右侧内容区域 */
+        .content {
+            margin-left: 270px; /* 留出左侧导航栏的宽度 */
+            padding: 20px;
+            width: calc(100% - 270px);
+        }
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <h2>目录</h2>
+        <ul>
+            <li><a href="#intro">简介</a></li>
+            <li><a href="#projects">项目</a></li>
+            <li><a href="#contact">联系</a></li>
+        </ul>
+    </div>
 
+    <div class="content">
+        <h1 id="intro">Hello 大家好</h1>
+        <p>我是 Haoming Xiang，这是我的个人网站。</p>
+        
+        <h2 id="projects">项目</h2>
+        <p>这里可以介绍我的一些项目。</p>
+        
+        <h2 id="contact">联系</h2>
+        <p>你可以通过以下方式找到我：</p>
+        <ul>
+            <li>GitHub: <a href="https://haoming58.github.io" target="_blank">haoming58.github.io</a></li>
+        </ul>
+    </div>
+</body>
+</html>
