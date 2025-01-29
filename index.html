@@ -1,80 +1,92 @@
 <!DOCTYPE html>
-<html lang="zh">
+<html>
 <head>
-    <meta charset="UTF-8">
+    <title>The Neural Network</title>
+    <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Haoming Xiang 的个人网站</title>
+    <link rel="stylesheet" href="file:///c:/Users/2053630/.vscode/extensions/shd101wyy.markdown-preview-enhanced-0.8.15/crossnote/dependencies/katex/katex.min.css">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
+        code[class*=language-], pre[class*=language-] {
+            color: #333;
+            background: 0 0;
+            font-family: Consolas, "Liberation Mono", Menlo, Courier, monospace;
+            text-align: left;
+            white-space: pre;
+            word-spacing: normal;
+            word-break: normal;
+            word-wrap: normal;
+            line-height: 1.4;
+            -moz-tab-size: 8;
+            -o-tab-size: 8;
+            tab-size: 8;
+            -webkit-hyphens: none;
+            -moz-hyphens: none;
+            -ms-hyphens: none;
+            hyphens: none
+        }
+
+        pre[class*=language-] {
+            padding: .8em;
+            overflow: auto;
+            border-radius: 3px;
+            background: #f5f5f5;
+        }
+
+        .markdown-preview {
+            width: 100%;
+            height: 100%;
             box-sizing: border-box;
         }
-        body {
-            display: flex;
-            font-family: Arial, sans-serif;
-        }
-        /* 左侧导航栏 */
-        .sidebar {
-            width: 250px;
-            height: 100vh;
-            background-color: #f4f4f4;
-            padding: 20px;
-            position: fixed;
-            left: 0;
-            top: 0;
-            overflow-y: auto;
-        }
-        .sidebar h2 {
-            margin-bottom: 20px;
-        }
-        .sidebar ul {
-            list-style: none;
-        }
-        .sidebar ul li {
-            margin: 10px 0;
-        }
-        .sidebar ul li a {
-            text-decoration: none;
+
+        html body {
+            font-family: 'Helvetica Neue', Helvetica, 'Segoe UI', Arial, freesans, sans-serif;
+            font-size: 16px;
+            line-height: 1.6;
             color: #333;
-            display: block;
-            padding: 10px;
-            background: #ddd;
-            border-radius: 5px;
-        }
-        .sidebar ul li a:hover {
-            background: #bbb;
-        }
-        /* 右侧内容区域 */
-        .content {
-            margin-left: 270px; /* 留出左侧导航栏的宽度 */
-            padding: 20px;
-            width: calc(100% - 270px);
+            background-color: #fff;
+            overflow: initial;
+            box-sizing: border-box;
+            word-wrap: break-word;
         }
     </style>
 </head>
-<body>
-    <div class="sidebar">
-        <h2>目录</h2>
-        <ul>
-            <li><a href="#intro">简介</a></li>
-            <li><a href="#projects">项目</a></li>
-            <li><a href="#contact">联系</a></li>
-        </ul>
-    </div>
 
-    <div class="content">
-        <h1 id="intro">Hello 大家好</h1>
-        <p>我是 Haoming Xiang，这是我的个人网站。</p>
-        
-        <h2 id="projects">项目</h2>
-        <p>这里可以介绍我的一些项目。</p>
-        
-        <h2 id="contact">联系</h2>
-        <p>你可以通过以下方式找到我：</p>
-        <ul>
-            <li>GitHub: <a href="https://haoming58.github.io" target="_blank">haoming58.github.io</a></li>
-        </ul>
+<body for="html-export">
+    <div class="crossnote markdown-preview">
+        <h1 id="the-neural-network">The Neural Network</h1>
+        <h2 id="1-the-basic-principle">1. The Basic Principle</h2>
+        <p>A <strong>Neural Network (NN)</strong> is a computational model inspired by the human brain. It consists of layers of interconnected nodes (neurons) that process and learn patterns from data.</p>
+
+        <h2 id="2-the-code-for-implementation">2. The Code for Implementation</h2>
+        <hr>
+        <pre data-role="codeBlock" data-info="python" class="language-python python">
+<code>import matplotlib.pyplot as plt # 用于绘图，绘制数据图，具体的用法请找文档
+import numpy as np 
+import scipy.io as sio  # 用于.mat格式数据的导入,主要是应用于matlab的格式。
+import scipy.optimize as opt  # 这是其中的优化模块
+from sklearn.metrics import classification_report  # sklearn 库中的模型评估的数据库
+</code></pre>
+        <hr>
+
+        <p>下面是数据加载模块，这里需要理解数据结构。使用的数据是图像。这里使用的灰度图片：</p>
+        <img src="image-1.png" alt="alt">
+        <p>整个图像可以看作一个矩阵，图像组成是20*20 组成，类似就是每一个点就是一个值。但是它实际存储的时候会变成一行也就是400. 意思是存储的时候是一行一行拿出来，还是一列一列拿出来存储，需要注意是怎么存储的，下面就是最为简单的数据结构。</p>
+        <p>总共有5000个样本。每个样本有着400个的特征值。</p>
+        <pre data-role="codeBlock" data-info="python" class="language-python python">
+<code>
+def load_data(path, transpose=True):  # 定义一个函数数据加载，并对其进行简单处理。
+    data = sio.loadmat(path) 
+    y = data.get('y')  # (5000,1)  # 这是5000个样本，的存在结果
+    y = y.reshape(y.shape[0])  # y.shape[0] 表示 行， 1表示列。 reshape 表示的是重新变成多少，展平数组。
+    
+    X = data.get('X')  # 取得图像数据（5000, 400），每个样本有400个特征
+    if transpose:
+        X = X.T  # 将数据转置为每一列代表一个特征值
+    return X, y
+</code></pre>
+
+        <h2 id="3-conclusion">3. Conclusion</h2>
+        <p>Neural Networks provide a powerful method for solving a wide variety of problems, including image recognition, classification, and regression tasks. By loading the dataset and defining the network structure, we can train a neural network model to make predictions on new data.</p>
     </div>
 </body>
 </html>
