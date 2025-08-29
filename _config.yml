@@ -1,0 +1,7 @@
+title: Haoming 的博客
+description: 我的学习与记录
+url: "https://haoming58.github.io"
+theme: minima
+# baseurl 通常保持空，除非仓库不是 xxx.github.io 这种
+# baseurl: ""
+author: Haoming
