@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ page.title }} - {{ site.title }}</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            line-height: 1.6;
+            color: #2c3e50;
+            background: #ffffff;
+            font-size: 16px;
+        }
+
+        /* Typora风格的导航栏 */
+        .navbar {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: #ffffff;
+            border-bottom: 1px solid #e1e4e8;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            padding: 0;
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 2rem;
+            height: 60px;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #2c3e50;
+            text-decoration: none;
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: #586069;
+            font-weight: 500;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            transition: all 0.2s ease;
+        }
+
+        .nav-links a:hover {
+            color: #2c3e50;
+            background: #f6f8fa;
+        }
+
+        .nav-links a.active {
+            color: #0366d6;
+            background: #f1f8ff;
+        }
+
+        /* 主要内容区域 */
+        .main-container {
+            display: flex;
+            margin-top: 60px;
+            min-height: calc(100vh - 60px);
+        }
+
+        /* 左侧目录 */
+        .sidebar {
+            width: 280px;
+            background: #f8f9fa;
+            border-right: 1px solid #e1e4e8;
+            padding: 2rem 0;
+            position: fixed;
+            height: calc(100vh - 60px);
+            overflow-y: auto;
+        }
+
+        .sidebar-content {
+            padding: 0 1.5rem;
+        }
+
+        .sidebar-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid #0366d6;
+        }
+
+        .toc {
+            list-style: none;
+        }
+
+        .toc-item {
+            margin-bottom: 0.5rem;
+        }
+
+        .toc-link {
+            display: block;
+            padding: 0.5rem 0.75rem;
+            color: #586069;
+            text-decoration: none;
+            border-radius: 6px;
+            transition: all 0.2s ease;
+            font-size: 0.95rem;
+        }
+
+        .toc-link:hover {
+            color: #2c3e50;
+            background: #e1e4e8;
+        }
+
+        .toc-link.active {
+            color: #0366d6;
+            background: #f1f8ff;
+            font-weight: 500;
+        }
+
+        .toc-subitem {
+            margin-left: 1rem;
+            margin-top: 0.25rem;
+        }
+
+        .toc-subitem .toc-link {
+            font-size: 0.9rem;
+            padding: 0.25rem 0.75rem;
+        }
+
+        /* 右侧内容区域 */
+        .content-area {
+            flex: 1;
+            margin-left: 280px;
+            padding: 2rem 3rem;
+            max-width: calc(100% - 280px);
+        }
+
+        .page-header {
+            margin-bottom: 3rem;
+            padding-bottom: 2rem;
+            border-bottom: 1px solid #e1e4e8;
+        }
+
+        .page-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #2c3e50;
+            margin-bottom: 1rem;
+        }
+
+        .page-subtitle {
+            font-size: 1.2rem;
+            color: #586069;
+            line-height: 1.6;
+        }
+
+        /* 博客列表 */
+        .blog-list {
+            margin-bottom: 3rem;
+        }
+
+        .blog-item {
+            padding: 2rem 0;
+            border-bottom: 1px solid #e1e4e8;
+        }
+
+        .blog-item:last-child {
+            border-bottom: none;
+        }
+
+        .blog-meta {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+            color: #6c757d;
+        }
+
+        .blog-date {
+            background: #f1f8ff;
+            color: #0366d6;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-weight: 500;
+        }
+
+        .blog-category {
+            background: #f6f8fa;
+            color: #586069;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+        }
+
+        .blog-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: #2c3e50;
+        }
+
+        .blog-title a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        .blog-title a:hover {
+            color: #0366d6;
+        }
+
+        .blog-excerpt {
+            color: #586069;
+            line-height: 1.7;
+            margin-bottom: 1.5rem;
+        }
+
+        .blog-tags {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .blog-tag {
+            background: #f6f8fa;
+            color: #586069;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            border: 1px solid #e1e4e8;
+        }
+
+        .read-more {
+            display: inline-block;
+            margin-top: 1rem;
+            padding: 0.5rem 1rem;
+            background: #0366d6;
+            color: white;
+            text-decoration: none;
+            border-radius: 6px;
+            transition: background 0.2s ease;
+            font-weight: 500;
+        }
+
+        .read-more:hover {
+            background: #0256cc;
+        }
+
+        /* 分页 */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 1rem;
+            margin-top: 3rem;
+        }
+
+        .pagination a {
+            padding: 0.5rem 1rem;
+            border: 1px solid #e1e4e8;
+            border-radius: 6px;
+            color: #586069;
+            text-decoration: none;
+            transition: all 0.2s ease;
+        }
+
+        .pagination a:hover {
+            background: #f6f8fa;
+            border-color: #0366d6;
+            color: #0366d6;
+        }
+
+        .pagination .current {
+            background: #0366d6;
+            color: white;
+            border-color: #0366d6;
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 1024px) {
+            .sidebar {
+                width: 240px;
+            }
+            
+            .content-area {
+                margin-left: 240px;
+                max-width: calc(100% - 240px);
+                padding: 2rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .nav-container {
+                flex-direction: column;
+                height: auto;
+                padding: 1rem 2rem;
+            }
+
+            .nav-links {
+                gap: 1rem;
+                margin-top: 1rem;
+            }
+
+            .sidebar {
+                display: none;
+            }
+
+            .content-area {
+                margin-left: 0;
+                max-width: 100%;
+                padding: 1.5rem;
+            }
+
+            .page-title {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 导航栏 -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="/" class="logo">{{ site.title }}</a>
+            <ul class="nav-links">
+                <li><a href="/">主页</a></li>
+                <li><a href="/about">个人介绍</a></li>
+                <li><a href="/blog" class="active">学习博客</a></li>
+                <li><a href="/projects">项目</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- 主要内容区域 -->
+    <div class="main-container">
+        <!-- 左侧目录 -->
+        <aside class="sidebar">
+            <div class="sidebar-content">
+                <h3 class="sidebar-title">目录导航</h3>
+                <ul class="toc">
+                    <li class="toc-item">
+                        <a href="#recent" class="toc-link active">最新文章</a>
+                    </li>
+                    <li class="toc-item">
+                        <a href="#frontend" class="toc-link">前端开发</a>
+                        <ul class="toc-subitem">
+                            <li><a href="#react" class="toc-link">React</a></li>
+                            <li><a href="#vue" class="toc-link">Vue</a></li>
+                            <li><a href="#typescript" class="toc-link">TypeScript</a></li>
+                        </ul>
+                    </li>
+                    <li class="toc-item">
+                        <a href="#backend" class="toc-link">后端开发</a>
+                        <ul class="toc-subitem">
+                            <li><a href="#nodejs" class="toc-link">Node.js</a></li>
+                            <li><a href="#python" class="toc-link">Python</a></li>
+                            <li><a href="#database" class="toc-link">数据库</a></li>
+                        </ul>
+                    </li>
+                    <li class="toc-item">
+                        <a href="#devops" class="toc-link">DevOps</a>
+                        <ul class="toc-subitem">
+                            <li><a href="#docker" class="toc-link">Docker</a></li>
+                            <li><a href="#kubernetes" class="toc-link">Kubernetes</a></li>
+                            <li><a href="#ci-cd" class="toc-link">CI/CD</a></li>
+                        </ul>
+                    </li>
+                    <li class="toc-item">
+                        <a href="#learning" class="toc-link">学习笔记</a>
+                    </li>
+                </ul>
+            </div>
+        </aside>
+
+        <!-- 右侧内容区域 -->
+        <main class="content-area">
+            <header class="page-header">
+                <h1 class="page-title">{{ page.title }}</h1>
+                <p class="page-subtitle">{{ page.subtitle | default: "分享我的技术学习心得、项目经验和生活感悟" }}</p>
+            </header>
+
+            <!-- 博客内容 -->
+            <div class="blog-content">
+                {{ content }}
+            </div>
+
+            <!-- 博客列表 -->
+            <section class="blog-list">
+                <h2 id="recent">最新文章</h2>
+                {% for post in site.posts limit:10 %}
+                <article class="blog-item">
+                    <div class="blog-meta">
+                        <span class="blog-date">{{ post.date | date: "%Y年%m月%d日" }}</span>
+                        {% if post.category %}
+                        <span class="blog-category">{{ post.category }}</span>
+                        {% endif %}
+                    </div>
+                    <h3 class="blog-title">
+                        <a href="{{ post.url }}">{{ post.title }}</a>
+                    </h3>
+                    <p class="blog-excerpt">{{ post.excerpt | default: post.content | strip_html | truncate: 200 }}</p>
+                    {% if post.tags %}
+                    <div class="blog-tags">
+                        {% for tag in post.tags %}
+                        <span class="blog-tag">{{ tag }}</span>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                    <a href="{{ post.url }}" class="read-more">阅读全文 →</a>
+                </article>
+                {% endfor %}
+            </section>
+
+            <!-- 分页 -->
+            <div class="pagination">
+                {% if paginator.previous_page %}
+                <a href="{{ paginator.previous_page_path }}">← 上一页</a>
+                {% endif %}
+                
+                <span class="current">第 {{ paginator.page }} 页，共 {{ paginator.total_pages }} 页</span>
+                
+                {% if paginator.next_page %}
+                <a href="{{ paginator.next_page_path }}">下一页 →</a>
+                {% endif %}
+            </div>
+        </main>
+    </div>
+
+    <!-- 页脚 -->
+    <footer style="background: #f8f9fa; color: #6c757d; text-align: center; padding: 2rem 0; border-top: 1px solid #e1e4e8; margin-top: 3rem;">
+        <p>&copy; {{ site.time | date: "%Y" }} {{ site.title }}. 保留所有权利。</p>
+    </footer>
+
+    <script>
+        // 目录导航高亮
+        document.addEventListener('DOMContentLoaded', function() {
+            const tocLinks = document.querySelectorAll('.toc-link');
+            
+            tocLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    // 移除所有active类
+                    tocLinks.forEach(l => l.classList.remove('active'));
+                    // 添加active类到当前点击的链接
+                    this.classList.add('active');
+                });
+            });
+        });
+    </script>
+</body>
+</html>
