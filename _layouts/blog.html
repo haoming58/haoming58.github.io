@@ -5,331 +5,70 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ page.title }} - {{ site.title }}</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+        * { margin:0; padding:0; box-sizing:border-box; }
+
+        :root {
+            --bg:#ffffff; --text:#2c3e50; --muted:#586069; --card:#ffffff; --border:#e1e4e8;
+            --primary:#0366d6; --primary-weak:#f1f8ff; --alt-bg:#f8f9fa; --alt-bg-2:#e9ecef;
+            --shadow:0 1px 3px rgba(0,0,0,0.1); --shadow-strong:0 4px 12px rgba(0,0,0,0.15);
         }
-
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', 'Helvetica Neue', Helvetica, Arial, sans-serif;
-            line-height: 1.6;
-            color: #2c3e50;
-            background: #ffffff;
-            font-size: 16px;
+        [data-theme="dark"]{
+            --bg:#0d1117; --text:#c9d1d9; --muted:#8b949e; --card:#161b22; --border:#30363d;
+            --primary:#58a6ff; --primary-weak:#0d419d33; --alt-bg:#0d1117; --alt-bg-2:#161b22;
+            --shadow:0 1px 3px rgba(0,0,0,0.5); --shadow-strong:0 4px 12px rgba(0,0,0,0.6);
         }
+        body { font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Hiragino Sans GB','Microsoft YaHei','Helvetica Neue',Helvetica,Arial,sans-serif; line-height:1.6; color:var(--text); background:var(--bg); font-size:16px; }
 
-        /* Typora风格的导航栏 */
-        .navbar {
-            position: fixed;
-            top: 0;
-            width: 100%;
-            background: #ffffff;
-            border-bottom: 1px solid #e1e4e8;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-            z-index: 1000;
-            padding: 0;
-        }
+        .navbar{ position:fixed; top:0; width:100%; background:var(--bg); border-bottom:1px solid var(--border); box-shadow:var(--shadow); z-index:1000; padding:0; }
+        .nav-container{ max-width:1200px; margin:0 auto; display:flex; justify-content:space-between; align-items:center; padding:0 2rem; height:60px; }
+        .logo{ font-size:1.5rem; font-weight:600; color:var(--text); text-decoration:none; }
+        .nav-right{ display:flex; gap:1rem; align-items:center; }
+        .nav-links{ display:flex; list-style:none; gap:2rem; }
+        .nav-links a{ text-decoration:none; color:var(--muted); font-weight:500; padding:0.5rem 1rem; border-radius:6px; transition:all .2s ease; }
+        .nav-links a:hover{ color:var(--text); background:#f6f8fa; }
+        [data-theme="dark"] .nav-links a:hover{ background:#161b22; }
+        .nav-links a.active{ color:var(--primary); background:var(--primary-weak); }
+        .theme-toggle{ appearance:none; border:1px solid var(--border); background:var(--card); color:var(--muted); padding:0.35rem .75rem; border-radius:6px; cursor:pointer; transition:all .2s ease; font-size:.9rem; }
+        .theme-toggle:hover{ color:var(--text); border-color:var(--primary); }
 
-        .nav-container {
-            max-width: 1200px;
-            margin: 0 auto;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 0 2rem;
-            height: 60px;
-        }
+        .main-container{ display:flex; margin-top:60px; min-height:calc(100vh - 60px); }
+        .sidebar{ width:280px; background:var(--alt-bg); border-right:1px solid var(--border); padding:2rem 0; position:fixed; height:calc(100vh - 60px); overflow-y:auto; }
+        .sidebar-content{ padding:0 1.5rem; }
+        .sidebar-title{ font-size:1.2rem; font-weight:600; color:var(--text); margin-bottom:1.5rem; padding-bottom:.5rem; border-bottom:2px solid var(--primary); }
+        .toc{ list-style:none; }
+        .toc-link{ display:block; padding:.5rem .75rem; color:var(--muted); text-decoration:none; border-radius:6px; transition:all .2s ease; font-size:.95rem; }
+        .toc-link:hover{ color:var(--text); background:#e1e4e833; }
+        .toc-link.active{ color:var(--primary); background:var(--primary-weak); font-weight:500; }
+        .toc-subitem{ margin-left:1rem; margin-top:.25rem; }
+        .toc-subitem .toc-link{ font-size:.9rem; padding:.25rem .75rem; }
 
-        .logo {
-            font-size: 1.5rem;
-            font-weight: 600;
-            color: #2c3e50;
-            text-decoration: none;
-        }
+        .content-area{ flex:1; margin-left:280px; padding:2rem 3rem; max-width:calc(100% - 280px); }
+        .page-header{ margin-bottom:3rem; padding-bottom:2rem; border-bottom:1px solid var(--border); }
+        .page-title{ font-size:2.5rem; font-weight:700; color:var(--text); margin-bottom:1rem; }
+        .page-subtitle{ font-size:1.2rem; color:var(--muted); line-height:1.6; }
 
-        .nav-links {
-            display: flex;
-            list-style: none;
-            gap: 2rem;
-        }
+        .blog-item{ padding:2rem 0; border-bottom:1px solid var(--border); }
+        .blog-item:last-child{ border-bottom:none; }
+        .blog-meta{ display:flex; align-items:center; gap:1rem; margin-bottom:1rem; font-size:.9rem; color:#6c757d; }
+        .blog-date{ background:var(--primary-weak); color:var(--primary); padding:.25rem .75rem; border-radius:20px; font-weight:500; }
+        .blog-category{ background:#f6f8fa; color:var(--muted); padding:.25rem .75rem; border-radius:20px; }
+        .blog-title{ font-size:1.5rem; font-weight:600; margin-bottom:1rem; color:var(--text); }
+        .blog-title a{ color:inherit; text-decoration:none; }
+        .blog-title a:hover{ color:var(--primary); }
+        .blog-excerpt{ color:var(--muted); line-height:1.7; margin-bottom:1.5rem; }
+        .blog-tag{ background:#f6f8fa; color:var(--muted); padding:.25rem .75rem; border-radius:20px; font-size:.85rem; border:1px solid var(--border); }
 
-        .nav-links a {
-            text-decoration: none;
-            color: #586069;
-            font-weight: 500;
-            padding: 0.5rem 1rem;
-            border-radius: 6px;
-            transition: all 0.2s ease;
-        }
+        .button{ display:inline-block; padding:.5rem 1rem; border-radius:6px; text-decoration:none; font-weight:500; transition:all .2s ease; }
+        .button-primary{ background:var(--primary); color:#fff; }
+        .button-primary:hover{ filter:brightness(.95); }
 
-        .nav-links a:hover {
-            color: #2c3e50;
-            background: #f6f8fa;
-        }
+        .pagination{ display:flex; justify-content:center; align-items:center; gap:1rem; margin-top:3rem; }
+        .pagination a{ padding:.5rem 1rem; border:1px solid var(--border); border-radius:6px; color:var(--muted); text-decoration:none; transition:all .2s ease; }
+        .pagination a:hover{ background:#f6f8fa; border-color:var(--primary); color:var(--primary); }
+        .pagination .current{ background:var(--primary); color:#fff; border-color:var(--primary); padding:.5rem 1rem; border-radius:6px; }
 
-        .nav-links a.active {
-            color: #0366d6;
-            background: #f1f8ff;
-        }
-
-        /* 主要内容区域 */
-        .main-container {
-            display: flex;
-            margin-top: 60px;
-            min-height: calc(100vh - 60px);
-        }
-
-        /* 左侧目录 */
-        .sidebar {
-            width: 280px;
-            background: #f8f9fa;
-            border-right: 1px solid #e1e4e8;
-            padding: 2rem 0;
-            position: fixed;
-            height: calc(100vh - 60px);
-            overflow-y: auto;
-        }
-
-        .sidebar-content {
-            padding: 0 1.5rem;
-        }
-
-        .sidebar-title {
-            font-size: 1.2rem;
-            font-weight: 600;
-            color: #2c3e50;
-            margin-bottom: 1.5rem;
-            padding-bottom: 0.5rem;
-            border-bottom: 2px solid #0366d6;
-        }
-
-        .toc {
-            list-style: none;
-        }
-
-        .toc-item {
-            margin-bottom: 0.5rem;
-        }
-
-        .toc-link {
-            display: block;
-            padding: 0.5rem 0.75rem;
-            color: #586069;
-            text-decoration: none;
-            border-radius: 6px;
-            transition: all 0.2s ease;
-            font-size: 0.95rem;
-        }
-
-        .toc-link:hover {
-            color: #2c3e50;
-            background: #e1e4e8;
-        }
-
-        .toc-link.active {
-            color: #0366d6;
-            background: #f1f8ff;
-            font-weight: 500;
-        }
-
-        .toc-subitem {
-            margin-left: 1rem;
-            margin-top: 0.25rem;
-        }
-
-        .toc-subitem .toc-link {
-            font-size: 0.9rem;
-            padding: 0.25rem 0.75rem;
-        }
-
-        /* 右侧内容区域 */
-        .content-area {
-            flex: 1;
-            margin-left: 280px;
-            padding: 2rem 3rem;
-            max-width: calc(100% - 280px);
-        }
-
-        .page-header {
-            margin-bottom: 3rem;
-            padding-bottom: 2rem;
-            border-bottom: 1px solid #e1e4e8;
-        }
-
-        .page-title {
-            font-size: 2.5rem;
-            font-weight: 700;
-            color: #2c3e50;
-            margin-bottom: 1rem;
-        }
-
-        .page-subtitle {
-            font-size: 1.2rem;
-            color: #586069;
-            line-height: 1.6;
-        }
-
-        /* 博客列表 */
-        .blog-list {
-            margin-bottom: 3rem;
-        }
-
-        .blog-item {
-            padding: 2rem 0;
-            border-bottom: 1px solid #e1e4e8;
-        }
-
-        .blog-item:last-child {
-            border-bottom: none;
-        }
-
-        .blog-meta {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            margin-bottom: 1rem;
-            font-size: 0.9rem;
-            color: #6c757d;
-        }
-
-        .blog-date {
-            background: #f1f8ff;
-            color: #0366d6;
-            padding: 0.25rem 0.75rem;
-            border-radius: 20px;
-            font-weight: 500;
-        }
-
-        .blog-category {
-            background: #f6f8fa;
-            color: #586069;
-            padding: 0.25rem 0.75rem;
-            border-radius: 20px;
-        }
-
-        .blog-title {
-            font-size: 1.5rem;
-            font-weight: 600;
-            margin-bottom: 1rem;
-            color: #2c3e50;
-        }
-
-        .blog-title a {
-            color: inherit;
-            text-decoration: none;
-        }
-
-        .blog-title a:hover {
-            color: #0366d6;
-        }
-
-        .blog-excerpt {
-            color: #586069;
-            line-height: 1.7;
-            margin-bottom: 1.5rem;
-        }
-
-        .blog-tags {
-            display: flex;
-            gap: 0.5rem;
-            flex-wrap: wrap;
-        }
-
-        .blog-tag {
-            background: #f6f8fa;
-            color: #586069;
-            padding: 0.25rem 0.75rem;
-            border-radius: 20px;
-            font-size: 0.85rem;
-            border: 1px solid #e1e4e8;
-        }
-
-        .read-more {
-            display: inline-block;
-            margin-top: 1rem;
-            padding: 0.5rem 1rem;
-            background: #0366d6;
-            color: white;
-            text-decoration: none;
-            border-radius: 6px;
-            transition: background 0.2s ease;
-            font-weight: 500;
-        }
-
-        .read-more:hover {
-            background: #0256cc;
-        }
-
-        /* 分页 */
-        .pagination {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 1rem;
-            margin-top: 3rem;
-        }
-
-        .pagination a {
-            padding: 0.5rem 1rem;
-            border: 1px solid #e1e4e8;
-            border-radius: 6px;
-            color: #586069;
-            text-decoration: none;
-            transition: all 0.2s ease;
-        }
-
-        .pagination a:hover {
-            background: #f6f8fa;
-            border-color: #0366d6;
-            color: #0366d6;
-        }
-
-        .pagination .current {
-            background: #0366d6;
-            color: white;
-            border-color: #0366d6;
-        }
-
-        /* 响应式设计 */
-        @media (max-width: 1024px) {
-            .sidebar {
-                width: 240px;
-            }
-            
-            .content-area {
-                margin-left: 240px;
-                max-width: calc(100% - 240px);
-                padding: 2rem;
-            }
-        }
-
-        @media (max-width: 768px) {
-            .nav-container {
-                flex-direction: column;
-                height: auto;
-                padding: 1rem 2rem;
-            }
-
-            .nav-links {
-                gap: 1rem;
-                margin-top: 1rem;
-            }
-
-            .sidebar {
-                display: none;
-            }
-
-            .content-area {
-                margin-left: 0;
-                max-width: 100%;
-                padding: 1.5rem;
-            }
-
-            .page-title {
-                font-size: 2rem;
-            }
-        }
+        @media (max-width:1024px){ .sidebar{ width:240px; } .content-area{ margin-left:240px; max-width:calc(100% - 240px); padding:2rem; } }
+        @media (max-width:768px){ .nav-container{ flex-direction:column; height:auto; padding:1rem 2rem; } .nav-links{ gap:1rem; margin-top:1rem; } .sidebar{ display:none; } .content-area{ margin-left:0; max-width:100%; padding:1.5rem; } .page-title{ font-size:2rem; } }
     </style>
 </head>
 <body>
@@ -337,12 +76,14 @@
     <nav class="navbar">
         <div class="nav-container">
             <a href="/" class="logo">{{ site.title }}</a>
+            <div class="nav-right">
             <ul class="nav-links">
                 <li><a href="/">主页</a></li>
                 <li><a href="/about">个人介绍</a></li>
                 <li><a href="/blog" class="active">学习博客</a></li>
-                <li><a href="/projects">项目</a></li>
             </ul>
+                <button id="theme-toggle" class="theme-toggle" aria-label="切换主题">🌙 深色</button>
+            </div>
         </div>
     </nav>
 
@@ -421,7 +162,7 @@
                         {% endfor %}
                     </div>
                     {% endif %}
-                    <a href="{{ post.url }}" class="read-more">阅读全文 →</a>
+                    <a href="{{ post.url }}" class="button button-primary">阅读全文 →</a>
                 </article>
                 {% endfor %}
             </section>
@@ -442,24 +183,21 @@
     </div>
 
     <!-- 页脚 -->
-    <footer style="background: #f8f9fa; color: #6c757d; text-align: center; padding: 2rem 0; border-top: 1px solid #e1e4e8; margin-top: 3rem;">
+    <footer style="background: var(--alt-bg); color: var(--muted); text-align: center; padding: 2rem 0; border-top: 1px solid var(--border); margin-top: 3rem;">
         <p>&copy; {{ site.time | date: "%Y" }} {{ site.title }}. 保留所有权利。</p>
     </footer>
 
     <script>
-        // 目录导航高亮
-        document.addEventListener('DOMContentLoaded', function() {
-            const tocLinks = document.querySelectorAll('.toc-link');
-            
-            tocLinks.forEach(link => {
-                link.addEventListener('click', function(e) {
-                    // 移除所有active类
-                    tocLinks.forEach(l => l.classList.remove('active'));
-                    // 添加active类到当前点击的链接
-                    this.classList.add('active');
-                });
-            });
-        });
+        (function(){
+            const root=document.documentElement, key='theme-preference';
+            const prefersDark=window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches;
+            const saved=localStorage.getItem(key); const current=saved?saved:(prefersDark?'dark':'light');
+            if(current==='dark') root.setAttribute('data-theme','dark');
+            const btn=document.getElementById('theme-toggle');
+            const setLabel=()=>{ const isDark=root.getAttribute('data-theme')==='dark'; btn.textContent=isDark?'☀️ 浅色':'🌙 深色'; btn.setAttribute('aria-pressed', String(isDark)); };
+            setLabel();
+            btn.addEventListener('click', function(){ const isDark=root.getAttribute('data-theme')==='dark'; if(isDark){ root.removeAttribute('data-theme'); localStorage.setItem(key,'light'); } else { root.setAttribute('data-theme','dark'); localStorage.setItem(key,'dark'); } setLabel(); });
+        })();
     </script>
 </body>
 </html>

@@ -11,11 +11,39 @@
             box-sizing: border-box;
         }
 
+        :root {
+            --bg: #ffffff;
+            --text: #2c3e50;
+            --muted: #586069;
+            --card: #ffffff;
+            --border: #e1e4e8;
+            --primary: #0366d6;
+            --primary-weak: #f1f8ff;
+            --alt-bg: #f8f9fa;
+            --alt-bg-2: #e9ecef;
+            --shadow: 0 1px 3px rgba(0,0,0,0.1);
+            --shadow-strong: 0 4px 12px rgba(0,0,0,0.15);
+        }
+
+        [data-theme="dark"] {
+            --bg: #0d1117;
+            --text: #c9d1d9;
+            --muted: #8b949e;
+            --card: #161b22;
+            --border: #30363d;
+            --primary: #58a6ff;
+            --primary-weak: #0d419d33;
+            --alt-bg: #0d1117;
+            --alt-bg-2: #161b22;
+            --shadow: 0 1px 3px rgba(0,0,0,0.5);
+            --shadow-strong: 0 4px 12px rgba(0,0,0,0.6);
+        }
+
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', 'Helvetica Neue', Helvetica, Arial, sans-serif;
             line-height: 1.6;
-            color: #2c3e50;
-            background: #ffffff;
+            color: var(--text);
+            background: var(--bg);
             font-size: 16px;
         }
 
@@ -24,9 +52,9 @@
             position: fixed;
             top: 0;
             width: 100%;
-            background: #ffffff;
-            border-bottom: 1px solid #e1e4e8;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            background: var(--bg);
+            border-bottom: 1px solid var(--border);
+            box-shadow: var(--shadow);
             z-index: 1000;
             padding: 0;
         }
@@ -44,9 +72,11 @@
         .logo {
             font-size: 1.5rem;
             font-weight: 600;
-            color: #2c3e50;
+            color: var(--text);
             text-decoration: none;
         }
+
+        .nav-right { display:flex; gap:1rem; align-items:center; }
 
         .nav-links {
             display: flex;
@@ -56,260 +86,72 @@
 
         .nav-links a {
             text-decoration: none;
-            color: #586069;
+            color: var(--muted);
             font-weight: 500;
             padding: 0.5rem 1rem;
             border-radius: 6px;
             transition: all 0.2s ease;
         }
 
-        .nav-links a:hover {
-            color: #2c3e50;
-            background: #f6f8fa;
-        }
+        .nav-links a:hover { color: var(--text); background: #f6f8fa; }
+        [data-theme="dark"] .nav-links a:hover { background: #161b22; }
+        .nav-links a.active { color: var(--primary); background: var(--primary-weak); }
 
-        .nav-links a.active {
-            color: #0366d6;
-            background: #f1f8ff;
+        .theme-toggle {
+            appearance: none;
+            border: 1px solid var(--border);
+            background: var(--card);
+            color: var(--muted);
+            padding: 0.35rem 0.75rem;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 0.9rem;
         }
+        .theme-toggle:hover { color: var(--text); border-color: var(--primary); }
 
         /* 页面头部 */
         .page-header {
-            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-            color: #2c3e50;
+            background: linear-gradient(135deg, var(--alt-bg) 0%, var(--alt-bg-2) 100%);
+            color: var(--text);
             padding: 8rem 0 4rem 0;
             text-align: center;
             margin-top: 60px;
         }
 
-        .page-title {
-            font-size: 3rem;
-            font-weight: 700;
-            margin-bottom: 1rem;
-            color: #2c3e50;
-        }
-
-        .page-subtitle {
-            font-size: 1.2rem;
-            color: #586069;
-            max-width: 600px;
-            margin: 0 auto;
-            line-height: 1.6;
-        }
+        .page-title { font-size: 3rem; font-weight: 700; margin-bottom: 1rem; color: var(--text); }
+        .page-subtitle { font-size: 1.2rem; color: var(--muted); max-width: 600px; margin: 0 auto; line-height: 1.6; }
 
         /* 主要内容区域 */
-        .main-content {
-            max-width: 1000px;
-            margin: 0 auto;
-            padding: 3rem 2rem;
-        }
+        .main-content { max-width: 1000px; margin: 0 auto; padding: 3rem 2rem; }
+        .content-section { background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 2rem; margin-bottom: 2rem; box-shadow: var(--shadow); }
+        .section-title { font-size: 1.8rem; color: var(--text); margin-bottom: 1.5rem; padding-bottom: 0.5rem; border-bottom: 3px solid var(--primary); display: inline-block; }
 
-        .content-section {
-            background: #ffffff;
-            border: 1px solid #e1e4e8;
-            border-radius: 8px;
-            padding: 2rem;
-            margin-bottom: 2rem;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-        }
+        .profile-grid { display: grid; grid-template-columns: 1fr 2fr; gap: 3rem; align-items: start; margin-bottom: 2rem; }
+        .avatar-image { width: 200px; height: 200px; border-radius: 50%; background: var(--alt-bg); display: flex; align-items: center; justify-content: center; font-size: 4rem; color: #6c757d; border: 4px solid var(--bg); box-shadow: var(--shadow-strong); margin: 0 auto 1rem auto; overflow: hidden; }
+        .avatar-img { width:100%; height:100%; object-fit: cover; display:block; }
 
-        .section-title {
-            font-size: 1.8rem;
-            color: #2c3e50;
-            margin-bottom: 1.5rem;
-            padding-bottom: 0.5rem;
-            border-bottom: 3px solid #0366d6;
-            display: inline-block;
-        }
+        .profile-info h3 { font-size: 1.5rem; color: var(--text); margin-bottom: 0.5rem; }
+        .profile-info p { color: var(--muted); margin-bottom: 0.5rem; }
 
-        .profile-grid {
-            display: grid;
-            grid-template-columns: 1fr 2fr;
-            gap: 3rem;
-            align-items: start;
-            margin-bottom: 2rem;
-        }
+        .skill-category { background: var(--alt-bg); border: 1px solid var(--border); border-radius: 8px; padding: 1.5rem; }
+        .skill-category h4 { color: var(--text); margin-bottom: 1rem; font-size: 1.2rem; border-bottom: 2px solid var(--primary); padding-bottom: 0.5rem; }
+        .skill-list { list-style: none; }
+        .skill-list li { padding: 0.5rem 0; color: var(--muted); border-bottom: 1px solid var(--border); }
+        .skill-list li:last-child { border-bottom: none; }
+        .skill-bar { flex: 1; height: 6px; background: var(--border); border-radius: 3px; margin: 0 1rem; overflow: hidden; }
+        .skill-progress { height: 100%; background: var(--primary); border-radius: 3px; transition: width 0.3s ease; }
 
-        .profile-avatar {
-            text-align: center;
-        }
+        .timeline::before { background: var(--primary); }
+        .timeline-item::before { background: var(--primary); border: 3px solid var(--bg); }
+        .timeline-date { color: var(--primary); }
+        .timeline-title { color: var(--text); }
+        .timeline-description { color: var(--muted); }
 
-        .avatar-image {
-            width: 200px;
-            height: 200px;
-            border-radius: 50%;
-            background: #f6f8fa;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 4rem;
-            color: #6c757d;
-            border: 4px solid #ffffff;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-            margin: 0 auto 1rem auto;
-        }
-
-        .profile-info h3 {
-            font-size: 1.5rem;
-            color: #2c3e50;
-            margin-bottom: 0.5rem;
-        }
-
-        .profile-info p {
-            color: #586069;
-            margin-bottom: 0.5rem;
-        }
-
-        .skill-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 1.5rem;
-            margin-top: 1.5rem;
-        }
-
-        .skill-category {
-            background: #f8f9fa;
-            border: 1px solid #e1e4e8;
-            border-radius: 8px;
-            padding: 1.5rem;
-        }
-
-        .skill-category h4 {
-            color: #2c3e50;
-            margin-bottom: 1rem;
-            font-size: 1.2rem;
-            border-bottom: 2px solid #0366d6;
-            padding-bottom: 0.5rem;
-        }
-
-        .skill-list {
-            list-style: none;
-        }
-
-        .skill-list li {
-            padding: 0.5rem 0;
-            color: #586069;
-            border-bottom: 1px solid #e1e4e8;
-        }
-
-        .skill-list li:last-child {
-            border-bottom: none;
-        }
-
-        .skill-level {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-top: 0.5rem;
-        }
-
-        .skill-bar {
-            flex: 1;
-            height: 6px;
-            background: #e1e4e8;
-            border-radius: 3px;
-            margin: 0 1rem;
-            overflow: hidden;
-        }
-
-        .skill-progress {
-            height: 100%;
-            background: #0366d6;
-            border-radius: 3px;
-            transition: width 0.3s ease;
-        }
-
-        .timeline {
-            position: relative;
-            padding-left: 2rem;
-        }
-
-        .timeline::before {
-            content: '';
-            position: absolute;
-            left: 0;
-            top: 0;
-            bottom: 0;
-            width: 2px;
-            background: #0366d6;
-        }
-
-        .timeline-item {
-            position: relative;
-            margin-bottom: 2rem;
-            padding-left: 2rem;
-        }
-
-        .timeline-item::before {
-            content: '';
-            position: absolute;
-            left: -0.5rem;
-            top: 0.5rem;
-            width: 1rem;
-            height: 1rem;
-            background: #0366d6;
-            border-radius: 50%;
-            border: 3px solid #ffffff;
-        }
-
-        .timeline-date {
-            font-weight: 600;
-            color: #0366d6;
-            margin-bottom: 0.5rem;
-        }
-
-        .timeline-title {
-            font-size: 1.2rem;
-            font-weight: 600;
-            color: #2c3e50;
-            margin-bottom: 0.5rem;
-        }
-
-        .timeline-description {
-            color: #586069;
-            line-height: 1.6;
-        }
-
-        .contact-info {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1rem;
-            margin-top: 1.5rem;
-        }
-
-        .contact-item {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            padding: 1rem;
-            background: #f8f9fa;
-            border-radius: 8px;
-            border: 1px solid #e1e4e8;
-        }
-
-        .contact-icon {
-            font-size: 1.5rem;
-            color: #0366d6;
-        }
-
-        .contact-details h5 {
-            color: #2c3e50;
-            margin-bottom: 0.25rem;
-        }
-
-        .contact-details p {
-            color: #586069;
-            font-size: 0.9rem;
-        }
-
-        .contact-details a {
-            color: #0366d6;
-            text-decoration: none;
-        }
-
-        .contact-details a:hover {
-            text-decoration: underline;
-        }
+        .contact-item { background: var(--alt-bg); border-radius: 8px; border: 1px solid var(--border); }
+        .contact-details h5 { color: var(--text); }
+        .contact-details p { color: var(--muted); }
+        .contact-details a { color: var(--primary); }
 
         /* 响应式设计 */
         @media (max-width: 768px) {
@@ -354,12 +196,14 @@
     <nav class="navbar">
         <div class="nav-container">
             <a href="/" class="logo">{{ site.title }}</a>
+            <div class="nav-right">
             <ul class="nav-links">
                 <li><a href="/">主页</a></li>
                 <li><a href="/about" class="active">个人介绍</a></li>
                 <li><a href="/blog">学习博客</a></li>
-                <li><a href="/projects">项目</a></li>
             </ul>
+                <button id="theme-toggle" class="theme-toggle" aria-label="切换主题">🌙 深色</button>
+            </div>
         </div>
     </nav>
 
@@ -570,8 +414,32 @@
     </main>
 
     <!-- 页脚 -->
-    <footer style="background: #f8f9fa; color: #6c757d; text-align: center; padding: 2rem 0; border-top: 1px solid #e1e4e8;">
+    <footer style="background: var(--alt-bg); color: var(--muted); text-align: center; padding: 2rem 0; border-top: 1px solid var(--border);">
         <p>&copy; {{ site.time | date: "%Y" }} {{ site.title }}. 保留所有权利。</p>
     </footer>
+
+    <script>
+        (function() {
+            const root = document.documentElement;
+            const storageKey = 'theme-preference';
+            const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+            const saved = localStorage.getItem(storageKey);
+            const current = saved ? saved : (prefersDark ? 'dark' : 'light');
+            if (current === 'dark') root.setAttribute('data-theme', 'dark');
+            const btn = document.getElementById('theme-toggle');
+            const setLabel = () => {
+                const isDark = root.getAttribute('data-theme') === 'dark';
+                btn.textContent = isDark ? '☀️ 浅色' : '🌙 深色';
+                btn.setAttribute('aria-pressed', String(isDark));
+            };
+            setLabel();
+            btn.addEventListener('click', function() {
+                const isDark = root.getAttribute('data-theme') === 'dark';
+                if (isDark) { root.removeAttribute('data-theme'); localStorage.setItem(storageKey, 'light'); }
+                else { root.setAttribute('data-theme', 'dark'); localStorage.setItem(storageKey, 'dark'); }
+                setLabel();
+            });
+        })();
+    </script>
 </body>
 </html>
