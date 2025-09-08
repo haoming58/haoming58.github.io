@@ -1,23 +1,24 @@
 # Haoming 的个人博客
 
-这是一个基于 Jekyll 构建的个人博客网站，具有现代化的设计和响应式布局。
+_config.yml：网站的全局配置文件。你可以在这里设置网站标题、导航菜单、作者信息等。
+Gemfile：定义了网站所需的 Ruby gem（插件和依赖），如 Jekyll、主题等。
+_layouts：存放页面布局模板（如 default.html），决定所有页面的结构和样式。
+_posts：存放博客文章，文件名格式为 YYYY-MM-DD-title.markdown。
+index.markdown、about.markdown、projects.md：网站的主要页面内容。
+assets/（如果有）：存放图片、CSS、JS 等静态资源。
+其他文件如 404.html、favicon.ico.png：分别是 404 页面和网站图标
 
-## ✨ 功能特性
+读取 _config.yml 配置。
 
-- 🎨 **现代化设计**: 采用渐变背景、卡片式布局和优雅的动画效果
-- 📱 **响应式布局**: 完美适配桌面端、平板和移动设备
-- 🧭 **导航系统**: 固定顶部导航栏，支持平滑滚动
-- 📝 **博客系统**: 基于 Markdown 的博客写作系统
-- 🔍 **SEO 优化**: 针对搜索引擎优化的页面结构
+加载 _layouts 提供的 HTML 结构。
 
-## 🏗️ 技术架构
+将 .md 内容渲染成 HTML。
 
-- **静态站点生成器**: Jekyll 4.4.1
-- **主题**: 自定义设计，不依赖第三方主题
-- **样式**: 纯 CSS3，支持现代浏览器特性
-- **布局**: 响应式网格布局，使用 CSS Grid 和 Flexbox
-- **图标**: 使用 Emoji 和 SVG 图标
+应用 Front Matter 中的参数。
 
+使用 Gemfile 定义的插件扩展功能。
+
+输出静态 HTML 页面。
 ## 📁 文件结构
 
 ```
