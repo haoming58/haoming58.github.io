@@ -1,15 +1,15 @@
-title: Haoming 的博客
+title: Haoming 的网站
 description: 我的学习与记录
 url: "https://haoming58.github.io"
 theme: minima
-# baseurl 通常保持空，除非仓库不是 xxx.github.io 这种
+# baseurl 通常保持空，除非仓  库不是 xxx.github.io 这种
 # baseurl: ""
 author: Haoming
 
 navigation:
   - name: 主页
     link: /
-  - name: 个人介绍
+  - name: 关于我
     link: /about
   - name: 博客
     link: /blog
