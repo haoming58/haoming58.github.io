@@ -11,11 +11,39 @@
             box-sizing: border-box;
         }
 
+        :root {
+            --bg: #ffffff;
+            --text: #2c3e50;
+            --muted: #586069;
+            --card: #ffffff;
+            --border: #e1e4e8;
+            --shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            --shadow-hover: 0 4px 12px rgba(0, 0, 0, 0.15);
+            --primary: #0366d6;
+            --primary-weak: #f1f8ff;
+            --alt-bg: #f8f9fa;
+            --alt-bg-2: #e9ecef;
+        }
+
+        [data-theme="dark"] {
+            --bg: #0d1117;
+            --text: #c9d1d9;
+            --muted: #8b949e;
+            --card: #161b22;
+            --border: #30363d;
+            --shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+            --shadow-hover: 0 4px 12px rgba(0, 0, 0, 0.6);
+            --primary: #58a6ff;
+            --primary-weak: #0d419d33;
+            --alt-bg: #0d1117;
+            --alt-bg-2: #161b22;
+        }
+
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', 'Helvetica Neue', Helvetica, Arial, sans-serif;
             line-height: 1.6;
-            color: #2c3e50;
-            background: #ffffff;
+            color: var(--text);
+            background: var(--bg);
             font-size: 16px;
         }
 
@@ -24,9 +52,9 @@
             position: fixed;
             top: 0;
             width: 100%;
-            background: #ffffff;
-            border-bottom: 1px solid #e1e4e8;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            background: var(--bg);
+            border-bottom: 1px solid var(--border);
+            box-shadow: var(--shadow);
             z-index: 1000;
             padding: 0;
         }
@@ -44,8 +72,14 @@
         .logo {
             font-size: 1.5rem;
             font-weight: 600;
-            color: #2c3e50;
+            color: var(--text);
             text-decoration: none;
+        }
+
+        .nav-right {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
         }
 
         .nav-links {
@@ -56,7 +90,7 @@
 
         .nav-links a {
             text-decoration: none;
-            color: #586069;
+            color: var(--muted);
             font-weight: 500;
             padding: 0.5rem 1rem;
             border-radius: 6px;
@@ -65,19 +99,40 @@
         }
 
         .nav-links a:hover {
-            color: #2c3e50;
+            color: var(--text);
             background: #f6f8fa;
         }
 
+        [data-theme="dark"] .nav-links a:hover {
+            background: #161b22;
+        }
+
         .nav-links a.active {
-            color: #0366d6;
-            background: #f1f8ff;
+            color: var(--primary);
+            background: var(--primary-weak);
+        }
+
+        .theme-toggle {
+            appearance: none;
+            border: 1px solid var(--border);
+            background: var(--card);
+            color: var(--muted);
+            padding: 0.35rem 0.75rem;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 0.9rem;
+        }
+
+        .theme-toggle:hover {
+            color: var(--text);
+            border-color: var(--primary);
         }
 
         /* 个人介绍区域 */
         .hero-section {
             padding: 120px 0 80px 0;
-            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            background: linear-gradient(135deg, var(--alt-bg) 0%, var(--alt-bg-2) 100%);
             text-align: center;
         }
 
@@ -92,27 +147,81 @@
             height: 120px;
             border-radius: 50%;
             margin: 0 auto 2rem auto;
-            background: #e9ecef;
+            background: var(--alt-bg-2);
             display: flex;
             align-items: center;
             justify-content: center;
             font-size: 3rem;
             color: #6c757d;
-            border: 4px solid #ffffff;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            border: 4px solid var(--bg);
+            box-shadow: var(--shadow-hover);
+            overflow: hidden;
+        }
+
+        .hero-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        .social-links {
+            margin-top: 1.5rem;
+            display: flex;
+            gap: 0.75rem;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .social-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            padding: 0.4rem 0.75rem;
+            border: 1px solid var(--border);
+            background: var(--card);
+            color: var(--muted);
+            text-decoration: none;
+            border-radius: 999px;
+            font-size: 0.9rem;
+            transition: all 0.2s ease;
+        }
+
+        .social-link:hover {
+            color: var(--text);
+            border-color: var(--primary);
+        }
+
+        .button {
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.2s ease;
+        }
+
+        .button-primary {
+            background: var(--primary);
+            color: #ffffff;
+        }
+
+        .button-primary:hover {
+            filter: brightness(0.95);
         }
 
         .hero-title {
             font-size: 2.5rem;
             font-weight: 700;
             margin-bottom: 1rem;
-            color: #2c3e50;
+            color: var(--text);
         }
 
         .hero-subtitle {
             font-size: 1.2rem;
             margin-bottom: 2rem;
-            color: #586069;
+            color: var(--muted);
             max-width: 600px;
             margin-left: auto;
             margin-right: auto;
@@ -126,10 +235,14 @@
             margin: 0 auto;
         }
 
+        [data-theme="dark"] .hero-description {
+            color: var(--muted);
+        }
+
         /* 内容区域 */
         .content-section {
             padding: 4rem 0;
-            background: #ffffff;
+            background: var(--bg);
         }
 
         .container {
@@ -142,11 +255,11 @@
             text-align: center;
             font-size: 2rem;
             margin-bottom: 3rem;
-            color: #2c3e50;
+            color: var(--text);
             font-weight: 600;
         }
 
-        /* 项目展示区域 */
+        /* 项目展示区域 - 已不展示，仅保留样式以兼容可能的片段 */
         .projects-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
@@ -155,18 +268,18 @@
         }
 
         .project-card {
-            background: #ffffff;
-            border: 1px solid #e1e4e8;
+            background: var(--card);
+            border: 1px solid var(--border);
             border-radius: 8px;
             overflow: hidden;
             transition: all 0.2s ease;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            box-shadow: var(--shadow);
         }
 
         .project-card:hover {
             transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-            border-color: #0366d6;
+            box-shadow: var(--shadow-hover);
+            border-color: var(--primary);
         }
 
         .project-image {
@@ -178,7 +291,12 @@
             justify-content: center;
             color: #6c757d;
             font-size: 2rem;
-            border-bottom: 1px solid #e1e4e8;
+            border-bottom: 1px solid var(--border);
+        }
+
+        [data-theme="dark"] .project-image {
+            background: #0d1117;
+            color: var(--muted);
         }
 
         .project-content {
@@ -189,11 +307,11 @@
             font-size: 1.3rem;
             font-weight: 600;
             margin-bottom: 0.5rem;
-            color: #2c3e50;
+            color: var(--text);
         }
 
         .project-description {
-            color: #586069;
+            color: var(--muted);
             margin-bottom: 1rem;
             line-height: 1.6;
         }
@@ -206,18 +324,22 @@
         }
 
         .tag {
-            background: #f1f8ff;
-            color: #0366d6;
+            background: var(--primary-weak);
+            color: var(--primary);
             padding: 0.25rem 0.75rem;
             border-radius: 20px;
             font-size: 0.85rem;
             border: 1px solid #c8e1ff;
         }
 
+        [data-theme="dark"] .tag {
+            border-color: #1f6feb66;
+        }
+
         .project-link {
             display: inline-block;
             padding: 0.5rem 1rem;
-            background: #0366d6;
+            background: var(--primary);
             color: white;
             text-decoration: none;
             border-radius: 6px;
@@ -229,9 +351,13 @@
             background: #0256cc;
         }
 
+        [data-theme="dark"] .project-link:hover {
+            background: #388bfd;
+        }
+
         /* 博客预览区域 */
         .blog-preview {
-            background: #f8f9fa;
+            background: var(--alt-bg);
             padding: 4rem 0;
         }
 
@@ -243,8 +369,8 @@
         }
 
         .blog-card {
-            background: #ffffff;
-            border: 1px solid #e1e4e8;
+            background: var(--card);
+            border: 1px solid var(--border);
             border-radius: 8px;
             padding: 1.5rem;
             transition: all 0.2s ease;
@@ -252,12 +378,12 @@
 
         .blog-card:hover {
             transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-            border-color: #0366d6;
+            box-shadow: var(--shadow-hover);
+            border-color: var(--primary);
         }
 
         .blog-date {
-            color: #6c757d;
+            color: var(--muted);
             font-size: 0.9rem;
             margin-bottom: 0.5rem;
         }
@@ -266,13 +392,22 @@
             font-size: 1.2rem;
             font-weight: 600;
             margin-bottom: 0.5rem;
-            color: #2c3e50;
+            color: var(--text);
         }
 
         .blog-excerpt {
-            color: #586069;
+            color: var(--muted);
             line-height: 1.6;
             margin-bottom: 1rem;
+        }
+
+        /* 页脚 */
+        .site-footer {
+            background: var(--alt-bg);
+            color: var(--muted);
+            text-align: center;
+            padding: 2rem 0;
+            border-top: 1px solid var(--border);
         }
 
         /* 响应式设计 */
@@ -283,9 +418,13 @@
                 padding: 1rem 2rem;
             }
 
+            .nav-right {
+                margin-top: 0.5rem;
+            }
+
             .nav-links {
                 gap: 1rem;
-                margin-top: 1rem;
+                margin-top: 0.5rem;
             }
 
             .hero-title {
@@ -312,11 +451,14 @@
     <nav class="navbar">
         <div class="nav-container">
             <a href="/" class="logo">{{ site.title }}</a>
-            <ul class="nav-links">
-                <li><a href="/" class="active">主页</a></li>
-                <li><a href="/about">个人介绍</a></li>
-                <li><a href="/blog">学习博客</a></li>
-            </ul>
+            <div class="nav-right">
+                <ul class="nav-links">
+                    <li><a href="/" class="active">主页</a></li>
+                    <li><a href="/about">个人介绍</a></li>
+                    <li><a href="/blog">学习博客</a></li>
+                </ul>
+                <button id="theme-toggle" class="theme-toggle" aria-label="切换主题">🌙 深色</button>
+            </div>
         </div>
     </nav>
 
@@ -324,13 +466,27 @@
     <section class="hero-section">
         <div class="hero-container">
             <div class="hero-avatar">
+                {% if site.avatar_url %}
+                <img src="{{ site.avatar_url }}" alt="{{ site.author | default: 'Avatar' }}" class="hero-img" />
+                {% else %}
                 👤
+                {% endif %}
             </div>
             <h1 class="hero-title">{{ page.hero_title | default: "你好，我是 Haoming" }}</h1>
             <p class="hero-subtitle">{{ page.hero_subtitle | default: "热爱技术，专注学习，分享成长" }}</p>
             <div class="hero-description">
                 {{ page.hero_description | default: "我是一名软件开发者，喜欢探索新技术，解决实际问题。在这里，我会分享我的学习心得、项目经验和生活感悟。希望通过这个平台，与更多志同道合的朋友交流学习，共同进步。" }}
             </div>
+            {% if site.social %}
+            <div class="social-links">
+                {% for s in site.social %}
+                <a class="social-link" href="{{ s.url }}" target="_blank" rel="noopener">
+                    {% if s.icon == 'github' %}🐙{% elsif s.icon == 'mail' %}✉️{% elsif s.icon == 'rss' %}📡{% else %}🔗{% endif %}
+                    <span>{{ s.name }}</span>
+                </a>
+                {% endfor %}
+            </div>
+            {% endif %}
         </div>
     </section>
 
@@ -344,7 +500,7 @@
                     <div class="blog-date">{{ post.date | date: "%Y年%m月%d日" }}</div>
                     <h3 class="blog-title">{{ post.title }}</h3>
                     <p class="blog-excerpt">{{ post.excerpt | default: post.content | strip_html | truncate: 100 }}</p>
-                    <a href="{{ post.url }}" class="project-link">阅读全文</a>
+                    <a href="{{ post.url }}" class="button button-primary">阅读全文</a>
                 </div>
                 {% endfor %}
             </div>
@@ -352,8 +508,39 @@
     </section>
 
     <!-- 页脚 -->
-    <footer style="background: #f8f9fa; color: #6c757d; text-align: center; padding: 2rem 0; border-top: 1px solid #e1e4e8;">
+    <footer class="site-footer">
         <p>&copy; {{ site.time | date: "%Y" }} {{ site.title }}. 保留所有权利。</p>
     </footer>
+
+    <script>
+        (function() {
+            const root = document.documentElement;
+            const storageKey = 'theme-preference';
+            const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+            const saved = localStorage.getItem(storageKey);
+            const current = saved ? saved : (prefersDark ? 'dark' : 'light');
+            if (current === 'dark') {
+                root.setAttribute('data-theme', 'dark');
+            }
+            const btn = document.getElementById('theme-toggle');
+            const setLabel = () => {
+                const isDark = root.getAttribute('data-theme') === 'dark';
+                btn.textContent = isDark ? '☀️ 浅色' : '🌙 深色';
+                btn.setAttribute('aria-pressed', String(isDark));
+            };
+            setLabel();
+            btn.addEventListener('click', function() {
+                const isDark = root.getAttribute('data-theme') === 'dark';
+                if (isDark) {
+                    root.removeAttribute('data-theme');
+                    localStorage.setItem(storageKey, 'light');
+                } else {
+                    root.setAttribute('data-theme', 'dark');
+                    localStorage.setItem(storageKey, 'dark');
+                }
+                setLabel();
+            });
+        })();
+    </script>
 </body>
 </html>

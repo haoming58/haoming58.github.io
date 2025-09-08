@@ -7,7 +7,6 @@
 - 🎨 **现代化设计**: 采用渐变背景、卡片式布局和优雅的动画效果
 - 📱 **响应式布局**: 完美适配桌面端、平板和移动设备
 - 🧭 **导航系统**: 固定顶部导航栏，支持平滑滚动
-- 🚀 **项目展示**: 精美的项目卡片展示，支持标签和链接
 - 📝 **博客系统**: 基于 Markdown 的博客写作系统
 - 🔍 **SEO 优化**: 针对搜索引擎优化的页面结构
 
@@ -25,15 +24,17 @@
 haoming58.github.io/
 ├── _layouts/          # 页面布局模板
 │   ├── home.html      # 首页布局
-│   ├── projects.html  # 项目页面布局
-│   └── default.html   # 默认布局
+│   ├── about.html     # 个人介绍布局
+│   ├── blog.html      # 博客列表布局
+│   ├── post.html      # 单篇文章布局
+│   └── default.html   # 默认布局（若使用）
 ├── _posts/            # 博客文章
 ├── _site/             # 构建输出目录
-├── index.markdown     # 首页内容
-├── projects.md        # 项目页面
+├── index.markdown     # 首页内容（前置信息）
 ├── about.markdown     # 关于页面
+├── blog.md            # 博客列表入口
 ├── _config.yml        # 网站配置
-└── Gemfile           # Ruby 依赖管理
+└── Gemfile            # Ruby 依赖管理
 ```
 
 ## 🚀 快速开始
@@ -93,82 +94,121 @@ tags: [标签1, 标签2]
 文章内容...
 ```
 
-### 修改首页项目
+### 调整首页文案
 
-编辑 `index.markdown` 文件中的 `featured_projects` 部分：
-
-```yaml
-featured_projects:
-  - title: "项目标题"
-    description: "项目描述"
-    icon: "🚀"
-    tags: ["标签1", "标签2"]
-    link: "/projects#project-id"
-```
-
-### 自定义样式
-
-所有样式都在 `_layouts/` 目录下的 HTML 文件中定义，可以直接修改 CSS 来自定义外观。
-
-## 🎨 自定义配置
-
-### 网站基本信息
-
-编辑 `_config.yml` 文件：
+编辑 `index.markdown` 的前置信息：
 
 ```yaml
-title: "你的网站标题"
-description: "网站描述"
-url: "你的网站URL"
-author: "你的名字"
+---
+layout: home
+title: 首页
+hero_title: "你好，我是小铭"
+hero_subtitle: "喜欢研究，分享和探讨知识的见解"
+---
 ```
 
 ### 导航菜单
 
-在布局文件中修改导航链接：
+在 `_config.yml` 中配置导航（模板自动渲染）：
 
-```html
-<ul class="nav-links">
-    <li><a href="/">主页</a></li>
-    <li><a href="/projects">项目</a></li>
-    <li><a href="/about">关于</a></li>
-</ul>
+```yaml
+navigation:
+  - name: 主页
+    link: /
+  - name: 个人介绍
+    link: /about
+  - name: 博客
+    link: /blog
 ```
 
-## 🌟 特色功能
+### 自定义样式
 
-### 1. 渐变背景
-首页使用现代化的渐变背景，营造视觉冲击力。
+所有样式都在 `
+```
 
-### 2. 项目卡片
-精美的项目展示卡片，支持悬停动画效果。
+## 🧩 快速模板与操作指南
 
-### 3. 响应式设计
-完美适配各种设备尺寸，提供最佳用户体验。
+### 新增一篇博客（推荐）
+在 `_posts/` 目录下新建文件，命名格式 `YYYY-MM-DD-title.md`：
 
-### 4. 平滑滚动
-页面内导航支持平滑滚动效果。
+```markdown
+---
+layout: post
+title: "文章标题"
+date: 2025-09-01
+# 可选：tags 会显示在文章页、便于检索
+tags: [学习, 笔记]
+# 可选：excerpt 用于列表摘要（不写则自动截取）
+excerpt: 这是一段自定义摘要，用于列表页展示。
+---
 
-## 📱 浏览器支持
+这里是正文内容，支持标准 Markdown 语法。
 
-- Chrome 60+
-- Firefox 55+
-- Safari 12+
-- Edge 79+
+- 支持代码块
+- 支持图片与链接
+- 支持表格
+```
 
-## 🤝 贡献指南
+### 新增一个页面（如「联系我」「作品集」）
+在仓库根目录新增 `contact.markdown`（或任意名字，注意 permalink）：
 
-欢迎提交 Issue 和 Pull Request 来改进这个项目！
+```markdown
+---
+layout: page
+title: 联系我
+permalink: /contact
+---
 
-## 📄 许可证
+这里写页面内容，支持 Markdown。
+```
 
-本项目采用 MIT 许可证 - 查看 [LICENSE](LICENSE) 文件了解详情。
+将新页面加入导航（可选）：编辑 `_config.yml`：
 
-## 📞 联系方式
+```yaml
+navigation:
+  - name: 主页
+    link: /
+  - name: 个人介绍
+    link: /about
+  - name: 博客
+    link: /blog
+  - name: 联系我
+    link: /contact
+```
 
-- **GitHub**: [haoming58](https://github.com/haoming58)
-- **网站**: [haoming58.github.io](https://haoming58.github.io)
+若不存在 `page` 布局，可复制 `_layouts/about.html` 为 `_layouts/page.html` 并做简单改名与文案调整，然后在页面前置信息里使用 `layout: page`。
+
+### 本地预览与发布
+- 本地预览：
+```bash
+bundle install
+bundle exec jekyll serve
+```
+浏览器访问 `http://127.0.0.1:4000`
+
+- 构建发布（GitHub Pages 建议直接推送到主分支）：
+```bash
+bundle exec jekyll build
+# 推送到 GitHub 后，Pages 会自动构建并发布到 https://<username>.github.io
+```
+
+### 常用调整速查
+- 修改首页主标题/副标题：编辑 `index.markdown` 的 `hero_title`、`hero_subtitle`。
+- 修改首页最近文章数量：在 `_layouts/home.html` 中调整 `{% for post in site.posts limit:3 %}` 的 `limit`。
+- 调整导航：在 `_config.yml` 的 `navigation` 数组增删项，模板会自动渲染。
+- 修改配色/间距/字体：编辑 `_layouts/home.html` 顶部 `<style>` 中的 CSS（同理可在 `blog.html`、`post.html` 中调整对应样式）。
+- 设置站点信息：在 `_config.yml` 修改 `title`、`description`、`url`、`author`。
+
+### 故障排查
+- 本地运行报依赖错误：
+  - 确认已安装 Ruby、Bundler；执行 `bundle install`。
+- 本地样式不更新：
+  - 清缓存或在开发时使用 `bundle exec jekyll serve --livereload`。
+- GitHub Pages 未更新：
+  - 检查仓库名是否为 `haoming58.github.io`；等待构建完成；查看仓库的 Pages 设置与构建日志。
+- 中文路径/文件名问题：
+  - 尽量使用英文文件名与路径，避免特殊字符导致的构建异常。
 
 ---
 
-*用代码记录生活，用技术连接世界* 🚀
+如果你希望加入「深色模式」、自定义字体或组件化片段（如页脚社交链接、文章目录 TOC），告诉我你的偏好，我可以直接帮你补齐对应的布局与样式，并写好注释，之后你可自行按注释修改。

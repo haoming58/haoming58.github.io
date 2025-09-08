@@ -13,3 +13,16 @@ navigation:
     link: /about
   - name: 博客
     link: /blog
+
+avatar_url: https://github.com/haoming58.png
+
+social:
+  - name: GitHub
+    url: https://github.com/haoming58
+    icon: github
+  - name: Email
+    url: mailto:your.email@example.com
+    icon: mail
+  - name: RSS
+    url: /feed.xml
+    icon: rss

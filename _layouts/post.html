@@ -424,7 +424,6 @@
                 <li><a href="/">主页</a></li>
                 <li><a href="/about">个人介绍</a></li>
                 <li><a href="/blog" class="active">学习博客</a></li>
-                <li><a href="/projects">项目</a></li>
             </ul>
         </div>
     </nav>
@@ -488,78 +487,70 @@
     </footer>
 
     <script>
-        // 动态生成目录
+        // 动态生成目录（仅 h2/h3），使用稳定 slug 作为锚点
         document.addEventListener('DOMContentLoaded', function() {
             const articleContent = document.querySelector('.article-content');
             const toc = document.getElementById('toc');
             
             if (articleContent && toc) {
-                const headings = articleContent.querySelectorAll('h1, h2, h3, h4, h5, h6');
+                const headings = articleContent.querySelectorAll('h2, h3');
+                const slugify = (text) => text
+                    .toLowerCase()
+                    .trim()
+                    .replace(/[^a-z0-9\u4e00-\u9fa5\s-]/g, '')
+                    .replace(/\s+/g, '-');
+
+                const used = new Map();
                 const tocItems = [];
-                
-                headings.forEach((heading, index) => {
-                    // 为每个标题添加ID
-                    const id = `heading-${index}`;
-                    heading.id = id;
-                    
-                    // 创建目录项
+
+                headings.forEach((heading) => {
+                    let base = slugify(heading.textContent);
+                    if (!base) base = 'section';
+                    let slug = base;
+                    let i = 1;
+                    while (used.has(slug)) {
+                        slug = `${base}-${i++}`;
+                    }
+                    used.set(slug, true);
+                    heading.id = slug;
+
                     const li = document.createElement('li');
-                    li.className = 'toc-item';
-                    
+                    li.className = heading.tagName === 'H3' ? 'toc-subitem' : 'toc-item';
+
                     const a = document.createElement('a');
-                    a.href = `#${id}`;
+                    a.href = `#${slug}`;
                     a.className = 'toc-link';
                     a.textContent = heading.textContent;
-                    
-                    // 根据标题级别添加缩进
-                    const level = parseInt(heading.tagName.charAt(1));
-                    if (level > 2) {
-                        li.className = 'toc-subitem';
-                    }
-                    
                     li.appendChild(a);
                     tocItems.push(li);
                 });
                 
-                // 清空并添加目录项
                 toc.innerHTML = '';
                 tocItems.forEach(item => toc.appendChild(item));
                 
-                // 目录导航高亮
                 const tocLinks = toc.querySelectorAll('.toc-link');
-                
-                // 滚动监听
-                window.addEventListener('scroll', function() {
+                const onScroll = () => {
                     let current = '';
-                    
                     headings.forEach((heading) => {
                         const rect = heading.getBoundingClientRect();
-                        if (rect.top <= 100) {
-                            current = heading.id;
-                        }
+                        if (rect.top <= 100) current = heading.id;
                     });
-                    
                     tocLinks.forEach(link => {
-                        link.classList.remove('active');
-                        if (link.getAttribute('href') === `#${current}`) {
-                            link.classList.add('active');
-                        }
+                        link.classList.toggle('active', link.getAttribute('href') === `#${current}`);
                     });
-                });
+                };
+                window.addEventListener('scroll', onScroll, { passive: true });
+                onScroll();
                 
-                // 平滑滚动
                 tocLinks.forEach(link => {
                     link.addEventListener('click', function(e) {
                         e.preventDefault();
                         const targetId = this.getAttribute('href');
                         const targetElement = document.querySelector(targetId);
-                        
                         if (targetElement) {
                             const offsetTop = targetElement.offsetTop - 80;
-                            window.scrollTo({
-                                top: offsetTop,
-                                behavior: 'smooth'
-                            });
+                            window.scrollTo({ top: offsetTop, behavior: 'smooth' });
+                            history.replaceState(null, '', targetId);
                         }
                     });
                 });
