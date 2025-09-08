@@ -316,7 +316,6 @@
                 <li><a href="/" class="active">主页</a></li>
                 <li><a href="/about">个人介绍</a></li>
                 <li><a href="/blog">学习博客</a></li>
-                <li><a href="/projects">项目</a></li>
             </ul>
         </div>
     </nav>
@@ -331,34 +330,6 @@
             <p class="hero-subtitle">{{ page.hero_subtitle | default: "热爱技术，专注学习，分享成长" }}</p>
             <div class="hero-description">
                 {{ page.hero_description | default: "我是一名软件开发者，喜欢探索新技术，解决实际问题。在这里，我会分享我的学习心得、项目经验和生活感悟。希望通过这个平台，与更多志同道合的朋友交流学习，共同进步。" }}
-            </div>
-        </div>
-    </section>
-
-    <!-- 项目展示区域 -->
-    <section class="content-section">
-        <div class="container">
-            <h2 class="section-title">精选项目</h2>
-            <div class="projects-grid">
-                {% for project in page.featured_projects %}
-                <div class="project-card">
-                    <div class="project-image">
-                        {{ project.icon | default: "🚀" }}
-                    </div>
-                    <div class="project-content">
-                        <h3 class="project-title">{{ project.title }}</h3>
-                        <p class="project-description">{{ project.description }}</p>
-                        <div class="project-tags">
-                            {% for tag in project.tags %}
-                            <span class="tag">{{ tag }}</span>
-                            {% endfor %}
-                        </div>
-                        {% if project.link %}
-                        <a href="{{ project.link }}" class="project-link">查看详情</a>
-                        {% endif %}
-                    </div>
-                </div>
-                {% endfor %}
             </div>
         </div>
     </section>
