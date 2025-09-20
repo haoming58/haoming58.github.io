@@ -1,314 +1,156 @@
-# Haoming 的个人网站
-
-基于 Jekyll 构建的个人技术博客和知识分享平台，采用极简主义设计风格。
-
-## 🌟 网站特色
-
-- **极简设计**: 采用 Jekyll-YAMT 主题的简洁风格
-- **响应式布局**: 完美适配桌面端和移动端
-- **模块化配置**: 灵活的功能开关和自定义选项
-- **代码高亮**: 支持多种编程语言的语法高亮
-- **SEO优化**: 完整的搜索引擎优化支持
-- **快速加载**: 优化的样式和资源加载
-
-## 📁 项目结构
-
-```
-haoming58.github.io/
-├── _config.yml              # 网站配置文件
-├── _data/                   # 数据配置文件
-│   ├── settings.yml         # 功能开关配置
-│   └── social.yml           # 社交链接配置
-├── _includes/               # 可重用组件
-│   ├── head.html           # 页面头部
-│   ├── header.html         # 网站头部
-│   ├── footer.html         # 网站底部
-│   ├── pages.html          # 导航页面
-│   ├── social.html         # 社交链接
-│   └── reading_time.html   # 阅读时间计算
-├── _layouts/               # 页面布局模板
-│   ├── default.html        # 默认布局
-│   └── home.html           # 首页布局
-├── _sass/                  # Sass样式文件
-│   ├── base.scss           # 基础样式
-│   ├── typography.scss     # 字体排版
-│   ├── header.scss         # 头部样式
-│   ├── home.scss           # 首页样式
-│   ├── post.scss           # 文章样式
-│   ├── footer.scss         # 底部样式
-│   ├── paginator.scss      # 分页样式
-│   ├── scrollbar.scss      # 滚动条样式
-│   ├── mobile.scss         # 移动端样式
-│   └── syntax.scss         # 代码高亮样式
-├── _posts/                 # 博客文章
-├── notes/                  # 学习笔记
-│   ├── antenna/            # 天线设计笔记
-│   ├── coding/             # 编程技术笔记
-│   └── thoughts/           # 思考感悟
-├── assets/                 # 静态资源
-│   ├── css/                # 样式文件
-│   └── images/             # 图片资源
-├── about.markdown          # 关于页面
-├── index.markdown          # 首页
-└── README.md               # 项目说明
-```
-
-## 🚀 快速开始
-
-### 1. 环境要求
-
-- Ruby 2.7 或更高版本
-- Jekyll 4.0 或更高版本
-- Bundler
-
-### 2. 安装依赖
-
-```bash
-# 克隆项目
-git clone https://github.com/haoming58/haoming58.github.io.git
-cd haoming58.github.io
-
-# 安装依赖
-bundle install
-```
-
-### 3. 本地开发
-
-```bash
-# 启动本地服务器
-bundle exec jekyll serve
-
-# 在浏览器中访问
-# http://localhost:4000
-```
-
-### 4. 构建部署
-
-```bash
-# 构建静态文件
-bundle exec jekyll build
-
-# 部署到 GitHub Pages
-git add .
-git commit -m "Update website"
-git push origin main
-```
-
-## ⚙️ 配置说明
-
-### 网站基本信息
-
-编辑 `_config.yml` 文件：
+# [YAMT - Yet Another Minimal Theme](https://yamt.netlify.app/)
+[![Netlify Status](https://api.netlify.com/api/v1/badges/249c3da6-7b23-4b57-915d-71934329e306/deploy-status)](https://yamt.netlify.app/)
+![](https://badgen.net/rubygems/dt/jekyll-yamt)
+[![contributions welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat)](https://github.com/PandaSekh/Jekyll-YAMT/issues)
+![GitHub forks](https://img.shields.io/github/forks/PandaSekh/Jekyll-YAMT?label=Fork%20it%21&style=social)
+## [Live Demo](https://yamt.netlify.app/)
 
-```yaml
-# 网站基本信息
-title: "你的网站标题"
-description: "网站描述"
-url: "https://your-username.github.io"
-author:
-  name: "你的姓名"
-  email: "your.email@example.com"
-  url: "https://your-username.github.io"
-```
+![Homepage](https://raw.githubusercontent.com/PandaSekh/Jekyll-YAMT/master/assets/img/screenshots/Screenshot.png?raw=true)
 
-### 功能开关
+YAMT is a minimal [Jekyll](http://jekyllrb.com) theme focused on simplicity and ease-of-use. It has great modularity, allowing you to easily decide what you actually want on your website.
 
-编辑 `_data/settings.yml` 文件：
+## Contents
 
-```yaml
-# 功能开关
-subtitle:
-  active: true
-  text: "你的副标题"
+- [Features](#features)
+- [Screenshots](#screenshots)
+- [Installation](#installation)
+- [Customize](#options)
+  - [Basics](#Basics)
+  - [Typography](#Typography)
+  - [Header](#header)
+  - [Home](#home)
+  - [Post](#post)
+  - [Contact Form](#contact-form)
+- [Development](#development)
+- [Credits](#credits)
+- [License](#license)
 
-nav:
-  pages:
-    active: true
-  social:
-    active: true
+## Features
 
-featured-img:
-  active: true
+- Minimal and clean design.
+- Fully modular: activate and load only what you really need.
+- Works great on mobile and smaller screens.
+- Works on Github Pages.
+- Supports [Disqus](https://disqus.com/) comments activated only on button press, if you activate them.
+- [Google Analytics](https://www.google.com/analytics/) support.
+- [Open Graph](https://ogp.me/) and [Twitter Cards](https://developer.twitter.com/en/docs/tweets/optimize-with-cards/guides/getting-started) support to better index the website content on search engines and social networks.
+- [MathJAX](https://www.mathjax.org/) and [LaTeX](https://www.latex-project.org/) optional support. Write beautiful math!
+- [RSS](https://github.com/jekyll/jekyll-feed) support.
+- Beautiful [Syntax Highlight](https://yamt.netlify.app/2020/05/19/special-formatting.html#syntax-highlight). Write some code and show it in a graceful way.
 
-date-under-post:
-  active: true
+## Screenshots
 
-categories:
-  active: true
-```
+Mobile:  
+![Mobile](https://raw.githubusercontent.com/PandaSekh/Jekyll-YAMT/master/assets/img/screenshots/Screenshot_mobile.png?raw=true)
 
-### 社交链接
+Code Highlight:  
+![Code](https://raw.githubusercontent.com/PandaSekh/Jekyll-YAMT/master/assets/img/screenshots/Screenshot_code_highlight.png)
 
-编辑 `_data/social.yml` 文件：
+Minimal:  
+![Minimal](https://raw.githubusercontent.com/PandaSekh/Jekyll-YAMT/master/assets/img/screenshots/Screenshot_minimal.png?raw=true)
 
-```yaml
-social:
-  - {icon: 'github', type: "brand", link: 'https://github.com/your-username'}
-  - {icon: 'twitter', type: "brand", link: 'https://twitter.com/your-username'}
-  - {icon: 'linkedin', type: "brand", link: 'https://linkedin.com/in/your-username'}
-  - {icon: 'envelope', type: "solid", link: 'mailto:your.email@example.com'}
-  - {icon: 'rss', type: "solid", link: "/feed.xml"}
-```
+## Installation
 
-## 📝 内容管理
+There are four way to use YAMT: Netlify (suggested, as this theme has a contact module built-in working only on Netlify), Github Pages, as a gem-based theme, by forking this repo or by copying all the files into your directory.
 
-### 添加博客文章
+### Download the files
+You can [download the files](https://github.com/PandaSekh/Jekyll-YAMT/releases/latest) and add them in your directory to start working.
 
-在 `_posts/` 目录下创建新的 Markdown 文件：
+### Netlify
 
-```markdown
----
-layout: post
-title: "文章标题"
-date: 2024-01-15 10:00:00 +0800
-categories: [技术分享]
-tags: [JavaScript, React, 前端开发]
-image: /assets/images/example.jpg
-description: "文章描述"
----
+1. [Fork this repo](https://github.com/PandaSekh/Jekyll-YAMT/generate). You can copy only master, set it to private or public and name it however you want.
+2. Go to [Netlify](https://app.netlify.com/), create a New site from Git, choose your repo or all repos, no difference. Back to Netlify, select the recently forked repo.
+3. Owner and branch are good to go. In build command write `bundle exec jekyll build` and publishing directory should be `_site/`.
+4. Deploy. Your site will shortly be available. Under domain settings you can change your subdomain, or add a primary level one. 
 
-# 文章标题
+### Github Pages
 
-文章内容...
-```
+Github Pages uses the [--safe flag](https://jekyllrb.com/docs/configuration/options/) to build jekyll websites, which disable custom plugins, caching to disk and ignore symbolic links. Because of that, I suggest you to use any other method. Netlify works great with a 5 minute config, so I suggest you use it.
 
-### 添加学习笔记
+1. [Fork this repo](https://github.com/PandaSekh/Jekyll-YAMT/generate).
+2. Create a new branch in your repo and call it `gh-pages`.
+3. Publish your website and choose gh-pages as the target branch.
 
-在 `notes/` 目录下的相应分类中创建新文件：
+### Remote theme
 
-```markdown
----
-layout: default
-title: "笔记标题"
-categories: [coding]
-date: 2024-01-15
-summary: "笔记摘要"
----
+[Follow these instructions](https://help.github.com/en/github/working-with-github-pages/adding-a-theme-to-your-github-pages-site-using-jekyll).
 
-# 笔记标题
+### Gem-based theme 
+1. Add this line to your Jekyll site's `Gemfile`:
 
-笔记内容...
-```
+    ```ruby
+    gem "jekyll-yamt"
+    ```
 
-### 支持的分类
+2. And add this line to your Jekyll site's `_config.yml`:
 
-- `coding`: 编程技术
-- `antenna`: 天线设计
-- `thoughts`: 思考感悟
+    ```yaml
+    theme: jekyll-yamt
+    ```
 
-## 🎨 样式定制
+3. And then execute:
 
-### 颜色主题
+    ``` bash
+    $ bundle
+    ```
 
-编辑 `_sass/base.scss` 文件中的颜色变量：
+4. Or install it yourself as:
+    
+    ``` bash
+    $ gem install jekyll-yamt
+    ```
 
-```scss
-// 主色调
-$primary-color: #2563eb;
-$secondary-color: #64748b;
-$accent-color: #f59e0b;
-$base: #a2a2a2;
-$light-grey: #ebebeb;
-```
+#### ERROR: There was an error while loading `jekyll-yamt.gemspec`: No such file or directory - git ls-files -z. Bundler cannot continue.
+If you encounter this error when running `bundle install`, please make sure git is installed.
 
-### 字体设置
+## Customize
 
-编辑 `_sass/typography.scss` 文件：
+YAMT is easily customizable. If you don't need a functionality, just deactivate it in `_data/settings.yml`.
+Most of the customizable things are self-explanatory and found in the `_data` folder and in the `_config.yml`.
 
-```scss
-body {
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  font-size: 16px;
-  line-height: 1.7;
-}
-```
+### Basics
 
-## 📱 响应式设计
+Under the `_data` folder there are three files: pages, settings and social.
+In pages you can add other pages that will show up in the nav-
+In social you can add your socials that will show up in the nav. To add a social, find a suitable icon on [FontAwesome](https://fontawesome.com/) and add it's name in the name tag.
+Brand defines Font Awesome's font type (fas is solid, fab is brand).
+Out of the box this theme has support colors for a bunch of social. If your social isn't supported, just add the color in the header.css 
 
-网站采用响应式设计，自动适配不同设备：
+In `_data/settings.yml` you can activate or deactivate various functions of the theme, like analytics, disqus comments, related posts and so on.
 
-- **桌面端**: 宽度 > 768px
-- **平板端**: 宽度 480px - 768px
-- **移动端**: 宽度 < 480px
+### Typography
+By default YAMT uses the System Font STack, which greatly reduces load times. If you want to use the old Font Stack, in `assets/main.scss` change `typography` to `typography-old`.
 
-## 🔧 功能特性
+### Header
+In `_data/settings.yml` you can choose to hide or show the subtitle, the page navigation or the social icons.
 
-### 代码高亮
+### Home
+In `_data/settings.yml` you can choose to hide or show the posts infos (date and read-time) and the featured image.
 
-支持多种编程语言的语法高亮：
+### Post
+In `_data/settings.yml` you can choose to hide or show the post infos, categories, related posts and comments.
+Note that by removing categories the Categories Archives will no longer be reachable.
 
-```javascript
-// JavaScript 示例
-function example() {
-    console.log("Hello, World!");
-}
-```
+### Contact Form
+YAMT has a built-in contact form builded using [Netlify](https://app.netlify.com/) free form functionality. To make it work you only need the line `data-netlify="true"` when declaring a form.  
+If you don't want to use Netlify, remove the line `data-netlify="true"`.
 
-```python
-# Python 示例
-def example():
-    print("Hello, World!")
-```
+## Development
 
-### 数学公式
+[Contributions are welcomed and encouraged](https://github.com/PandaSekh/Jekyll-YAMT/issues).
 
-支持 LaTeX 数学公式（需要启用 MathJAX）：
+To set up your environment to develop this theme, run `bundle install`.
 
-```latex
-$$E = mc^2$$
-```
+Your theme is setup just like a normal Jekyll site! To test your theme, run `bundle exec jekyll serve` and open your browser at `http://localhost:4000`. This starts a Jekyll server using your theme. Add pages, documents, data, etc. like normal to test your theme's contents. As you make modifications to your theme and to your content, your site will regenerate and you should see the changes in the browser after a refresh, just like normal.
 
-### 目录生成
+When your theme is released, only the files in `_layouts`, `_includes`, `_sass` and `assets` tracked with Git will be bundled.
+To add a custom directory to your theme-gem, please edit the regexp in `yamt.gemspec` accordingly.
 
-在文章中使用 `{:toc}` 自动生成目录。
+## Credits
+Theme designed and created by [Alessio Franceschi](https://github.com/PandaSekh/).
+Inspired by [Lagrange by LeNPaul](https://lenpaul.github.io/Lagrange/).  
+Also great help from [this blog](https://blog.webjeda.com/), I've used this even before I created this theme.  
+Images from [Unsplash](https://unsplash.com/).
 
-### 阅读时间
-
-自动计算文章阅读时间。
-
-## 📊 SEO 优化
-
-- 自动生成 sitemap.xml
-- 支持 Open Graph 标签
-- 支持 Twitter Cards
-- 自动生成 RSS 订阅
-
-## 🚀 部署
-
-### GitHub Pages
-
-1. 将代码推送到 GitHub 仓库
-2. 在仓库设置中启用 GitHub Pages
-3. 选择源分支（通常是 main）
-4. 网站将自动部署到 `https://your-username.github.io`
-
-### 自定义域名
-
-1. 在仓库根目录创建 `CNAME` 文件
-2. 在文件中写入你的域名
-3. 在域名服务商处配置 DNS 记录
-
-## 📚 学习资源
-
-- [Jekyll 官方文档](https://jekyllrb.com/docs/)
-- [Markdown 语法指南](https://www.markdownguide.org/)
-- [Sass 官方文档](https://sass-lang.com/documentation)
-- [Font Awesome 图标库](https://fontawesome.com/)
-
-## 🤝 贡献
-
-欢迎提交 Issue 和 Pull Request 来改进这个项目！
-
-## 📄 许可证
-
-本项目基于 MIT 许可证开源。
-
-## 📞 联系方式
-
-- **GitHub**: [haoming58](https://github.com/haoming58)
-- **邮箱**: your.email@example.com
-- **网站**: https://haoming58.github.io
-
----
-
-*让我们一起学习，一起成长，用技术创造更美好的世界！*
+## License
+The theme is available as open source under the terms of the [MIT License](https://github.com/PandaSekh/Jekyll-YAMT/blob/master/LICENSE.txt).

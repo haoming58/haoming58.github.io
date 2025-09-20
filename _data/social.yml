@@ -1,6 +1,8 @@
-# 社交链接配置
+# 社交链接配置 | Social Links Configuration
 # 支持的图标可以在 https://fontawesome.com/ 找到
+# Supported icons can be found at https://fontawesome.com/
 # type: "brand" 表示品牌图标，"solid" 表示实心图标
+# type: "brand" for brand icons, "solid" for solid icons
 
 social:
   - {icon: 'github', type: "brand", link: 'https://github.com/haoming58'}

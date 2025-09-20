@@ -2,27 +2,8 @@
 layout: default
 title: Home
 ---
+{% for post in paginator.posts %}
 
-<!-- 英雄区域 -->
-<section class="hero-section">
-    <div class="hero-content">
-        {% if site.profile_image %}
-        <img src="{{ site.profile_image }}" alt="Haoming" class="hero-avatar">
-        {% endif %}
-        
-        <h1 class="hero-title">{{ page.hero_title | default: site.title }}</h1>
-        <p class="hero-subtitle">{{ page.hero_subtitle | default: site.description }}</p>
-        
-        <div class="cta-buttons">
-            <a href="/about" class="btn">了解更多</a>
-            <a href="/notes" class="btn">查看笔记</a>
-            <a href="/research" class="btn">研究内容</a>
-        </div>
-    </div>
-</section>
-
-<!-- 最新文章 -->
-{% for post in site.posts limit:3 %}
 <div class="post">
     <h2 id = "post-title"><a href="{{ post.url  | relative_url }}">{{ post.title }}</a></h2>
 
@@ -41,6 +22,9 @@ title: Home
     {% if post.image %}
         <a href="{{ post.url | relative_url }}"><img src="{{ post.image | relative_url }}"/></a>
     {% endif %}
+    {% if post.gif %}
+        <a href="{{ post.url | relative_url }}">{% include gif.html file = post.gif %}</a>
+    {% endif %}
     </div>
     {% endif %}
 
@@ -50,41 +34,19 @@ title: Home
         {% else %}
             {{ post.content | strip_html | truncatewords:50 }}
         {% endif %}
-        <span class = "continue-reading"><a href="{{ post.url | relative_url }}">继续阅读...</a></span>
+        <span class = "continue-reading"><a href="{{ post.url | relative_url }}">Continue reading...</a></span>
     </p> 
 </div>
 {% endfor %}
 
-<!-- 最近的知识记录 -->
-<section class="recent-notes">
-    <h2 class="section-title">最近的知识分享 ✨</h2>
-    
-    <div class="notes-grid">
-        {% assign recent_notes = site.notes | limit: 6 %}
-        {% for note in recent_notes %}
-        <article class="note-card {{ note.categories | first }}">
-            <span class="category-badge {{ note.categories | first }}">
-                {% assign cat_name = note.categories | first %}
-                {% case cat_name %}
-                    {% when 'antenna' %}天线设计
-                    {% when 'coding' %}编程技术
-                    {% when 'thoughts' %}思考感悟
-                    {% else %}{{ cat_name }}
-                {% endcase %}
-            </span>
-            <h3 class="note-title">
-                <a href="{{ note.url }}">{{ note.title }}</a>
-            </h3>
-            {% if note.summary %}
-            <p class="note-summary">{{ note.summary }}</p>
-            {% else %}
-            <p class="note-summary">{{ note.content | strip_html | truncatewords: 20 }}</p>
-            {% endif %}
-        </article>
-        {% endfor %}
-    </div>
-    
-    <div style="text-align: center; margin-top: 2rem;">
-        <a href="/notes" class="view-all-link">查看所有记录 →</a>
-    </div>
-</section>
+<!-- Pagination links -->
+<div class = "paginator">
+    {% if paginator.total_pages > 1 %}
+    {% if paginator.next_page %}
+      <a class = "older paginate-button" href="{{ paginator.next_page_path | relative_url }}">Older Posts</a>
+    {% endif %}
+    {% if paginator.previous_page %}
+    <a class = "newer paginate-button" href="{{ paginator.previous_page_path | relative_url }}">Newer Posts</a>
+  {% endif %}
+  {% endif %}
+</div>

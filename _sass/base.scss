@@ -1,20 +1,15 @@
-// Colors
+//Colors
 $base: #a2a2a2;
 $light-grey: #ebebeb;
-$primary-color: #2563eb;
-$secondary-color: #64748b;
-$accent-color: #f59e0b;
 
 * {
   -webkit-box-sizing: border-box;
      -moz-box-sizing: border-box;
           box-sizing: border-box;
 }
-
 html{
   scroll-behavior: smooth;
 }
-
 .container {
     margin-left: auto;
     margin-right: auto;
@@ -25,7 +20,7 @@ html{
   list-style: none;
 }
 
-// Alerts
+//Alerts
 .alert{
   padding: 20px;
   border-radius: 0 4px 4px 0;
@@ -48,9 +43,9 @@ html{
   background-color: #e45454;
   border-left: 7px solid #cb2020;
 }
-// End Alerts
+//End Alerts
 
-// Blockquote
+//Blockquote
 blockquote {
   border-left: .25em solid #dfe2e5;
   color: #6a737d;
@@ -64,19 +59,19 @@ blockquote {
     }
   }
 }
-// End Blockquote
+//End Blockquote
 
-// MathJAX
+//MathJAX
 .MathJax_Display{
   .MathJax {
   font-size: 1.2rem;
   }
 }
-// End MathJAX
+//End MathJAX
 
-// ToC
+//ToC
 #markdown-toc::before {
-  content: "目录";
+  content: "Contents";
   font-size: 1.1rem;
   font-weight: bold;
 }
@@ -101,9 +96,9 @@ blockquote {
     list-style: disc;
   }
 }
-// End ToC
+//End ToC
 
-// Archive
+//Archive
 .archive-link{
   text-decoration: none;
   color: black;
@@ -114,4 +109,4 @@ blockquote {
 .archive-link:hover{
   text-decoration: underline;
 }
-// End Archive
+//End Archive

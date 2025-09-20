@@ -1,92 +1,51 @@
-// 响应式设计
-@media (max-width: 768px) {
-  .container {
-    width: 90%;
-    padding: 0 1rem;
-  }
-  
-  header {
-    width: 100%;
-    
-    #site_title h1 {
-      font-size: 2rem;
+@media (max-width: 768px){
+    html{
+        overflow-y: auto;
     }
-    
-    #subheader {
-      .pages, .social {
-        float: none;
+    .container {
+        width: 88vw;
+    }
+    #header{
+        width: 80vw;
+        #subheader{
+            display: flex;
+            flex-flow: column wrap;
+            align-items: center;
+            .pages{
+                margin-top: 12px;
+                order: 2;
+                text-align: center;
+                a{
+                    font-size: 1.15rem;
+                }
+            }
+            .social{
+                order: 1;
+                i{
+                    font-size: 1.3rem;
+                }
+            }
+        }
+    }
+    #post-title{
         text-align: center;
-        margin: 0.5rem 0;
-      }
     }
-  }
-  
-  .hero-section {
-    padding: 2rem 1rem;
-    
-    .hero-title {
-      font-size: 2rem;
-    }
-    
-    .hero-avatar {
-      width: 120px;
-      height: 120px;
-    }
-    
-    .cta-buttons {
-      flex-direction: column;
-      align-items: center;
-    }
-  }
-  
-  .notes-grid {
-    grid-template-columns: 1fr;
-  }
-  
-  .note-card {
-    padding: 1.5rem;
-  }
-  
-  .post-container {
-    padding: 0;
-  }
-  
-  h1 {
-    font-size: 2rem;
-  }
-  
-  h2 {
-    font-size: 1.5rem;
-  }
-  
-  h3 {
-    font-size: 1.25rem;
-  }
-}
 
-@media (max-width: 480px) {
-  .container {
-    width: 95%;
-  }
-  
-  .hero-section {
-    padding: 1.5rem 0.5rem;
-    
-    .hero-title {
-      font-size: 1.75rem;
+    p{
+        font-size: 1.2rem;
     }
-    
-    .hero-subtitle {
-      font-size: 1rem;
+    .post-info{
+        text-align: center;
     }
-  }
-  
-  .note-card {
-    padding: 1rem;
-  }
-  
-  .btn {
-    padding: 0.5rem 1.5rem;
-    font-size: 0.9rem;
-  }
+    ::-webkit-scrollbar {
+        height: 3px;
+      }
+    div .highlight{
+        padding-left: 8px;
+        padding-right: 0px;
+    }
+    pre .highlight{
+        padding-left: 8px;
+        padding-right: 0px;
+    }
 }

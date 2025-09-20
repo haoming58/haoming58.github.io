@@ -1,0 +1,363 @@
+---
+layout: default
+---
+
+<div class="category-container">
+    <!-- 左侧目录 - 占1/4 -->
+    <aside class="category-sidebar">
+        <div class="sidebar-content">
+            <h3>{{ page.title }}</h3>
+            
+            <!-- 分类导航 -->
+            <nav class="category-nav">
+                <ul>
+                    <li><a href="/notes.html" class="{% if page.category == 'notes' %}active{% endif %}">学习笔记 | Notes</a></li>
+                    <li><a href="/research.html" class="{% if page.category == 'research' %}active{% endif %}">研究内容 | Research</a></li>
+                    <li><a href="/life.html" class="{% if page.category == 'life' %}active{% endif %}">生活感悟 | Life</a></li>
+                </ul>
+            </nav>
+            
+            <!-- 子分类 -->
+            <div class="subcategories">
+                {% if page.category == 'notes' %}
+                    <h4>子分类 | Subcategories</h4>
+                    <ul>
+                        <li><a href="#programming">编程技术 | Programming</a></li>
+                        <li><a href="#antenna">天线设计 | Antenna Design</a></li>
+                        <li><a href="#tools">工具使用 | Tools</a></li>
+                    </ul>
+                {% elsif page.category == 'research' %}
+                    <h4>研究方向 | Research Areas</h4>
+                    <ul>
+                        <li><a href="#technical">技术研究 | Technical Research</a></li>
+                        <li><a href="#professional">专业领域 | Professional Fields</a></li>
+                        <li><a href="#innovation">创新应用 | Innovative Applications</a></li>
+                    </ul>
+                {% elsif page.category == 'life' %}
+                    <h4>内容分类 | Content Categories</h4>
+                    <ul>
+                        <li><a href="#thoughts">思考感悟 | Thoughts & Insights</a></li>
+                        <li><a href="#reading">读书笔记 | Reading Notes</a></li>
+                        <li><a href="#experiences">生活体验 | Life Experiences</a></li>
+                        <li><a href="#goals">目标规划 | Goals & Planning</a></li>
+                    </ul>
+                {% endif %}
+            </div>
+            
+            <!-- 最新文章 -->
+            <div class="recent-posts-sidebar">
+                <h4>最新文章 | Recent Posts</h4>
+                <ul>
+                    {% assign category_posts = site.posts | where: "categories", page.category %}
+                    {% for post in category_posts limit:5 %}
+                    <li>
+                        <a href="{{ post.url | relative_url }}">{{ post.title }}</a>
+                        <span class="post-date">{{ post.date | date: "%Y-%m-%d" }}</span>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </aside>
+    
+    <!-- 右侧内容 - 占3/4 -->
+    <main class="category-content">
+        <div class="content-wrapper">
+            <!-- 序言部分 -->
+            <section class="category-intro">
+                <h1>{{ page.title }}</h1>
+                <p class="description">{{ page.description }}</p>
+            </section>
+            
+            <!-- 主要内容 -->
+            <section class="category-main">
+                {{ content }}
+            </section>
+            
+            <!-- 文章列表 -->
+            <section class="posts-list">
+                <h2>文章列表 | Posts List</h2>
+                
+                {% assign category_posts = site.posts | where: "categories", page.category %}
+                {% if category_posts.size > 0 %}
+                    {% for post in category_posts %}
+                    <article class="post-item">
+                        <div class="post-meta">
+                            <time datetime="{{ post.date | date_to_xmlschema }}">{{ post.date | date: "%Y年%m月%d日" }}</time>
+                            {% if post.tags %}
+                                <span class="post-tags">
+                                    {% for tag in post.tags %}
+                                        <span class="tag">{{ tag }}</span>
+                                    {% endfor %}
+                                </span>
+                            {% endif %}
+                        </div>
+                        <h3 class="post-title">
+                            <a href="{{ post.url | relative_url }}">{{ post.title }}</a>
+                        </h3>
+                        {% if post.excerpt %}
+                            <p class="post-excerpt">{{ post.excerpt | strip_html | truncatewords: 30 }}</p>
+                        {% endif %}
+                    </article>
+                    {% endfor %}
+                {% else %}
+                    <p class="no-posts">暂无文章，敬请期待 | No posts yet, stay tuned!</p>
+                {% endif %}
+            </section>
+        </div>
+    </main>
+</div>
+
+<style>
+.category-container {
+    display: flex;
+    min-height: 100vh;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1rem;
+}
+
+.category-sidebar {
+    width: 25%;
+    background: #f8f9fa;
+    border-right: 1px solid #e9ecef;
+    padding: 2rem 1rem;
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    overflow-y: auto;
+}
+
+.sidebar-content h3 {
+    color: #333;
+    margin-bottom: 1.5rem;
+    font-size: 1.2rem;
+    border-bottom: 2px solid #333;
+    padding-bottom: 0.5rem;
+}
+
+.category-nav ul {
+    list-style: none;
+    padding: 0;
+    margin-bottom: 2rem;
+}
+
+.category-nav li {
+    margin-bottom: 0.5rem;
+}
+
+.category-nav a {
+    display: block;
+    padding: 0.5rem 0.75rem;
+    color: #666;
+    text-decoration: none;
+    border-radius: 4px;
+    transition: all 0.3s ease;
+    font-size: 0.9rem;
+}
+
+.category-nav a:hover,
+.category-nav a.active {
+    background: #333;
+    color: white;
+}
+
+.subcategories {
+    margin-bottom: 2rem;
+}
+
+.subcategories h4 {
+    color: #333;
+    margin-bottom: 1rem;
+    font-size: 1rem;
+}
+
+.subcategories ul {
+    list-style: none;
+    padding: 0;
+}
+
+.subcategories li {
+    margin-bottom: 0.3rem;
+}
+
+.subcategories a {
+    display: block;
+    padding: 0.3rem 0.5rem;
+    color: #666;
+    text-decoration: none;
+    font-size: 0.85rem;
+    transition: color 0.3s ease;
+}
+
+.subcategories a:hover {
+    color: #333;
+}
+
+.recent-posts-sidebar h4 {
+    color: #333;
+    margin-bottom: 1rem;
+    font-size: 1rem;
+}
+
+.recent-posts-sidebar ul {
+    list-style: none;
+    padding: 0;
+}
+
+.recent-posts-sidebar li {
+    margin-bottom: 0.8rem;
+    padding-bottom: 0.8rem;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.recent-posts-sidebar a {
+    color: #333;
+    text-decoration: none;
+    font-size: 0.85rem;
+    line-height: 1.4;
+    display: block;
+    margin-bottom: 0.3rem;
+}
+
+.recent-posts-sidebar a:hover {
+    color: #666;
+}
+
+.post-date {
+    font-size: 0.75rem;
+    color: #999;
+}
+
+.category-content {
+    width: 75%;
+    padding: 2rem;
+}
+
+.category-intro {
+    margin-bottom: 3rem;
+    text-align: center;
+    padding: 2rem;
+    background: #f8f9fa;
+    border-radius: 8px;
+}
+
+.category-intro h1 {
+    color: #333;
+    margin-bottom: 1rem;
+    font-size: 2.5rem;
+}
+
+.description {
+    color: #666;
+    font-size: 1.1rem;
+    line-height: 1.6;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.category-main {
+    margin-bottom: 3rem;
+}
+
+.posts-list h2 {
+    color: #333;
+    margin-bottom: 2rem;
+    font-size: 1.8rem;
+    border-bottom: 2px solid #333;
+    padding-bottom: 0.5rem;
+}
+
+.post-item {
+    background: white;
+    border: 1px solid #e9ecef;
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    transition: all 0.3s ease;
+}
+
+.post-item:hover {
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    transform: translateY(-2px);
+}
+
+.post-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+    font-size: 0.9rem;
+    color: #666;
+}
+
+.post-tags {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.tag {
+    background: #f8f9fa;
+    color: #666;
+    padding: 0.2rem 0.5rem;
+    border-radius: 12px;
+    font-size: 0.8rem;
+}
+
+.post-title {
+    margin-bottom: 1rem;
+}
+
+.post-title a {
+    color: #333;
+    text-decoration: none;
+    font-size: 1.3rem;
+    font-weight: 600;
+}
+
+.post-title a:hover {
+    color: #666;
+}
+
+.post-excerpt {
+    color: #666;
+    line-height: 1.6;
+}
+
+.no-posts {
+    text-align: center;
+    color: #666;
+    font-style: italic;
+    padding: 2rem;
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+    .category-container {
+        flex-direction: column;
+    }
+    
+    .category-sidebar {
+        width: 100%;
+        height: auto;
+        position: static;
+        border-right: none;
+        border-bottom: 1px solid #e9ecef;
+    }
+    
+    .category-content {
+        width: 100%;
+        padding: 1rem;
+    }
+    
+    .category-intro h1 {
+        font-size: 2rem;
+    }
+    
+    .post-meta {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+    }
+}
+</style>

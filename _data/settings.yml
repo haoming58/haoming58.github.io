@@ -1,38 +1,57 @@
+# 中英双文配置 | Bilingual Configuration
 # Google Analytics
 analytics-id: #leave blank to not use Analytics
 
-# Subtitle
+# Profile image
+profile_image: "/assets/images/profile/profile.jpg"
+
+# Subtitle - 副标题
 subtitle:
   active: true
-  text: 热爱技术的开发者，专注于编程、天线设计和知识分享
+  text: "热爱技术的开发者，专注于编程、天线设计和知识分享 | A passionate developer focused on programming, antenna design and knowledge sharing"
 
-# Nav 
+# Navigation - 导航
 nav:
   pages:
     active: true
   social:
     active: true
 
-# Featured images in homepage
+# Featured images in homepage - 首页特色图片
 featured-img:
   active: true
 
-# Show categories at the end of posts
+# Show categories at the end of posts - 在文章末尾显示分类
 categories:
   active: true
 
-# Show date and read time under the post title
+# Show date and read time under the post title - 在文章标题下显示日期和阅读时间
 date-under-post:
   active: true
 
-# Use MathJAX
+# Use MathJAX - 使用数学公式
 mathjax:
   active: true
 
-# Show related posts based on categories
+# Show related posts based on categories - 显示相关文章
 related-posts:
   active: true
-  title: "你可能也感兴趣"
+  title: "你可能也感兴趣 | You might also like"
 
-# Comments
+# Comments - 评论
 comments: true
+
+# Language settings - 语言设置
+language:
+  default: "zh"
+  supported: ["zh", "en"]
+  
+# Navigation labels - 导航标签
+navigation:
+  home: "首页 | Home"
+  about: "关于我 | About"
+  notes: "学习笔记 | Notes"
+  research: "研究内容 | Research"
+  life: "生活感悟 | Life"
+  blog: "博客 | Blog"
+  contact: "联系我 | Contact"

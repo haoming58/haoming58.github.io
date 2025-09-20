@@ -1,22 +1,22 @@
 # Site settings
-title: Haoming 的网站
-description: "热爱技术的开发者，专注于编程、天线设计和知识分享"
+title: "Haoming's Website | 浩明的网站"
+description: "热爱技术的开发者，专注于编程、天线设计和知识分享 | A passionate developer focused on programming, antenna design and knowledge sharing"
 url: "https://haoming58.github.io"
-baseurl: ""
+baseurl: "/"
 author:
   name: "Haoming"
   email: "your.email@example.com"
   url: "https://haoming58.github.io"
 permalink: /:year/:month/:day/:title:output_ext
 
-# Plugins
+#Plugins
 plugins: [jekyll-paginate, jekyll-feed, jekyll-seo-tag, jekyll-sitemap]
 
-# Pagination
-paginate: 5
+#Pagination
+paginate: 3
 paginate_path: "/page:num/"
 
-# SEO
+#SEO
 twitter:
   username: haoming58
   card: summary
@@ -38,10 +38,11 @@ webmaster_verifications:
   baidu: 
 lang: zh_CN
 
-# Highlighter
+#Highlighter
 kramdown:
-  input: GFM
+  input:          GFM
   syntax_highlighter: rouge
+
   syntax_highlighter_opts:
     css_class: 'highlight'
     span:
@@ -50,30 +51,7 @@ kramdown:
       line_numbers: false
       start_line: 1
 
-# Sass
+#Sass
 sass:
   style: compressed
   sourcemap: never
-
-# 个人图片配置
-profile_image: "/assets/images/profile/profile.jpg"
-hero_image: "/assets/images/profile/hero-bg.jpg"
-
-# 网站配置
-show_excerpts: true
-excerpt_separator: "<!--more-->"
-
-# 导航配置
-navigation:
-  - name: 主页
-    link: /
-  - name: 关于我
-    link: /about
-  - name: 学习笔记
-    link: /notes
-  - name: 研究笔记
-    link: /research
-  - name: 博客
-    link: /blog
-
-avatar_url: https://github.com/haoming58.png
