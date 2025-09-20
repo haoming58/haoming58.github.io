@@ -1,29 +1,79 @@
+# Site settings
 title: Haoming 的网站
-description: 我的学习与记录
+description: "热爱技术的开发者，专注于编程、天线设计和知识分享"
 url: "https://haoming58.github.io"
-theme: minima
-# baseurl 通常保持空，除非仓  库不是 xxx.github.io 这种
-# baseurl: ""
-author: Haoming
+baseurl: ""
+author:
+  name: "Haoming"
+  email: "your.email@example.com"
+  url: "https://haoming58.github.io"
+permalink: /:year/:month/:day/:title:output_ext
 
+# Plugins
+plugins: [jekyll-paginate, jekyll-feed, jekyll-seo-tag, jekyll-sitemap]
+
+# Pagination
+paginate: 5
+paginate_path: "/page:num/"
+
+# SEO
+twitter:
+  username: haoming58
+  card: summary
+facebook:
+  app_id: 
+  publisher: 
+  admins: 
+logo: /assets/images/profile/profile.jpg
+social:
+  links:
+    - https://github.com/haoming58
+    - mailto:your.email@example.com
+    - /feed.xml
+webmaster_verifications:
+  google: 
+  bing: 
+  alexa: 
+  yandex: 
+  baidu: 
+lang: zh_CN
+
+# Highlighter
+kramdown:
+  input: GFM
+  syntax_highlighter: rouge
+  syntax_highlighter_opts:
+    css_class: 'highlight'
+    span:
+      line_numbers: false
+    block:
+      line_numbers: false
+      start_line: 1
+
+# Sass
+sass:
+  style: compressed
+  sourcemap: never
+
+# 个人图片配置
+profile_image: "/assets/images/profile/profile.jpg"
+hero_image: "/assets/images/profile/hero-bg.jpg"
+
+# 网站配置
+show_excerpts: true
+excerpt_separator: "<!--more-->"
+
+# 导航配置
 navigation:
   - name: 主页
     link: /
   - name: 关于我
     link: /about
+  - name: 学习笔记
+    link: /notes
+  - name: 研究笔记
+    link: /research
   - name: 博客
     link: /blog
 
 avatar_url: https://github.com/haoming58.png
-
-
-social:
-  - name: GitHub
-    url: https://github.com/haoming58
-    icon: github
-  - name: Email
-    url: mailto:your.email@example.com
-    icon: mail
-  - name: RSS
-    url: /feed.xml
-    icon: rss

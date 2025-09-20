@@ -1,0 +1,5 @@
+{% for social in site.data.social.social %}
+    <a href="{{ social.link }}" target="_blank" rel="noopener noreferrer">
+        <i class="fa{{ social.type }} fa-{{ social.icon }}" id="{{ social.icon }}"></i>
+    </a>
+{% endfor %}

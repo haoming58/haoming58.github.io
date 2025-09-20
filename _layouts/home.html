@@ -1,141 +1,90 @@
 ---
 layout: default
+title: Home
 ---
-
-<style>
-/* 首页样式 - 去除时间相关元素 */
-.hero-section {
-    background: linear-gradient(135deg, #ff6b9d20, #4ecdc420);
-    padding: 4rem 2rem;
-    text-align: center;
-    border-radius: 20px;
-    margin-bottom: 3rem;
-    position: relative;
-    overflow: hidden;
-}
-
-.hero-title {
-    font-size: 3rem;
-    font-weight: 700;
-    color: #2c3e50;
-    margin-bottom: 1rem;
-    background: linear-gradient(135deg, #667eea, #764ba2);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-}
-
-.recent-notes {
-    margin-top: 3rem;
-}
-
-.notes-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-    gap: 2rem;
-    margin-top: 2rem;
-}
-
-.note-card {
-    background: white;
-    border-radius: 15px;
-    padding: 2rem;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-    transition: transform 0.3s, box-shadow 0.3s;
-    border-left: 4px solid;
-    height: fit-content;
-}
-
-.note-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 20px 40px rgba(0,0,0,0.15);
-}
-
-.note-card.antenna { border-left-color: #ff6b9d; }
-.note-card.coding { border-left-color: #4ecdc4; }
-.note-card.thoughts { border-left-color: #ffe66d; }
-
-.note-title {
-    font-size: 1.3rem;
-    font-weight: 600;
-    color: #2c3e50;
-    margin-bottom: 1rem;
-    line-height: 1.4;
-}
-
-.note-title a {
-    text-decoration: none;
-    color: inherit;
-    transition: color 0.3s;
-}
-
-.note-title a:hover {
-    color: #667eea;
-}
-
-.note-summary {
-    color: #7f8c8d;
-    line-height: 1.6;
-    margin-bottom: 1rem;
-    font-size: 0.95rem;
-}
-
-.category-badge {
-    display: inline-block;
-    padding: 0.3rem 0.8rem;
-    border-radius: 15px;
-    font-size: 0.8rem;
-    font-weight: 500;
-    color: white;
-    text-decoration: none;
-}
-
-.category-badge.antenna { background: #ff6b9d; }
-.category-badge.coding { background: #4ecdc4; }
-.category-badge.thoughts { background: #ffe66d; color: #2c3e50; }
-</style>
 
 <!-- 英雄区域 -->
 <section class="hero-section">
     <div class="hero-content">
-        {% if site.author.avatar %}
-        <img src="{{ site.author.avatar }}" alt="Haoming" class="hero-avatar">
+        {% if site.profile_image %}
+        <img src="{{ site.profile_image }}" alt="Haoming" class="hero-avatar">
         {% endif %}
         
         <h1 class="hero-title">{{ page.hero_title | default: site.title }}</h1>
         <p class="hero-subtitle">{{ page.hero_subtitle | default: site.description }}</p>
         
-        {{ content }}
+        <div class="cta-buttons">
+            <a href="/about" class="btn">了解更多</a>
+            <a href="/notes" class="btn">查看笔记</a>
+            <a href="/research" class="btn">研究内容</a>
+        </div>
     </div>
 </section>
 
+<!-- 最新文章 -->
+{% for post in site.posts limit:3 %}
+<div class="post">
+    <h2 id = "post-title"><a href="{{ post.url  | relative_url }}">{{ post.title }}</a></h2>
+
+    {% if site.data.settings.date-under-post.active %} 
+    <div class = "post-info">
+        <span>
+            <i class="far fa-calendar" aria-hidden="true"></i>
+            <time datetime="{{ post.date | date_to_xmlschema }}" class="by-line">{{ post.date | date_to_string }}</time> - <i class="far fa-clock"></i> 
+            {% include reading_time.html %}
+        </span>
+    </div>
+    {% endif %}
+
+    {% if site.data.settings.featured-img.active %}
+    <div class = "featured-img-container">
+    {% if post.image %}
+        <a href="{{ post.url | relative_url }}"><img src="{{ post.image | relative_url }}"/></a>
+    {% endif %}
+    </div>
+    {% endif %}
+
+    <p>
+        {% if post.customexcerpt %}
+            {{post.customexcerpt | strip_html | truncatewords:50}}
+        {% else %}
+            {{ post.content | strip_html | truncatewords:50 }}
+        {% endif %}
+        <span class = "continue-reading"><a href="{{ post.url | relative_url }}">继续阅读...</a></span>
+    </p> 
+</div>
+{% endfor %}
+
 <!-- 最近的知识记录 -->
-{% if page.show_recent_notes %}
 <section class="recent-notes">
     <h2 class="section-title">最近的知识分享 ✨</h2>
     
     <div class="notes-grid">
-        {% assign recent_notes = site.notes | limit: page.recent_notes_limit | default: 6 %}
+        {% assign recent_notes = site.notes | limit: 6 %}
         {% for note in recent_notes %}
         <article class="note-card {{ note.categories | first }}">
             <span class="category-badge {{ note.categories | first }}">
                 {% assign cat_name = note.categories | first %}
-                {% for category in site.note_categories %}
-                    {% if category.slug == cat_name %}{{ category.name }}{% endif %}
-                {% endfor %}
+                {% case cat_name %}
+                    {% when 'antenna' %}天线设计
+                    {% when 'coding' %}编程技术
+                    {% when 'thoughts' %}思考感悟
+                    {% else %}{{ cat_name }}
+                {% endcase %}
             </span>
             <h3 class="note-title">
                 <a href="{{ note.url }}">{{ note.title }}</a>
             </h3>
             {% if note.summary %}
             <p class="note-summary">{{ note.summary }}</p>
+            {% else %}
+            <p class="note-summary">{{ note.content | strip_html | truncatewords: 20 }}</p>
             {% endif %}
         </article>
         {% endfor %}
     </div>
     
-    <div style="text-align: center;">
+    <div style="text-align: center; margin-top: 2rem;">
         <a href="/notes" class="view-all-link">查看所有记录 →</a>
     </div>
 </section>
-{% endif %}

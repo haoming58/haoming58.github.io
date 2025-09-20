@@ -1,0 +1,8 @@
+# 社交链接配置
+# 支持的图标可以在 https://fontawesome.com/ 找到
+# type: "brand" 表示品牌图标，"solid" 表示实心图标
+
+social:
+  - {icon: 'github', type: "brand", link: 'https://github.com/haoming58'}
+  - {icon: 'envelope', type: "solid", link: 'mailto:your.email@example.com'}
+  - {icon: 'rss', type: "solid", link: "/feed.xml"}

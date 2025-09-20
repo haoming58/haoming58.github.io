@@ -1,0 +1,3 @@
+{% for item in site.navigation %}
+    <a href="{{ item.link | relative_url }}">{{ item.name }}</a>
+{% endfor %}

@@ -1,31 +1,18 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="zh-CN">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ page.title }} - {{ site.title }}</title>
-    </head>
+  {% include head.html %}
+</head>
 <body>
 
-    <header>
-        <nav>
-            <ul>
-                {% for item in site.navigation %}
-                    <li>
-                        <a href="{{ item.link }}">{{ item.name }}</a>
-                    </li>
-                {% endfor %}
-            </ul>
-        </nav>
-    </header>
+  <div class="container">
+    {% include header.html %}
 
-    <main>
-        {{ content }}
-    </main>
+    <div class="post-container">
+      {{ content }}
+    </div>
+  </div>
 
-    <footer>
-        <p>&copy; {{ site.time | date: "%Y" }} {{ site.title }}</p>
-    </footer>
-
+{%- include footer.html -%}
 </body>
 </html>
