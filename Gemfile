@@ -7,8 +7,9 @@ group :jekyll_plugins do
     gem 'jekyll-archives-v2'
     gem 'jekyll-email-protect'
     gem 'jekyll-feed'
+    # gem "jekyll-terser"  # removed - gem no longer available
     gem 'jekyll-get-json'
-    gem 'jekyll-imagemagick'
+    # gem 'jekyll-imagemagick'  # disabled due to UTF-8 encoding issues
     gem 'jekyll-jupyter-notebook'
     gem 'jekyll-link-attributes'
     gem 'jekyll-minifier'
@@ -17,7 +18,6 @@ group :jekyll_plugins do
     gem 'jekyll-scholar'
     gem 'jekyll-sitemap'
     gem 'jekyll-tabs'
-    gem 'jekyll-terser', :git => "https://github.com/RobertoJBeltran/jekyll-terser.git"
     gem 'jekyll-toc'
     gem 'jekyll-twitter-plugin'
     gem 'jemoji'
