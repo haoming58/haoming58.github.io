@@ -1,8 +1,8 @@
 # 页面配置 | Pages Configuration
 pages:
   - {name: '关于我 | About', url: 'about.html'}
-  - {name: '学习笔记 | Notes', url: 'notes.html'}
-  - {name: '研究内容 | Research', url: 'research.html'}
-  - {name: '生活感悟 | Life', url: 'life.html'}
   - {name: '博客 | Blog', url: 'blog.html'}
+  - {name: '项目 | Projects', url: 'projects.html'}
+  - {name: '出版物 | Publications', url: 'publications.html'}
+  - {name: '简历 | CV', url: 'cv.html'}
   - {name: '联系我 | Contact', url: 'contact.html'}
