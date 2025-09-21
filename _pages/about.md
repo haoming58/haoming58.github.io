@@ -3,6 +3,7 @@ layout: about
 title: about
 permalink: /
 subtitle: 热爱技术的开发者，专注于编程、天线设计和知识分享 | A passionate developer focused on programming, antenna design and knowledge sharing
+img: assets/img/1.jpg
 
 profile:
   align: right
