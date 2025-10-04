@@ -1,0 +1,109 @@
+/* Academic Fonts for Haoming's Website */
+
+/* Import Academic Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Source+Serif+Pro:wght@300;400;600;700&family=Inter:wght@300;400;500;600;700&family=Crimson+Text:ital,wght@0,400;0,600;1,400&display=swap');
+
+/* Apply academic fonts to site title */
+.site-title, 
+.navbar-brand,
+h1.site-title {
+  font-family: 'Source Serif Pro', 'Inter', serif !important;
+  font-weight: 600 !important;
+  color: #2c3e50 !important;
+  letter-spacing: 0.5px !important;
+}
+
+/* Dark mode support for site title */
+html[data-theme="dark"] .site-title,
+html[data-theme="dark"] .navbar-brand,
+html[data-theme="dark"] h1.site-title {
+  color: #e8eaed !important;
+}
+
+/* Profile name styling */
+.profile-name,
+.author-name {
+  font-family: 'Source Serif Pro', serif !important;
+  font-weight: 600 !important;
+  color: #2c3e50 !important;
+  letter-spacing: 0.5px !important;
+}
+
+/* Dark mode support for profile name */
+html[data-theme="dark"] .profile-name,
+html[data-theme="dark"] .author-name {
+  color: #e8eaed !important;
+}
+
+/* Headings styling */
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Source Serif Pro', serif !important;
+  font-weight: 600 !important;
+  color: #2c3e50 !important;
+}
+
+/* Dark mode support for headings */
+html[data-theme="dark"] h1,
+html[data-theme="dark"] h2,
+html[data-theme="dark"] h3,
+html[data-theme="dark"] h4,
+html[data-theme="dark"] h5,
+html[data-theme="dark"] h6 {
+  color: #e8eaed !important;
+}
+
+/* Navigation styling */
+.navbar-nav .nav-link {
+  font-family: 'Inter', sans-serif !important;
+  font-weight: 500 !important;
+  color: #34495e !important;
+}
+
+/* Dark mode support for navigation */
+html[data-theme="dark"] .navbar-nav .nav-link {
+  color: #e8eaed !important;
+}
+
+/* Academic body text styling */
+body, p, div, span {
+  font-family: 'Inter', sans-serif !important;
+  font-weight: 400 !important;
+  color: #2c3e50 !important;
+  line-height: 1.6 !important;
+}
+
+/* Dark mode support for body text */
+html[data-theme="dark"] body,
+html[data-theme="dark"] p,
+html[data-theme="dark"] div,
+html[data-theme="dark"] span {
+  color: #e8eaed !important;
+}
+
+/* Academic paper titles */
+.paper-title, .publication-title {
+  font-family: 'Source Serif Pro', serif !important;
+  font-weight: 600 !important;
+  color: #2c3e50 !important;
+  font-style: italic !important;
+}
+
+/* Dark mode support for paper titles */
+html[data-theme="dark"] .paper-title,
+html[data-theme="dark"] .publication-title {
+  color: #e8eaed !important;
+}
+
+/* Academic emphasis */
+.emphasis, .highlight {
+  font-family: 'Crimson Text', serif !important;
+  font-weight: 600 !important;
+  color: #2c3e50 !important;
+  font-style: italic !important;
+}
+
+/* Dark mode support for emphasis */
+html[data-theme="dark"] .emphasis,
+html[data-theme="dark"] .highlight {
+  color: #e8eaed !important;
+}
