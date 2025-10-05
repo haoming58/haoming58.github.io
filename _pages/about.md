@@ -2,16 +2,15 @@
 layout: about
 title: about
 permalink: /
-subtitle: <a href='#'>Academic Researcher</a>. Computer Science. Machine Learning. AI.
+subtitle: <a href='https://www.brunel.ac.uk/'>Brunel University of London</a> · <em>PhD Student</em>
 
 profile:
   align: right
   image: prof_pic.jpg
   image_circular: false # crops the image to make it circular
   more_info: >
-    <p>Email: haoming.xiang@example.com</p>
-    <p>Research Focus: Machine Learning, AI</p>
-    <p>Location: Academic Institution</p>
+    <p>haoming.xiang@brunel.ac.uk</p>
+    
 
 selected_papers: true # includes a list of papers marked as "selected={true}"
 social: true # includes social icons at the bottom of the page
@@ -27,8 +26,16 @@ latest_posts:
   limit: 
 ---
 
-I am Haoming Xiang, a researcher in computer science with a focus on machine learning and artificial intelligence. My research interests span across various domains including deep learning, natural language processing, and computer vision.
+I am a researcher focused on IoT, antennas, and AI for science. My interests include deep learning, mobile antennas, natural language processing, time‑series forecasting, and nonlinear dynamic systems.
 
-I am passionate about advancing the field of AI through innovative research and practical applications. My work aims to bridge the gap between theoretical understanding and real-world implementation of machine learning algorithms.
+Feel free to explore these pages to learn more.
 
-Feel free to explore my [publications](/publications/) and [projects](/projects/) to learn more about my research contributions.
+## Research Interests
+
+- Internet of Things (IoT)
+- Antennas 
+- Deep learning 
+- Natural language processing
+- Time‑series forecasting
+- Nonlinear dynamic systems
+
