@@ -2,96 +2,90 @@
   type: map
   contents:
     - name: Full Name
-      value: Albert Einstein
-    - name: Date of Birth
-      value: 14th March 1879
+      value: Haoming Xiang
+    - name: Research Field
+      value: Computer Science, Machine Learning, AI
     - name: Languages
-      value: English, German
+      value: English, Chinese
 
 - title: Education
   type: time_table
   contents:
-    - title: PhD
-      institution: University of Zurich, Zurich, Switzerland
-      year: 1905
+    - title: PhD in Computer Science
+      institution: University Name, City, Country
+      year: 2020-2024
       description:
-        - Description 1.
-        - Description 2.
-        - title: Description 3.
-          contents:
-            - Sub-description 1.
-            - Sub-description 2.
-    - title: Federal teaching diploma
-      institution: Eidgenössische Technische Hochschule, Zurich, Switzerland
-      year: 1900
+        - Research focus on machine learning and artificial intelligence
+        - Thesis: "Advanced Machine Learning Techniques for Real-world Applications"
+    - title: Master's Degree in Computer Science
+      institution: University Name, City, Country
+      year: 2018-2020
       description:
-        - Description 1.
-        - Description 2.
+        - Specialization in machine learning and data science
+        - GPA: 3.8/4.0
 
 - title: Experience
   type: time_table
   contents:
-    - title: Professor of Theoretical Physics
-      institution: Institute for Advanced Study, Princeton University
-      year: 1933 - 1955
+    - title: Research Scientist
+      institution: AI Research Lab, University Name
+      year: 2022 - Present
       description:
-        - Description 1.
-        - Description 2.
-        - title: Description 3.
-          contents:
-            - Sub-description 1.
-            - Sub-description 2.
-    - title: Visiting Professor
-      institution: California Institute of Technology, Pasadena, California, US
-      year: 1933
+        - Leading research projects in machine learning and AI
+        - Publishing papers in top-tier conferences and journals
+        - Mentoring graduate students and postdocs
+    - title: Postdoctoral Researcher
+      institution: Machine Learning Lab, University Name
+      year: 2020 - 2022
       description:
-        - Description 1.
-        - Description 2.
+        - Conducted research on deep learning applications
+        - Collaborated with industry partners on real-world AI solutions
+        - Published 8 papers in top-tier venues
 
-    - title: Director
-      institution: Kaiser Wilhelm Institute for Physics, Berlin, Germany.
-      year: 1917-1933
-
-    - title: Professor of Theoretical Physics
-      institution: Karl-Ferdinand University, Prague, Czechoslovakia
-      year: 1911 - 1917
+    - title: Research Assistant
+      institution: Computer Science Department, University Name
+      year: 2018-2020
       description:
+        - Assisted in machine learning research projects
+        - Developed novel algorithms for data analysis
 
-    - title: Associate Professor of Theoretical Physics
-      institution: University of Zurich, Zurich, Switzerland
-      year: 1909 - 1911
-
-- title: Open Source Projects
+- title: Research Projects
   type: time_table
   contents:
-    - title: <a href="https://github.com/alshedivat/al-folio">al-folio</a>
-      year: 2015-now
-      description: A beautiful, simple, clean, and responsive Jekyll theme for academics.
+    - title: <a href="#">Deep Learning for Natural Language Processing</a>
+      year: 2023-now
+      description: Developing novel neural architectures for improved language understanding and generation.
+    - title: <a href="#">Computer Vision Applications</a>
+      year: 2022-2023
+      description: Research on object detection and image classification using deep learning techniques.
 
 - title: Honors and Awards
   type: time_table
   contents:
-    - year: 1921
+    - year: 2023
       items:
-        - Nobel Prize in Physics
-        - Matteucci Medal
-    - year: 2029
+        - Best Paper Award at International Conference on Machine Learning
+        - Outstanding Research Contribution Award
+    - year: 2022
       items:
-        - Max Planck Medal
+        - Young Researcher Award
+        - Innovation in AI Award
 
-- title: Academic Interests
+- title: Research Interests
   type: nested_list
   contents:
-    - title: Topic 1.
+    - title: Machine Learning
       items:
-        - Description 1.
-        - Description 2.
-    - title: Topic 2.
+        - Deep learning and neural networks
+        - Reinforcement learning
+        - Transfer learning and domain adaptation
+    - title: Artificial Intelligence
       items:
-        - Description 1.
-        - Description 2.
+        - Natural language processing
+        - Computer vision
+        - AI ethics and fairness
 
 - title: Other Interests
   type: list
   contents:
-    - <u>Hobbies:</u> Hobby 1, Hobby 2, etc.
+    - <u>Hobbies:</u> Photography, Hiking, Reading, Programming
