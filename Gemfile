@@ -9,7 +9,7 @@ group :jekyll_plugins do
     gem 'jekyll-feed'
     gem 'jekyll-get-json'
     # gem 'jekyll-imagemagick' # disabled for GitHub Actions compatibility
-    gem 'jekyll-jupyter-notebook'
+    # gem 'jekyll-jupyter-notebook' # disabled for GitHub Actions compatibility
     gem 'jekyll-link-attributes'
     # gem 'jekyll-minifier' # disabled for local Windows preview
     gem 'jekyll-paginate-v2'

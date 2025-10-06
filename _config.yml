@@ -222,17 +222,17 @@ sass:
 # Jekyll Minifier
 # -----------------------------------------------------------------------------
 
-jekyll-minifier:
-  compress_javascript: false # set to false since we are using terser as the js minifier
-  exclude: ["robots.txt", "assets/js/search/*.js"]
+# jekyll-minifier:
+#   compress_javascript: false # set to false since we are using terser as the js minifier
+#   exclude: ["robots.txt", "assets/js/search/*.js"]
 
 # -----------------------------------------------------------------------------
 # Terser
 # -----------------------------------------------------------------------------
 
-terser:
-  compress:
-    drop_console: true
+# terser:
+#   compress:
+#     drop_console: true
 
 # -----------------------------------------------------------------------------
 # Jekyll Archives
