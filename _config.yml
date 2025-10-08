@@ -197,7 +197,7 @@ plugins:
   - jekyll-email-protect
   - jekyll-feed
   - jekyll-get-json
-  - jekyll-jupyter-notebook
+  # - jekyll-jupyter-notebook # disabled for GitHub Actions compatibility
   - jekyll-link-attributes
   - jekyll-paginate-v2
   - jekyll-regex-replace
@@ -222,17 +222,17 @@ sass:
 # Jekyll Minifier
 # -----------------------------------------------------------------------------
 
-jekyll-minifier:
-  compress_javascript: false # set to false since we are using terser as the js minifier
-  exclude: ["robots.txt", "assets/js/search/*.js"]
+# jekyll-minifier:
+#   compress_javascript: false # set to false since we are using terser as the js minifier
+#   exclude: ["robots.txt", "assets/js/search/*.js"]
 
 # -----------------------------------------------------------------------------
 # Terser
 # -----------------------------------------------------------------------------
 
-terser:
-  compress:
-    drop_console: true
+# terser:
+#   compress:
+#     drop_console: true
 
 # -----------------------------------------------------------------------------
 # Jekyll Archives
@@ -316,7 +316,7 @@ filtered_bibtex_keywords:
   ]
 
 # Maximum number of authors to be shown for each publication (more authors are visible on click)
-max_author_limit: 3 # leave blank to always show all authors
+max_author_limit: 1000 # leave blank to always show all authors
 more_authors_animation_delay: 10 # more authors are revealed on click using animation; smaller delay means faster animation
 
 # Enables publication thumbnails. If disabled, none of the publications will display thumbnails, even if specified in the bib entry.
