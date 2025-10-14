@@ -4,7 +4,7 @@ title: 学习笔记
 permalink: /notes/
 description: 个人学习笔记，包含机器学习和天线设计等各类知识总结
 nav: true
-nav_order: 4
+nav_order: 3
 ---
 
 <div class="notes">
@@ -14,7 +14,6 @@ nav_order: 4
   
   {% if categories.size > 0 or uncategorized.size > 0 %}
     <div class="notes-toc" id="categories">
-      <h2 class="toc-title">📚 Note Categories</h2>
       <div class="toc-content">
         {% for category in categories %}
           {% if category.name != blank %}
@@ -154,7 +153,7 @@ function generateNotesTOC() {
   let tocHTML = '<ul>';
   
   // Add main sections
-  tocHTML += '<li><a href="#categories" class="toc-level-1">📚 笔记分类</a></li>';
+  tocHTML += '<li><a href="#categories" class="toc-level-1">笔记分类</a></li>';
   
   // Add category links
   const categoryLinks = document.querySelectorAll('.toc-link[data-category]');
@@ -239,62 +238,59 @@ document.addEventListener('DOMContentLoaded', function() {
 </script>
 
 <style>
+/* Chirpy 主题风格 - 简洁清爽 */
+
 /* Table of contents styles */
 .notes-toc {
   background: var(--global-bg-color);
-  border: 1px solid var(--global-border-color);
-  border-radius: 12px;
-  padding: 1.5rem;
-  margin-bottom: 2rem;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-}
-
-.toc-title {
-  color: var(--global-theme-color);
-  margin-bottom: 1rem;
-  font-size: 1.5rem;
-  text-align: center;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 8px;
+  padding: 1.5rem 1.5rem;
+  margin-bottom: 2.5rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 }
 
 .toc-content {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
 }
 
 .toc-category {
-  text-align: center;
+  text-align: left;
 }
 
 .toc-link {
-  display: block;
-  padding: 0.75rem 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 1.25rem;
   background: var(--global-bg-color);
-  border: 2px solid var(--global-border-color);
-  border-radius: 8px;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 6px;
   text-decoration: none;
   color: var(--global-text-color);
-  transition: all 0.3s ease;
-  font-weight: 500;
+  transition: all 0.2s ease;
+  font-weight: 400;
+  font-family: 'Noto Sans', 'Roboto', sans-serif;
 }
 
 .toc-link:hover {
-  background: var(--global-theme-color);
-  color: white;
   border-color: var(--global-theme-color);
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  background: var(--global-bg-color);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 }
 
 .toc-category-name {
-  display: block;
-  font-size: 1.1rem;
-  margin-bottom: 0.25rem;
+  font-size: 1.05rem;
+  font-weight: 500;
+  color: var(--global-text-color);
 }
 
 .toc-count {
-  font-size: 0.9rem;
-  opacity: 0.8;
+  font-size: 0.875rem;
+  color: var(--global-text-color-light);
+  opacity: 0.7;
 }
 
 /* Category title styles */
@@ -307,30 +303,55 @@ document.addEventListener('DOMContentLoaded', function() {
   scroll-margin-top: 2rem; /* Provide offset for anchor links */
 }
 
-/* Notes list styles */
+/* Chirpy 风格笔记列表 */
 .notes-list {
   list-style: none;
   padding-left: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
 }
 
 .note-item {
-  margin-bottom: 1rem;
-  padding: 0.75rem;
+  padding: 1.25rem 1.5rem;
   background: var(--global-bg-color);
-  border: 1px solid var(--global-border-color);
-  border-radius: 8px;
-  transition: all 0.3s ease;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 6px;
+  transition: all 0.2s ease;
+  position: relative;
+}
+
+.note-item::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 3px;
+  height: 100%;
+  background: var(--global-theme-color);
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  border-radius: 6px 0 0 6px;
 }
 
 .note-item:hover {
-  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-  transform: translateY(-2px);
+  border-color: var(--global-theme-color);
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+}
+
+.note-item:hover::before {
+  opacity: 1;
 }
 
 .note-item a {
   color: var(--global-text-color);
   text-decoration: none;
   font-weight: 500;
+  font-size: 1.05rem;
+  display: block;
+  margin-bottom: 0.5rem;
+  transition: color 0.2s ease;
+  font-family: 'Noto Sans', 'Roboto', sans-serif;
 }
 
 .note-item a:hover {
@@ -340,49 +361,75 @@ document.addEventListener('DOMContentLoaded', function() {
 .note-description {
   color: var(--global-text-color-light);
   font-size: 0.9rem;
+  line-height: 1.6;
+  margin-bottom: 0.5rem;
+  font-family: 'Noto Sans', 'Roboto', sans-serif;
 }
 
 .note-tags {
-  margin-top: 0.5rem;
+  margin-top: 0.75rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
 }
 
 .tag {
-  display: inline-block;
-  background: var(--global-theme-color);
-  color: white;
-  padding: 0.2rem 0.5rem;
-  border-radius: 12px;
+  display: inline-flex;
+  align-items: center;
+  background: var(--global-bg-color);
+  color: var(--global-theme-color);
+  padding: 0.25rem 0.65rem;
+  border-radius: 4px;
   font-size: 0.8rem;
-  margin-right: 0.5rem;
-  margin-bottom: 0.25rem;
+  font-weight: 400;
+  transition: all 0.2s ease;
+  border: 1px solid var(--global-divider-color);
+  font-family: 'Noto Sans', 'Roboto', sans-serif;
 }
 
-/* Notes header styles */
+.tag:hover {
+  background: var(--global-theme-color);
+  color: white;
+  border-color: var(--global-theme-color);
+}
+
+/* Chirpy 风格 header */
 .notes-header {
-  text-align: center;
-  margin-bottom: 2rem;
+  text-align: left;
+  margin-bottom: 2.5rem;
+  padding: 1.5rem 0;
 }
 
 .notes-header h1 {
-  color: var(--global-theme-color);
-  margin-bottom: 0.5rem;
+  color: var(--global-text-color);
+  margin-bottom: 0.75rem;
+  font-size: 2rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  font-family: 'Noto Sans', 'Roboto', sans-serif;
 }
 
 .notes-description {
   color: var(--global-text-color-light);
-  font-size: 1.1rem;
-  margin-bottom: 1rem;
+  font-size: 1rem;
+  line-height: 1.7;
+  margin-bottom: 1.25rem;
+  font-family: 'Noto Sans', 'Roboto', sans-serif;
 }
 
 .back-link {
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
   color: var(--global-theme-color);
   text-decoration: none;
   font-weight: 500;
   padding: 0.5rem 1rem;
-  border: 2px solid var(--global-theme-color);
-  border-radius: 8px;
-  transition: all 0.3s ease;
+  border: 1px solid var(--global-theme-color);
+  border-radius: 6px;
+  transition: all 0.2s ease;
+  font-size: 0.95rem;
+  font-family: 'Noto Sans', 'Roboto', sans-serif;
 }
 
 .back-link:hover {
@@ -396,18 +443,87 @@ document.addEventListener('DOMContentLoaded', function() {
   color: var(--global-text-color-light);
 }
 
-/* Responsive design */
+/* Chirpy 响应式设计 */
 @media (max-width: 768px) {
-  .toc-content {
-    grid-template-columns: 1fr;
+  .notes-toc {
+    padding: 1.25rem 1rem;
+    margin-bottom: 2rem;
+  }
+  
+  .toc-title {
+    font-size: 1.5rem;
+    margin-bottom: 1.25rem;
   }
   
   .toc-link {
-    padding: 0.5rem;
+    padding: 0.875rem 1rem;
+    font-size: 0.95rem;
   }
   
   .toc-category-name {
     font-size: 1rem;
+  }
+  
+  .notes-header {
+    padding: 1rem 0;
+    margin-bottom: 2rem;
+  }
+  
+  .notes-header h1 {
+    font-size: 1.5rem;
+  }
+  
+  .notes-description {
+    font-size: 0.95rem;
+  }
+  
+  .note-item {
+    padding: 1rem 1.25rem;
+  }
+  
+  .note-item a {
+    font-size: 1rem;
+  }
+}
+
+/* Chirpy 简洁动画 */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.toc-category {
+  animation: fadeIn 0.3s ease forwards;
+}
+
+.toc-category:nth-child(1) { animation-delay: 0.05s; }
+.toc-category:nth-child(2) { animation-delay: 0.1s; }
+.toc-category:nth-child(3) { animation-delay: 0.15s; }
+.toc-category:nth-child(4) { animation-delay: 0.2s; }
+.toc-category:nth-child(5) { animation-delay: 0.25s; }
+
+/* 平滑滚动 */
+html {
+  scroll-behavior: smooth;
+}
+
+/* 暗色模式适配 */
+@media (prefers-color-scheme: dark) {
+  .notes-toc,
+  .note-item {
+    border-color: rgba(255, 255, 255, 0.1);
+  }
+  
+  .toc-link {
+    border-color: rgba(255, 255, 255, 0.1);
+  }
+  
+  .toc-link:hover {
+    box-shadow: 0 2px 8px rgba(255, 255, 255, 0.1);
   }
 }
 </style>

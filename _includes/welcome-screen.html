@@ -1,0 +1,819 @@
+<!-- Welcome Screen / Splash Page -->
+<!-- 切换方案：在下面的 class 中添加对应的类名
+     - design-a: 极简优雅 (推荐)
+     - design-b: 分屏设计
+     - design-c: 毛玻璃效果
+     - design-d: 淡雅渐入
+-->
+<div id="welcome-screen" class="welcome-screen active design-c">
+  <div class="welcome-content">
+    <!-- 照片容器 -->
+    <div class="welcome-image-container">
+      <img src="{{ '/assets/img/1.jpg' | relative_url }}" alt="Welcome" class="welcome-image">
+      
+      <!-- 文字覆盖层 -->
+      <div class="welcome-overlay">
+        <h1 class="welcome-title">{{ site.first_name }} {{ site.last_name }}</h1>
+        <p class="welcome-subtitle">{{ site.contact_note }}</p>
+      </div>
+    </div>
+    
+  </div>
+</div>
+
+<!-- 重新打开按钮 -->
+<button id="reopen-welcome-btn" class="reopen-welcome-btn" onclick="openWelcomeScreen()" title="Show Welcome Screen">
+  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+    <rect x="3" y="3" width="18" height="18" rx="2"/>
+    <circle cx="8.5" cy="8.5" r="1.5"/>
+    <path d="m21 15-5-5L5 21"/>
+  </svg>
+</button>
+
+<style>
+/* Welcome Screen Styles */
+.welcome-screen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  background: #000;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 1;
+  visibility: visible;
+  transition: opacity 0.8s ease, visibility 0.8s ease;
+  cursor: pointer;
+}
+
+.welcome-screen.hidden {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.welcome-content {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 5;
+}
+
+.welcome-image-container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+.welcome-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  animation: zoomIn 1.5s ease-out;
+}
+
+@keyframes zoomIn {
+  from {
+    transform: scale(1.1);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* 文字覆盖层 */
+.welcome-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(to bottom, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0.6) 100%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  text-align: center;
+  padding: 2rem;
+  animation: fadeIn 1s ease-out 0.5s both;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.welcome-title {
+  font-size: 4rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  letter-spacing: 0.05em;
+  text-shadow: 0 4px 12px rgba(0,0,0,0.5);
+  animation: fadeInUp 1s ease-out 0.8s both;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.welcome-subtitle {
+  font-size: 1.3rem;
+  font-weight: 300;
+  max-width: 600px;
+  line-height: 1.8;
+  text-shadow: 0 2px 8px rgba(0,0,0,0.5);
+  opacity: 0.95;
+  animation: fadeInUp 1s ease-out 1s both;
+}
+
+/* 关闭按钮 */
+.welcome-close-btn {
+  position: absolute;
+  bottom: 4rem;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(10px);
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  color: white;
+  padding: 1rem 2.5rem;
+  border-radius: 50px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  z-index: 10;
+  animation: fadeInUp 1s ease-out 1.2s both;
+}
+
+.welcome-close-btn:hover {
+  background: rgba(255, 255, 255, 0.25);
+  border-color: rgba(255, 255, 255, 0.5);
+  transform: translateX(-50%) translateY(-4px);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+}
+
+.close-icon {
+  font-size: 1.3rem;
+  line-height: 1;
+}
+
+.close-text {
+  font-size: 1rem;
+  letter-spacing: 0.1em;
+}
+
+/* 提示文字 */
+.welcome-hint {
+  position: absolute;
+  bottom: 2rem;
+  left: 50%;
+  transform: translateX(-50%);
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 0.9rem;
+  letter-spacing: 0.1em;
+  animation: pulse 2s ease-in-out infinite, fadeInUp 1s ease-out 1.5s both;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 0.7;
+  }
+  50% {
+    opacity: 0.4;
+  }
+}
+
+/* 重新打开按钮 */
+.reopen-welcome-btn {
+  position: fixed;
+  bottom: 2rem;
+  right: 2rem;
+  width: 50px;
+  height: 50px;
+  background: var(--global-theme-color);
+  color: white;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  transition: all 0.3s ease;
+  z-index: 1000;
+  opacity: 0;
+  visibility: hidden;
+  transform: scale(0.8);
+}
+
+.reopen-welcome-btn.visible {
+  opacity: 1;
+  visibility: visible;
+  transform: scale(1);
+}
+
+.reopen-welcome-btn:hover {
+  transform: scale(1.1);
+  box-shadow: 0 6px 20px rgba(0,0,0,0.25);
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+  .welcome-title {
+    font-size: 2.5rem;
+  }
+  
+  .welcome-subtitle {
+    font-size: 1rem;
+    padding: 0 1rem;
+  }
+  
+  .welcome-close-btn {
+    bottom: 3rem;
+    padding: 0.75rem 2rem;
+    font-size: 1rem;
+  }
+  
+  .reopen-welcome-btn {
+    bottom: 1.5rem;
+    right: 1.5rem;
+    width: 45px;
+    height: 45px;
+  }
+}
+
+/* 页面加载时禁止滚动 */
+body.welcome-active {
+  overflow: hidden;
+}
+
+/* ========================================
+   方案 A: 极简优雅 ✨ (推荐)
+   居中卡片式设计
+   ======================================== */
+.welcome-screen.design-a {
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(20px);
+}
+
+.welcome-screen.design-a .welcome-content {
+  padding: 2rem;
+}
+
+.welcome-screen.design-a .welcome-image-container {
+  width: auto;
+  height: auto;
+  max-width: 600px;
+  max-height: 80vh;
+  border-radius: 24px;
+  overflow: hidden;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+  animation: cardFadeIn 0.8s ease-out;
+}
+
+@keyframes cardFadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9) translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.welcome-screen.design-a .welcome-image {
+  animation: none;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.welcome-screen.design-a .welcome-overlay {
+  background: linear-gradient(to bottom, rgba(0,0,0,0.2) 0%, rgba(0,0,0,0.8) 100%);
+  padding: 3rem 2rem 2rem;
+  justify-content: flex-end;
+}
+
+.welcome-screen.design-a .welcome-title {
+  font-size: 2.8rem;
+  margin-bottom: 0.5rem;
+}
+
+.welcome-screen.design-a .welcome-subtitle {
+  font-size: 1rem;
+  max-width: 90%;
+}
+
+.welcome-screen.design-a .welcome-close-btn {
+  bottom: 2rem;
+  background: white;
+  color: var(--global-theme-color);
+  border: none;
+  padding: 0.9rem 2rem;
+}
+
+.welcome-screen.design-a .welcome-close-btn:hover {
+  background: #f0f0f0;
+  transform: translateX(-50%) translateY(-2px);
+}
+
+.welcome-screen.design-a .welcome-hint {
+  color: rgba(255, 255, 255, 0.8);
+}
+
+
+/* ========================================
+   方案 B: 分屏设计 📐
+   左右分屏布局
+   ======================================== */
+.welcome-screen.design-b {
+  background: var(--global-bg-color);
+}
+
+.welcome-screen.design-b .welcome-content {
+  flex-direction: row;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0;
+}
+
+.welcome-screen.design-b .welcome-image-container {
+  width: 50%;
+  height: 100vh;
+  position: relative;
+}
+
+.welcome-screen.design-b .welcome-image {
+  animation: slideInLeft 1s ease-out;
+}
+
+@keyframes slideInLeft {
+  from {
+    transform: translateX(-50px);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+.welcome-screen.design-b .welcome-overlay {
+  position: relative;
+  width: 50%;
+  background: var(--global-bg-color);
+  color: var(--global-text-color);
+  animation: slideInRight 1s ease-out;
+  padding: 4rem;
+}
+
+@keyframes slideInRight {
+  from {
+    transform: translateX(50px);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+.welcome-screen.design-b .welcome-title {
+  font-size: 3.5rem;
+  color: var(--global-theme-color);
+  text-shadow: none;
+  margin-bottom: 1.5rem;
+}
+
+.welcome-screen.design-b .welcome-subtitle {
+  font-size: 1.2rem;
+  color: var(--global-text-color);
+  text-shadow: none;
+  max-width: 500px;
+  margin-bottom: 3rem;
+}
+
+.welcome-screen.design-b .welcome-close-btn {
+  position: relative;
+  bottom: auto;
+  left: auto;
+  transform: none;
+  margin-top: 2rem;
+  background: var(--global-theme-color);
+  color: white;
+}
+
+.welcome-screen.design-b .welcome-close-btn:hover {
+  transform: translateY(-2px);
+  background: var(--global-theme-color);
+  filter: brightness(1.1);
+}
+
+.welcome-screen.design-b .welcome-hint {
+  display: none;
+}
+
+
+/* ========================================
+   方案 C: 毛玻璃效果 💎
+   Glassmorphism 设计
+   ======================================== */
+.welcome-screen.design-c {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  cursor: pointer;
+  overflow: hidden;
+  position: relative;
+}
+
+.welcome-screen.design-c .welcome-image-container {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  z-index: 2;
+}
+
+.welcome-screen.design-c .welcome-image {
+  filter: blur(8px) brightness(0.9);
+  transform: scale(1.05);
+  animation: blurZoom 1.5s ease-out;
+}
+
+@keyframes blurZoom {
+  from {
+    filter: blur(0px) brightness(1);
+    transform: scale(1);
+  }
+  to {
+    filter: blur(8px) brightness(0.9);
+    transform: scale(1.05);
+  }
+}
+
+.welcome-screen.design-c .welcome-overlay {
+  background: none;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 2rem;
+  z-index: 50;
+  position: relative;
+}
+
+.welcome-screen.design-c .welcome-overlay::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 90%;
+  max-width: 700px;
+  height: 70%;
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(15px);
+  border-radius: 32px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+  animation: glassFadeIn 1s ease-out 0.3s both;
+  z-index: 0;
+}
+
+@keyframes glassFadeIn {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+}
+
+.welcome-screen.design-c .welcome-title,
+.welcome-screen.design-c .welcome-subtitle {
+  position: relative;
+  z-index: 100;
+  color: white;
+  text-align: center;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.welcome-screen.design-c .welcome-title {
+  font-size: 3.5rem;
+  font-weight: 300;
+  margin-bottom: 1.5rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: white;
+  text-shadow: 0 4px 20px rgba(0,0,0,0.5);
+  position: relative;
+}
+
+.welcome-screen.design-c .welcome-title::before {
+  content: '';
+  position: absolute;
+  top: -15px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 80px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent 0%, white 50%, transparent 100%);
+  opacity: 0.6;
+}
+
+.welcome-screen.design-c .welcome-title::after {
+  content: '';
+  position: absolute;
+  bottom: -15px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 80px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent 0%, white 50%, transparent 100%);
+  opacity: 0.6;
+}
+
+.welcome-screen.design-c .welcome-subtitle {
+  font-size: 1.3rem;
+  font-weight: 300;
+  max-width: 550px;
+  line-height: 2;
+  color: rgba(255, 255, 255, 0.95);
+  font-style: italic;
+  letter-spacing: 0.05em;
+  text-shadow: 0 2px 8px rgba(0,0,0,0.2);
+  position: relative;
+  padding: 0 2rem;
+}
+
+.welcome-screen.design-c .welcome-subtitle::before,
+.welcome-screen.design-c .welcome-subtitle::after {
+  content: '"';
+  font-size: 2.5rem;
+  font-family: Georgia, serif;
+  line-height: 0;
+  position: absolute;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.welcome-screen.design-c .welcome-subtitle::before {
+  left: 0;
+  top: 0.5rem;
+}
+
+.welcome-screen.design-c .welcome-subtitle::after {
+  right: 0;
+  bottom: -1.5rem;
+}
+
+.welcome-screen.design-c .welcome-close-btn {
+  left: 4rem;
+  transform: none;
+  z-index: 2;
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(10px);
+  border: 2px solid rgba(255, 255, 255, 1);
+  color: var(--global-theme-color);
+  font-weight: 600;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: pointer;
+}
+
+.welcome-screen.design-c .welcome-close-btn:hover {
+  background: white;
+  border-color: white;
+  transform: translateY(-4px);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.25);
+}
+
+.welcome-screen.design-c .welcome-close-btn .close-icon {
+  color: var(--global-theme-color);
+}
+
+.welcome-screen.design-c .welcome-close-btn .close-text {
+  color: var(--global-theme-color);
+}
+
+.welcome-screen.design-c .welcome-hint {
+  color: rgba(255, 255, 255, 0.8);
+  font-weight: 400;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+
+/* ========================================
+   方案 D: 淡雅渐入 🌫️
+   超简约设计
+   ======================================== */
+.welcome-screen.design-d {
+  background: white;
+}
+
+.welcome-screen.design-d .welcome-image-container {
+  display: none;
+}
+
+.welcome-screen.design-d .welcome-overlay {
+  position: relative;
+  background: white;
+  color: var(--global-text-color);
+  animation: simpleFadeIn 1.5s ease-out;
+}
+
+@keyframes simpleFadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.welcome-screen.design-d .welcome-title {
+  font-size: 4rem;
+  font-weight: 300;
+  color: var(--global-theme-color);
+  text-shadow: none;
+  margin-bottom: 1rem;
+  letter-spacing: 0.02em;
+}
+
+.welcome-screen.design-d .welcome-subtitle {
+  font-size: 1.1rem;
+  font-weight: 400;
+  color: var(--global-text-color-light);
+  text-shadow: none;
+  max-width: 600px;
+  line-height: 1.8;
+}
+
+.welcome-screen.design-d .welcome-close-btn {
+  display: none;
+}
+
+.welcome-screen.design-d .welcome-hint {
+  color: var(--global-text-color-light);
+  font-size: 0.9rem;
+}
+
+/* 方案D自动消失 */
+.welcome-screen.design-d.active {
+  animation: autoFadeOut 3s ease-out 2s forwards;
+}
+
+@keyframes autoFadeOut {
+  0%, 80% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    visibility: hidden;
+  }
+}
+
+
+/* ========================================
+   响应式设计 - 覆盖所有方案
+   ======================================== */
+@media (max-width: 768px) {
+  .welcome-screen.design-a .welcome-image-container {
+    max-width: 90%;
+    max-height: 70vh;
+  }
+  
+  .welcome-screen.design-a .welcome-title {
+    font-size: 2rem;
+  }
+  
+  .welcome-screen.design-b .welcome-content {
+    flex-direction: column;
+  }
+  
+  .welcome-screen.design-b .welcome-image-container,
+  .welcome-screen.design-b .welcome-overlay {
+    width: 100%;
+    height: 50%;
+  }
+  
+  .welcome-screen.design-b .welcome-overlay {
+    padding: 2rem;
+  }
+  
+  .welcome-screen.design-b .welcome-title {
+    font-size: 2.5rem;
+  }
+  
+  .welcome-screen.design-c .welcome-title {
+    font-size: 2rem;
+    letter-spacing: 0.08em;
+    margin-bottom: 1rem;
+  }
+  
+  .welcome-screen.design-c .welcome-subtitle {
+    font-size: 0.95rem;
+    padding: 0 1.5rem;
+  }
+  
+  .welcome-screen.design-c .welcome-subtitle::before,
+  .welcome-screen.design-c .welcome-subtitle::after {
+    font-size: 1.8rem;
+  }
+  
+  .welcome-screen.design-c .welcome-overlay::before {
+    width: 95%;
+    height: 80%;
+  }
+  
+  .welcome-screen.design-d .welcome-title {
+    font-size: 2.8rem;
+  }
+}
+</style>
+
+<script>
+// Welcome Screen Functions
+function closeWelcomeScreen() {
+  const welcomeScreen = document.getElementById('welcome-screen');
+  const reopenBtn = document.getElementById('reopen-welcome-btn');
+  
+  welcomeScreen.classList.add('hidden');
+  document.body.classList.remove('welcome-active');
+  
+  // 显示重新打开按钮
+  setTimeout(() => {
+    reopenBtn.classList.add('visible');
+  }, 800);
+  
+  // 保存状态到 sessionStorage
+  sessionStorage.setItem('welcomeScreenClosed', 'true');
+}
+
+function openWelcomeScreen() {
+  const welcomeScreen = document.getElementById('welcome-screen');
+  const reopenBtn = document.getElementById('reopen-welcome-btn');
+  
+  welcomeScreen.classList.remove('hidden');
+  document.body.classList.add('welcome-active');
+  reopenBtn.classList.remove('visible');
+  
+  // 移除保存的状态
+  sessionStorage.removeItem('welcomeScreenClosed');
+}
+
+// 页面加载时检查
+document.addEventListener('DOMContentLoaded', function() {
+  const welcomeScreen = document.getElementById('welcome-screen');
+  const reopenBtn = document.getElementById('reopen-welcome-btn');
+  
+  // 检查是否已经关闭过
+  const wasClosed = sessionStorage.getItem('welcomeScreenClosed');
+  
+  if (wasClosed) {
+    // 如果已经关闭过，直接隐藏并显示重新打开按钮
+    welcomeScreen.classList.add('hidden');
+    document.body.classList.remove('welcome-active');
+    reopenBtn.classList.add('visible');
+  } else {
+    // 首次访问，显示欢迎屏幕
+    document.body.classList.add('welcome-active');
+  }
+  
+  // 点击屏幕任意位置关闭
+  welcomeScreen.addEventListener('click', function(e) {
+    // 如果点击的不是按钮本身，就关闭
+    if (!e.target.closest('.welcome-close-btn')) {
+      closeWelcomeScreen();
+    }
+  });
+});
+</script>
