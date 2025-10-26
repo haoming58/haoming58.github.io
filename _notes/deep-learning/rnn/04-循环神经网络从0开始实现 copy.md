@@ -4,7 +4,7 @@ title: 4. 循环神经网络从0开始实现
 description: Building RNN from scratch with detailed implementation
 category: Machine Learning
 tags: [RNN, Deep Learning, Neural Networks, PyTorch, Implementation]
-permalink: /notes/RNN从0开始实现/
+permalink: /notes/循环神经网络从0开始实现/
 ---
 
 # 4. 循环神经网络从0开始实现
@@ -691,3 +691,382 @@ train_ch8(net, train_iter, vocab, lr, num_epochs, d2l.try_gpu(),
 ![RNN单元](figures/step7b_rnn_cell.png)
 ![序列处理](figures/step7c_sequential.png)
 ![输出拼接](figures/step7d_output_concat.png)
+
+
+
+## 4.4 问题
+
+### 嵌入表示与独热编码
+
+1. **嵌入表示（Embedding）**
+
+   * 是一种把离散类别（如单词、物品、用户、城市等）映射到 **连续向量空间** 的方法。
+   * 每个类别都有一个向量表示，可以用于捕捉类别特性和关系。
+
+2. **独热编码（One-Hot Encoding）是嵌入的一种特殊情况**
+
+   * 向量长度 = 类别数量
+   * 向量只有一个位置是 1，其余都是 0
+   * 每个类别都有一个唯一向量，但向量非常简单、**稀疏**（只有少数元素非零，其余为 0）
+   * 例如，苹果的独热编码：[1, 0, 0]
+
+3. **嵌入向量更加灵活**
+
+   * 可以是稠密向量（大部分元素非零，不只是 0 和 1）
+   * 可以学习类别之间的相似性，例如苹果和香蕉的向量更接近，葡萄向量更远
+   * 允许向量自由表示对象的特征，而不仅仅是简单的 0 和 1
+
+
+
+### 参数调整改变困惑度
+
+通过调整超参数（如迭代周期数、隐藏单元数、小批量数据的时间步数、学习率等）来改善困惑度。
+
+由于参数较多，使用列表用于检查单个参数在同一张图上进行展示。
+并且新增一个函数，用来记录困惑度
+
+```python
+def train_ch8_record(net, train_iter, vocab, lr, num_epochs, device,
+                     use_random_iter=False):
+    """原 train_ch8 的记录版本，不画图，返回每轮 perplexity"""
+
+    # 一样的配置
+    
+    loss = nn.CrossEntropyLoss() 
+    # 损失函数设置为交叉熵函数
+
+    if isinstance(net, nn.Module):
+        updater = torch.optim.SGD(net.parameters(), lr)
+    # 没有 net.parameters() 方法，所以不能直接用 PyTorch 的优化器
+    else:
+        updater = lambda batch_size: d2l.sgd(net.params, lr, batch_size)
+    # 承了 nn.Module，有标准接口 net.parameters()
+    ppl_list = []
+    for epoch in range(num_epochs):
+        ppl, speed = train_epoch_ch8(
+            net, train_iter, loss, updater, device, use_random_iter)
+        ppl_list.append(ppl) 
+    # 将每一次的迭代返回一个列表
+    return ppl_list
+
+
+
+def compare_hyperparams_plot(param_name, values, train_iter, vocab, base_config):
+    """
+    对比单个超参数对困惑度的影响，并绘制曲线。
+    
+    param_name: 要对比的超参数名 ('lr', 'num_hiddens', 'num_epochs')
+    values: 不同取值的列表
+    train_iter, vocab: 数据迭代器与词表
+    base_config: dict，包含基础参数配置
+    """
+    device = d2l.try_gpu()
+    results = {} # 创建一个空字典用于保存结果
+
+    for v in values: 
+    # 复制一份基础配置，然后只修改当前要实验的那个超参数（比如学习率）
+        cfg = base_config.copy() 
+        cfg[param_name] = v
+        print(f"\n=== 实验 {param_name}={v} ===")
+
+        # 创建 scratch RNN 模型
+        net = RNNModelScratch(
+            vocab_size=len(vocab),
+            num_hiddens=cfg['num_hiddens'],
+            device=device,
+            get_params=get_params,
+            init_state=init_rnn_state,
+            forward_fn=rnn
+        )
+
+        # 训练并记录每轮困惑度
+        ppl_list = train_ch8_record(
+            net, train_iter, vocab,
+            lr=cfg['lr'],
+            num_epochs=cfg['num_epochs'],
+            device=device
+        )
+
+        # 将结果放入到创建好的字典中去
+        """
+        results = {}
+        param_name = "lr"
+        v = 0.01
+        ppl_list = [10.3, 9.8, 9.6]
+
+        results[f"{param_name}={v}"] = ppl_list 
+
+        # {'lr=0.01': [10.3, 9.8, 9.6]}
+        """
+        results[f"{param_name}={v}"] = ppl_list
+
+    # ----------------------
+    # 绘制困惑度曲线
+    # ----------------------
+     
+
+    每次绘制，选择其中一个参数去绘制。
+    plt.figure(figsize=(8,5))
+    for label, ppl in results.items():
+        plt.plot(range(1, len(ppl)+1), ppl, label=label)
+
+    results.items() 会返回一个一个的 (label, ppl) 对，例如：
+
+    # ("lr=0.001", [52.1, 47.3, 44.9, 43.0])
+
+    # ("lr=0.01", [49.5, 42.8, 38.7, 36.2])
+
+    # ("lr=0.1", [80.2, 77.1, 75.0, 73.5])
+
+    plt.xlabel("Epoch")
+    plt.ylabel("Perplexity")
+    plt.title(f"Perplexity Comparison by {param_name}")
+    plt.legend()
+    plt.grid(True)
+    plt.show()
+```
+```
+compare_hyperparams_plot(
+    param_name='lr',
+    values=[0.01,0.1,1.0,2.0],
+    train_iter=train_iter,
+    vocab=vocab,
+    base_config=base_config
+)
+
+compare_hyperparams_plot(
+    param_name='num_hiddens',
+    values=[128, 256, 512, 1024, 2048],
+    train_iter=train_iter,
+    vocab=vocab,
+    base_config=base_config
+)
+
+compare_hyperparams_plot(
+    param_name='num_epochs',
+    values=[100, 200, 500, 700],
+    train_iter=train_iter,
+    vocab=vocab,
+    base_config=base_config
+)
+
+```
+
+![alt text](image.png)
+
+![alt text](image-1.png)
+
+![alt text](image-2.png)
+
+简单来说，除了最后的迭代次数，其余的效果不是很好，有可能是我调整的基本
+
+
+### 使用学习的嵌入表示替换独热编码
+
+嵌入和独热的区别就是可以是不同长度为向量大小
+
+这里为了替换生成，需要改变一些函数的结构，具体修改如下：
+
+1. 加入 embedding
+2. 修改，不再用 F.one_hot
+3. 在 rnn 函数中使用嵌入后的向量
+
+
+```python
+
+X = F.one_hot(X.T, self.vocab_size).type(torch.float32)
+
+这个是独热编码的输入，删除，添加
+
+class RNNModelScratch: 
+    def __init__(self, vocab_size, num_hiddens, device,
+                 get_params, init_state, forward_fn, embed_size=100):
+        self.vocab_size, self.num_hiddens = vocab_size, num_hiddens
+        self.embed_size = embed_size
+        self.params = get_params(vocab_size, num_hiddens, device)
+        self.init_state, self.forward_fn = init_state, forward_fn
+        # 可学习嵌入层
+        self.embedding = nn.Embedding(vocab_size, embed_size).to(device)
+
+    def __call__(self, X, state):
+        # X的形状: (batch_size, num_steps)
+        X = self.embedding(X.T)  # 变成 (num_steps, batch_size, embed_size)
+        return self.forward_fn(X, state, self.params)
+
+    def begin_state(self, batch_size, device):
+        return self.init_state(batch_size, self.num_hiddens, device)
+
+RNN 的输入维度要和嵌入维度匹配，所以还要修改 get_params 中 W_xh 的大小，
+因为，输出主要就是关于 
+
+```
+
+```python
+
+W_xh 是 (vocab_size, num_hiddens),输入维度变成 embed_size
+
+def get_params(vocab_size, num_hiddens, device, embed_size=100):
+
+    num_inputs = embed_size  # W_xh 的输入维度必须改为 embed_size
+
+    # 因为输入改了更为稠密的向量
+
+    num_outputs = vocab_size
+
+    def normal(shape):
+        return torch.randn(size=shape, device=device) * 0.01
+
+    # 隐藏层参数
+    W_xh = normal((num_inputs, num_hiddens))
+    W_hh = normal((num_hiddens, num_hiddens))
+    b_h = torch.zeros(num_hiddens, device=device)
+    # 输出层参数
+    W_hq = normal((num_hiddens, num_outputs))
+    b_q = torch.zeros(num_outputs, device=device)
+    # 附加梯度
+    params = [W_xh, W_hh, b_h, W_hq, b_q]
+    for param in params:
+        param.requires_grad_(True)
+    return params
+```
+```python
+
+embed_size = 100  # 嵌入维度，可尝试 50~300
+net = RNNModelScratch(len(vocab), num_hiddens, d2l.try_gpu(),
+                      lambda vocab_size, num_hiddens, device: get_params(vocab_size, num_hiddens, d2l.try_gpu(), embed_size),
+                      init_rnn_state, rnn, embed_size=embed_size)
+```
+最终的最终的效果还是不错：
+![alt text](image-3.png)
+
+### 使用其他数据集合
+
+其他书作为数据集时效果如何， 例如世界大战
+
+这里需要修改
+
+```python
+train_iter, vocab = d2l.load_data_time_machine(batch_size, num_steps)
+```
+
+由于，这个的逻辑是一样的，涉及到，重新建立新的词表，以及其他系列，相对来说，有点麻烦，因此， 实在需要，就后面自己写
+
+
+### 修改预测函数，例如使用采样，而不是选择最有可能的下一个字符
+
+贪心选择（argmax） 改成 按概率采样（sampling）
+
+```python
+
+def predict_ch8_sample(prefix, num_preds, net, vocab, device, temperature=1.0):
+    """在prefix后面生成新字符（使用采样而非贪心选择）
+    
+    temperature 控制随机性：<1 保守，>1 更随机
+    """
+    state = net.begin_state(batch_size=1, device=device)
+    outputs = [vocab[prefix[0]]]
+    
+    get_input = lambda: torch.tensor([outputs[-1]], device=device).reshape((1, 1))
+    
+    # 预热期
+    for y in prefix[1:]:
+        _, state = net(get_input(), state)
+        outputs.append(vocab[y])
+    
+    # 采样生成新字符
+    for _ in range(num_preds):
+        y, state = net(get_input(), state)
+        # logits -> softmax -> 温度调节
+        prob = torch.softmax(y / temperature, dim=1)
+        next_char_idx = torch.multinomial(prob, num_samples=1)  # 按概率采样
+        outputs.append(int(next_char_idx.reshape(1)))
+    
+    return ''.join([vocab.idx_to_token[i] for i in outputs])
+
+每次都选择概率最大的： outputs.append(int(y.argmax(dim=1).reshape(1)))
+
+        y 是网络输出的 每个字符的概率分布（通常是 logits）。
+
+        原始的分数，并未归一化
+
+        y.argmax(dim=1) 直接取概率最高的字符索引。
+
+        这就是 贪心策略，生成的文本每次都是最可能的下一步。
+
+主要的修改就是：
+        
+        prob = torch.softmax(y, dim=1)           # 转为概率分布
+        # 按概率采样
+        next_char = torch.multinomial(prob, num_samples=1)
+
+        从给定概率分布 prob 中随机采样 1 个样本
+
+        outputs.append(int(next_char.reshape(1)))
+
+        next_char_idx 是一个张量，形状通常是 (1,1)
+
+        reshape(1) 把它展平成一维 [0]，在转化为普通的python 整数
+```
+
+| 特性           | 贪心选择          | 采样            |
+| ------------ | ------------- | ------------- |
+| **生成文本的确定性** | 每次生成相同        | 每次可能不同（随机性）   |
+| **多样性**      | 很低，容易重复模式     | 高，可以生成更丰富的文本  |
+| **流畅度**      | 可能更平滑，但容易陷入循环 | 可能偶尔生成不自然字符组合 |
+| **创意/新颖性**   | 低             | 高             |
+
+![alt text](image-5.png)
+
+
+### 在不裁剪梯度的情况下运行本节中的代码会发生什么？
+
+首先，不裁剪梯度，可能会导致梯度爆炸。梯度消失，倒是不知道。
+
+可以自己删除，然后实践。
+
+
+
+### 更改顺序划分，使其不会从计算图中分离隐状态。运行时间会有变化吗？困惑度呢？
+
+肯定是有变化的，RNN 训练的时候，使用了窗口，就是为了避免大量的计算/
+
+不 detach：
+
+    BPTT 会跨越多个小段，梯度传播路径变长。
+
+    计算图更大，占用更多显存。
+
+    运行时间增加：
+
+    因为反向传播需要处理更长的依赖链。
+
+    计算量增加，尤其是序列很长时。
+
+肯定会记录更多，会出现更好的结果，但是会不稳定，出现梯度爆炸，计算的时间更长。
+
+
+
+### 用ReLU替换本节中使用的激活函数，并重复本节中的实验。我们还需要梯度裁剪吗？为什么？
+
+
+梯度爆炸风险高
+
+ReLU 输出可以无限大，累乘梯度时很容易爆炸。
+
+特别是长序列训练时，梯度裁剪能防止训练发散。
+
+保持训练稳定
+
+即使 ReLU 避免了梯度消失，梯度裁剪可以让学习率和优化器设置更安全。
+
+不裁剪可能出现：
+
+loss NaN
+
+参数跳跃过大，模型不收敛
+
+
+| 激活函数         | 梯度消失 | 梯度爆炸 | 是否需要梯度裁剪   |
+| ------------ | ---- | ---- | ---------- |
+| tanh/sigmoid | 常见   | 较少   | 推荐（尤其长序列）  |
+| ReLU         | 较少   | 高    | 必须（防止梯度爆炸） |
