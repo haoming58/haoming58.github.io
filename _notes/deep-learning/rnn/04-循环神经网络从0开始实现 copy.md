@@ -680,17 +680,17 @@ train_ch8(net, train_iter, vocab, lr, num_epochs, d2l.try_gpu(),
 
 ## 4.3 相关流程图示
 
-![原始文本](figures/step1_raw_text.png)
-![分词](figures/step2_tokenization.png)
-![词表构建](figures/step3_vocabulary.png)
-![批次划分](figures/step4_batches.png)
-![两种采样方法](figures/step4_batches_both_methods.png)
-![转置操作](figures/step5_transpose.png)
-![独热编码](figures/step6_onehot.png)
-![独热编码输入](figures/step7a_onehot_input.png)
-![RNN单元](figures/step7b_rnn_cell.png)
-![序列处理](figures/step7c_sequential.png)
-![输出拼接](figures/step7d_output_concat.png)
+![原始文本]({{ '/assets/img/notes/rnn/figures/step1_raw_text.png' | relative_url }})
+![分词]({{ '/assets/img/notes/rnn/figures/step2_tokenization.png' | relative_url }})
+![词表构建]({{ '/assets/img/notes/rnn/figures/step3_vocabulary.png' | relative_url }})
+![批次划分]({{ '/assets/img/notes/rnn/figures/step4_batches.png' | relative_url }})
+![两种采样方法]({{ '/assets/img/notes/rnn/figures/step4_batches_both_methods.png' | relative_url }})
+![转置操作]({{ '/assets/img/notes/rnn/figures/step5_transpose.png' | relative_url }})
+![独热编码]({{ '/assets/img/notes/rnn/figures/step6_onehot.png' | relative_url }})
+![独热编码输入]({{ '/assets/img/notes/rnn/figures/step7a_onehot_input.png' | relative_url }})
+![RNN单元]({{ '/assets/img/notes/rnn/figures/step7b_rnn_cell.png' | relative_url }})
+![序列处理]({{ '/assets/img/notes/rnn/figures/step7c_sequential.png' | relative_url }})
+![输出拼接]({{ '/assets/img/notes/rnn/figures/step7d_output_concat.png' | relative_url }})
 
 
 
@@ -848,11 +848,11 @@ compare_hyperparams_plot(
 )
 ```
 
-![学习率对比](figures/image.png)
+![学习率对比]({{ '/assets/img/notes/rnn/figures/image.png' | relative_url }})
 
-![隐藏层大小对比](figures/image-1.png)
+![隐藏层大小对比]({{ '/assets/img/notes/rnn/figures/image-1.png' | relative_url }})
 
-![迭代次数对比](figures/image-2.png)
+![迭代次数对比]({{ '/assets/img/notes/rnn/figures/image-2.png' | relative_url }})
 
 简单来说，除了最后的迭代次数，其余的效果不是很好，有可能是我调整的基本
 
@@ -933,7 +933,7 @@ net = RNNModelScratch(len(vocab), num_hiddens, d2l.try_gpu(),
 
 最终的最终的效果还是不错：
 
-![嵌入表示效果](figures/image-3.png)
+![嵌入表示效果]({{ '/assets/img/notes/rnn/figures/image-3.png' | relative_url }})
 
 ### 使用其他数据集合
 
@@ -1012,7 +1012,7 @@ next_char = torch.multinomial(prob, num_samples=1)
 | **流畅度**      | 可能更平滑，但容易陷入循环 | 可能偶尔生成不自然字符组合 |
 | **创意/新颖性**   | 低             | 高             |
 
-![采样方法效果对比](figures/image-5.png)
+![采样方法效果对比]({{ '/assets/img/notes/rnn/figures/image-5.png' | relative_url }})
 
 
 ### 在不裁剪梯度的情况下运行本节中的代码会发生什么？
