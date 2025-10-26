@@ -803,20 +803,14 @@ def compare_hyperparams_plot(param_name, values, train_iter, vocab, base_config)
     # ----------------------
     # 绘制困惑度曲线
     # ----------------------
-     
-
-    每次绘制，选择其中一个参数去绘制。
+    # 每次绘制，选择其中一个参数去绘制。
     plt.figure(figsize=(8,5))
     for label, ppl in results.items():
+        # results.items() 会返回一个一个的 (label, ppl) 对，例如：
+        # ("lr=0.001", [52.1, 47.3, 44.9, 43.0])
+        # ("lr=0.01", [49.5, 42.8, 38.7, 36.2])
+        # ("lr=0.1", [80.2, 77.1, 75.0, 73.5])
         plt.plot(range(1, len(ppl)+1), ppl, label=label)
-
-    results.items() 会返回一个一个的 (label, ppl) 对，例如：
-
-    # ("lr=0.001", [52.1, 47.3, 44.9, 43.0])
-
-    # ("lr=0.01", [49.5, 42.8, 38.7, 36.2])
-
-    # ("lr=0.1", [80.2, 77.1, 75.0, 73.5])
 
     plt.xlabel("Epoch")
     plt.ylabel("Perplexity")
@@ -825,7 +819,10 @@ def compare_hyperparams_plot(param_name, values, train_iter, vocab, base_config)
     plt.grid(True)
     plt.show()
 ```
-```
+
+**使用示例：**
+
+```python
 compare_hyperparams_plot(
     param_name='lr',
     values=[0.01,0.1,1.0,2.0],
@@ -849,14 +846,13 @@ compare_hyperparams_plot(
     vocab=vocab,
     base_config=base_config
 )
-
 ```
 
-![alt text](image.png)
+![学习率对比](figures/image.png)
 
-![alt text](image-1.png)
+![隐藏层大小对比](figures/image-1.png)
 
-![alt text](image-2.png)
+![迭代次数对比](figures/image-2.png)
 
 简单来说，除了最后的迭代次数，其余的效果不是很好，有可能是我调整的基本
 
@@ -871,9 +867,7 @@ compare_hyperparams_plot(
 2. 修改，不再用 F.one_hot
 3. 在 rnn 函数中使用嵌入后的向量
 
-
 ```python
-
 X = F.one_hot(X.T, self.vocab_size).type(torch.float32)
 
 这个是独热编码的输入，删除，添加
@@ -929,15 +923,17 @@ def get_params(vocab_size, num_hiddens, device, embed_size=100):
         param.requires_grad_(True)
     return params
 ```
-```python
 
+```python
 embed_size = 100  # 嵌入维度，可尝试 50~300
 net = RNNModelScratch(len(vocab), num_hiddens, d2l.try_gpu(),
                       lambda vocab_size, num_hiddens, device: get_params(vocab_size, num_hiddens, d2l.try_gpu(), embed_size),
                       init_rnn_state, rnn, embed_size=embed_size)
 ```
+
 最终的最终的效果还是不错：
-![alt text](image-3.png)
+
+![嵌入表示效果](figures/image-3.png)
 
 ### 使用其他数据集合
 
@@ -951,13 +947,11 @@ train_iter, vocab = d2l.load_data_time_machine(batch_size, num_steps)
 
 由于，这个的逻辑是一样的，涉及到，重新建立新的词表，以及其他系列，相对来说，有点麻烦，因此， 实在需要，就后面自己写
 
-
 ### 修改预测函数，例如使用采样，而不是选择最有可能的下一个字符
 
 贪心选择（argmax） 改成 按概率采样（sampling）
 
 ```python
-
 def predict_ch8_sample(prefix, num_preds, net, vocab, device, temperature=1.0):
     """在prefix后面生成新字符（使用采样而非贪心选择）
     
@@ -982,31 +976,34 @@ def predict_ch8_sample(prefix, num_preds, net, vocab, device, temperature=1.0):
         outputs.append(int(next_char_idx.reshape(1)))
     
     return ''.join([vocab.idx_to_token[i] for i in outputs])
+```
 
-每次都选择概率最大的： outputs.append(int(y.argmax(dim=1).reshape(1)))
+**对比贪心选择和采样：**
 
-        y 是网络输出的 每个字符的概率分布（通常是 logits）。
+每次都选择概率最大的：
+```python
+outputs.append(int(y.argmax(dim=1).reshape(1)))
+```
 
-        原始的分数，并未归一化
-
-        y.argmax(dim=1) 直接取概率最高的字符索引。
-
-        这就是 贪心策略，生成的文本每次都是最可能的下一步。
+- `y` 是网络输出的每个字符的概率分布（通常是 logits）
+- 原始的分数，并未归一化
+- `y.argmax(dim=1)` 直接取概率最高的字符索引
+- 这就是贪心策略，生成的文本每次都是最可能的下一步
 
 主要的修改就是：
-        
-        prob = torch.softmax(y, dim=1)           # 转为概率分布
-        # 按概率采样
-        next_char = torch.multinomial(prob, num_samples=1)
 
-        从给定概率分布 prob 中随机采样 1 个样本
-
-        outputs.append(int(next_char.reshape(1)))
-
-        next_char_idx 是一个张量，形状通常是 (1,1)
-
-        reshape(1) 把它展平成一维 [0]，在转化为普通的python 整数
+```python
+prob = torch.softmax(y, dim=1)           # 转为概率分布
+# 按概率采样
+next_char = torch.multinomial(prob, num_samples=1)
 ```
+
+- 从给定概率分布 `prob` 中随机采样 1 个样本
+- `outputs.append(int(next_char.reshape(1)))`
+- `next_char_idx` 是一个张量，形状通常是 `(1,1)`
+- `reshape(1)` 把它展平成一维 `[0]`，再转化为普通的python 整数
+
+**两种方法对比：**
 
 | 特性           | 贪心选择          | 采样            |
 | ------------ | ------------- | ------------- |
@@ -1015,7 +1012,7 @@ def predict_ch8_sample(prefix, num_preds, net, vocab, device, temperature=1.0):
 | **流畅度**      | 可能更平滑，但容易陷入循环 | 可能偶尔生成不自然字符组合 |
 | **创意/新颖性**   | 低             | 高             |
 
-![alt text](image-5.png)
+![采样方法效果对比](figures/image-5.png)
 
 
 ### 在不裁剪梯度的情况下运行本节中的代码会发生什么？
@@ -1024,47 +1021,35 @@ def predict_ch8_sample(prefix, num_preds, net, vocab, device, temperature=1.0):
 
 可以自己删除，然后实践。
 
-
-
 ### 更改顺序划分，使其不会从计算图中分离隐状态。运行时间会有变化吗？困惑度呢？
 
-肯定是有变化的，RNN 训练的时候，使用了窗口，就是为了避免大量的计算/
+肯定是有变化的，RNN 训练的时候，使用了窗口，就是为了避免大量的计算。
 
-不 detach：
+**不 detach 的影响：**
 
-    BPTT 会跨越多个小段，梯度传播路径变长。
-
-    计算图更大，占用更多显存。
-
-    运行时间增加：
-
-    因为反向传播需要处理更长的依赖链。
-
-    计算量增加，尤其是序列很长时。
+- BPTT 会跨越多个小段，梯度传播路径变长
+- 计算图更大，占用更多显存
+- **运行时间增加**：
+  - 因为反向传播需要处理更长的依赖链
+  - 计算量增加，尤其是序列很长时
 
 肯定会记录更多，会出现更好的结果，但是会不稳定，出现梯度爆炸，计算的时间更长。
 
-
-
 ### 用ReLU替换本节中使用的激活函数，并重复本节中的实验。我们还需要梯度裁剪吗？为什么？
 
+**梯度爆炸风险高：**
 
-梯度爆炸风险高
+- ReLU 输出可以无限大，累乘梯度时很容易爆炸
+- 特别是长序列训练时，梯度裁剪能防止训练发散
 
-ReLU 输出可以无限大，累乘梯度时很容易爆炸。
+**保持训练稳定：**
 
-特别是长序列训练时，梯度裁剪能防止训练发散。
+- 即使 ReLU 避免了梯度消失，梯度裁剪可以让学习率和优化器设置更安全
+- 不裁剪可能出现：
+  - loss NaN
+  - 参数跳跃过大，模型不收敛
 
-保持训练稳定
-
-即使 ReLU 避免了梯度消失，梯度裁剪可以让学习率和优化器设置更安全。
-
-不裁剪可能出现：
-
-loss NaN
-
-参数跳跃过大，模型不收敛
-
+**不同激活函数对比：**
 
 | 激活函数         | 梯度消失 | 梯度爆炸 | 是否需要梯度裁剪   |
 | ------------ | ---- | ---- | ---------- |
