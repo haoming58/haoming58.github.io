@@ -174,9 +174,9 @@ def init_rnn_params(num_inputs, num_hiddens, num_outputs, device):
 
 隐藏状态 h0，需要一个h_t-1
 
-\[
+$$
 h_t = \tanh(W_{xh} x_t + W_{hh} h_{t-1} + b_h)
-\]
+$$
 
 
 
@@ -414,15 +414,15 @@ def predict_ch8(prefix, num_preds, net, vocab, device):  #@save
 
 梯度下降的基本公式：
 
-\[ 
+$$
 w′=w−η∇f(w)
-\]
+$$
 
 梯度裁剪公式：
 
-\[
+$$
 \tilde{\mathbf{g}} = \min\left(1, \frac{\theta}{\|\mathbf{g}\|}\right)\mathbf{g}
-\]
+$$
 
 其中：
 - **\(\mathbf{g}\)**：原始梯度  
