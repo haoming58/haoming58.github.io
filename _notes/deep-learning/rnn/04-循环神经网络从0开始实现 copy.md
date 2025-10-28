@@ -691,38 +691,6 @@ train_ch8(net, train_iter, vocab, lr, num_epochs, d2l.try_gpu(),
 ![RNN单元]({{ '/assets/img/notes/rnn/figures/step7b_rnn_cell.png' | relative_url }})
 ![序列处理]({{ '/assets/img/notes/rnn/figures/step7c_sequential.png' | relative_url }})
 ![输出拼接]({{ '/assets/img/notes/rnn/figures/step7d_output_concat.png' | relative_url }})
-
-
-
-## 4.4 问题
-
-### 嵌入表示与独热编码
-
-1. **嵌入表示（Embedding）**
-
-   * 是一种把离散类别（如单词、物品、用户、城市等）映射到 **连续向量空间** 的方法。
-   * 每个类别都有一个向量表示，可以用于捕捉类别特性和关系。
-
-2. **独热编码（One-Hot Encoding）是嵌入的一种特殊情况**
-
-   * 向量长度 = 类别数量
-   * 向量只有一个位置是 1，其余都是 0
-   * 每个类别都有一个唯一向量，但向量非常简单、**稀疏**（只有少数元素非零，其余为 0）
-   * 例如，苹果的独热编码：[1, 0, 0]
-
-3. **嵌入向量更加灵活**
-
-   * 可以是稠密向量（大部分元素非零，不只是 0 和 1）
-   * 可以学习类别之间的相似性，例如苹果和香蕉的向量更接近，葡萄向量更远
-   * 允许向量自由表示对象的特征，而不仅仅是简单的 0 和 1
-
-
-
-### 参数调整改变困惑度
-
-通过调整超参数（如迭代周期数、隐藏单元数、小批量数据的时间步数、学习率等）来改善困惑度。
-
-由于参数较多，使用列表用于检查单个参数在同一张图上进行展示。
 并且新增一个函数，用来记录困惑度
 
 ```python
@@ -856,7 +824,6 @@ compare_hyperparams_plot(
 
 简单来说，除了最后的迭代次数，其余的效果不是很好，有可能是我调整的基本
 
-
 ### 使用学习的嵌入表示替换独热编码
 
 嵌入和独热的区别就是可以是不同长度为向量大小
@@ -864,8 +831,8 @@ compare_hyperparams_plot(
 这里为了替换生成，需要改变一些函数的结构，具体修改如下：
 
 1. 加入 embedding
-2. 修改，不再用 F.one_hot
-3. 在 rnn 函数中使用嵌入后的向量
+1. 修改，不再用 F.one_hot
+1. 在 rnn 函数中使用嵌入后的向量
 
 ```python
 X = F.one_hot(X.T, self.vocab_size).type(torch.float32)
@@ -890,21 +857,14 @@ class RNNModelScratch:
     def begin_state(self, batch_size, device):
         return self.init_state(batch_size, self.num_hiddens, device)
 
-RNN 的输入维度要和嵌入维度匹配，所以还要修改 get_params 中 W_xh 的大小，
-因为，输出主要就是关于 
-
-```
-
+ RNN 的输入维度要和嵌入维度匹配，所以还要修改 get_params 中 W_xh 的大小，
+ 因为，输出主要就是关于 
+ W_xh 是 (vocab_size, num_hiddens),输入维度变成 embed_size
+ 
 ```python
-
-W_xh 是 (vocab_size, num_hiddens),输入维度变成 embed_size
-
 def get_params(vocab_size, num_hiddens, device, embed_size=100):
-
-    num_inputs = embed_size  # W_xh 的输入维度必须改为 embed_size
-
-    # 因为输入改了更为稠密的向量
-
+    # W_xh 的输入维度必须改为 embed_size
+    num_inputs = embed_size  
     num_outputs = vocab_size
 
     def normal(shape):
