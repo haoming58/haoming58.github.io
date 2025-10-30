@@ -201,6 +201,7 @@ plugins:
   # - jekyll-jupyter-notebook # disabled for GitHub Actions compatibility
   - jekyll-link-attributes
   - jekyll-paginate-v2
+  - jekyll-redirect-from
   - jekyll-regex-replace
   - jekyll/scholar
   - jekyll-sitemap
