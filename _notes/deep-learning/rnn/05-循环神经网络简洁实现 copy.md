@@ -232,12 +232,11 @@ d2l.train_ch8(net, train_iter, vocab, lr, num_epochs, device)
 
 ```
 
-![alt text]({{ '/assets/img/notes/rnn/figures/image-7.png' | relative_url }})
-
+![alt text](../../../assets/img/notes/rnn/figures/image-7.png)
 
 ## 5.3 问题
 
-### 尝试使用高级API，能使循环神经网络模型过拟合吗？
+### 5.1 尝试使用高级API，能使循环神经网络模型过拟合吗？
 
 首先，需要理解过拟合：
 
@@ -261,7 +260,7 @@ d2l.train_ch8(net, train_iter, vocab, lr, num_epochs, device)
 
 高级 API 并不会自动防止过拟合，参数是本身需要你自己调整
 
-### 如果在循环神经网络模型中增加隐藏层的数量会发生什么？能使模型正常工作吗？
+### 5.2 如果在循环神经网络模型中增加隐藏层的数量会发生什么？能使模型正常工作吗？
 
 ```python
 
@@ -282,4 +281,14 @@ bidirectional = False（默认单向）
 
 rnn_layer = nn.RNN(len(vocab), num_hiddens，num_layers = 10)
 
+与此同时，还需要修改 state 的初始配置：
+
+# 原始代码：state = torch.zeros((1, batch_size, num_hiddens)) # 错误，层数是10
+state = torch.zeros((rnn_layer.num_layers, batch_size, num_hiddens)) 
+# 或者直接使用数字：
+# state = torch.zeros((10, batch_size, num_hiddens))
+
 ```
+![alt text](../../../assets/img/notes/rnn/figures/image.png)
+
+总体来说，结果还是不错的
