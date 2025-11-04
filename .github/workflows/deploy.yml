@@ -26,9 +26,16 @@ jobs:
       - name: Setup Ruby
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: '3.1'
+          ruby-version: '3.2'
           bundler-cache: true
           
+      - name: Ensure pinned gems are used
+        run: |
+          bundle update jekyll-sass-converter sass-embedded
+        env:
+          BUNDLE_WITHOUT: "development:test"
+          JEKYLL_ENV: production
+
       - name: Setup Pages
         id: pages
         uses: actions/configure-pages@v4
