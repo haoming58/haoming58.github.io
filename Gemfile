@@ -2,7 +2,7 @@ source 'https://rubygems.org'
 
 gem 'jekyll'
 gem 'jekyll-sass-converter', '~> 3.0.0'
-gem 'sass-embedded', '1.77.6'
+gem 'sass-embedded', '~> 1.69.0'
 
 # Core plugins that directly affect site building
 group :jekyll_plugins do
