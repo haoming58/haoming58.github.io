@@ -2,7 +2,7 @@
 layout: note_with_toc
 title: 4. 循环神经网络从0开始实现
 description: Building RNN from scratch with detailed implementation
-category: Machine Learning
+category: Deep Learning - RNN Basics
 tags: [RNN, Deep Learning, Neural Networks, PyTorch, Implementation]
 permalink: /notes/rnn-from-scratch/
 redirect_from:
