@@ -27,11 +27,13 @@ jobs:
         uses: ruby/setup-ruby@v1
         with:
           ruby-version: '3.2'
-          bundler-cache: true
+          bundler-cache: false
           
-      - name: Ensure pinned gems are used
+      - name: Install dependencies with pinned gem versions
         run: |
+          bundle config set path vendor/bundle
           bundle update jekyll-sass-converter sass-embedded
+          bundle install --jobs 4
         env:
           BUNDLE_WITHOUT: "development:test"
           JEKYLL_ENV: production
