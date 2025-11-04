@@ -4,7 +4,9 @@ title: 4. 循环神经网络从0开始实现
 description: Building RNN from scratch with detailed implementation
 category: Machine Learning
 tags: [RNN, Deep Learning, Neural Networks, PyTorch, Implementation]
-permalink: /notes/循环神经网络从0开始实现/
+permalink: /notes/rnn-from-scratch/
+redirect_from:
+  - /notes/循环神经网络从0开始实现/
 ---
 
 # 4. 循环神经网络从0开始实现

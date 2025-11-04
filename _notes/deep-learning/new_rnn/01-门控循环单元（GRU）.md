@@ -1,12 +1,13 @@
 ---
 layout: note_with_toc
 title: 1. 门控循环单元（GRU）
-description: Basic concepts and principles of sequence modeling
+description: Gated Recurrent Unit - advanced RNN architecture with reset and update gates
 category: Machine Learning
-tags: [RNN, Sequence Modeling, Deep Learning, Neural Networks]
-permalink: /notes/sequence-modeling-basics/
+tags: [RNN, GRU, Gated Networks, Deep Learning, Neural Networks]
+permalink: /notes/gated-recurrent-unit/
 redirect_from:
   - /notes/门控循环单元（GRU）/
+  - /notes/sequence-modeling-basics/
 ---
 
 # 1. 门控循环单元（GRU）
