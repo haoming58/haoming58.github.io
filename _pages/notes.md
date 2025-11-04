@@ -43,24 +43,53 @@ nav_order: 3
       <div class="category-section" id="{{ category.name | slugify }}" style="display: none;">
         <div class="notes-header">
           <h1>{{ category.name }} 笔记</h1>
-          <p class="notes-description">{{ category.name }}相关的学习笔记和教程</p>
+          <p class="notes-description">{{ category.name}}相关的学习笔记和教程</p>
           <a href="#" class="back-link" onclick="showCategories()">← 返回分类列表</a>
         </div>
-        <ul class="notes-list">
-          {% for note in category.items %}
-          <li class="note-item">
-            <a href="{{ note.url | relative_url }}" onclick="storeCurrentCategory('{{ category.name | slugify }}')">{{ note.title }}</a>
-            {% if note.description %}<span class="note-description"> — {{ note.description }}</span>{% endif %}
-            {% if note.tags %}
-              <div class="note-tags">
-                {% for tag in note.tags %}
-                  <span class="tag">{{ tag }}</span>
-                {% endfor %}
-              </div>
+        
+        {% comment %} Group by subcategory if exists {% endcomment %}
+        {% assign subcategories = category.items | group_by: 'subcategory' | sort: 'name' %}
+        
+        {% if subcategories.size > 1 or subcategories.first.name != blank %}
+          {% comment %} Has subcategories, show them {% endcomment %}
+          {% for subcategory in subcategories %}
+            {% if subcategory.name != blank %}
+              <h2 class="subcategory-title">{{ subcategory.name }}</h2>
             {% endif %}
-          </li>
+            <ul class="notes-list">
+              {% for note in subcategory.items %}
+              <li class="note-item">
+                <a href="{{ note.url | relative_url }}" onclick="storeCurrentCategory('{{ category.name | slugify }}')">{{ note.title }}</a>
+                {% if note.description %}<span class="note-description"> — {{ note.description }}</span>{% endif %}
+                {% if note.tags %}
+                  <div class="note-tags">
+                    {% for tag in note.tags %}
+                      <span class="tag">{{ tag }}</span>
+                    {% endfor %}
+                  </div>
+                {% endif %}
+              </li>
+              {% endfor %}
+            </ul>
           {% endfor %}
-        </ul>
+        {% else %}
+          {% comment %} No subcategories, show flat list {% endcomment %}
+          <ul class="notes-list">
+            {% for note in category.items %}
+            <li class="note-item">
+              <a href="{{ note.url | relative_url }}" onclick="storeCurrentCategory('{{ category.name | slugify }}')">{{ note.title }}</a>
+              {% if note.description %}<span class="note-description"> — {{ note.description }}</span>{% endif %}
+              {% if note.tags %}
+                <div class="note-tags">
+                  {% for tag in note.tags %}
+                    <span class="tag">{{ tag }}</span>
+                  {% endfor %}
+                </div>
+              {% endif %}
+            </li>
+            {% endfor %}
+          </ul>
+        {% endif %}
       </div>
     {% endif %}
   {% endfor %}
@@ -301,6 +330,22 @@ document.addEventListener('DOMContentLoaded', function() {
   margin-top: 2rem;
   margin-bottom: 1rem;
   scroll-margin-top: 2rem; /* Provide offset for anchor links */
+}
+
+/* Subcategory title styles */
+.subcategory-title {
+  color: var(--global-text-color);
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-top: 2.5rem;
+  margin-bottom: 1.25rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid var(--global-divider-color);
+  font-family: 'Noto Sans', 'Roboto', sans-serif;
+}
+
+.subcategory-title:first-of-type {
+  margin-top: 1rem;
 }
 
 /* Chirpy 风格笔记列表 */
