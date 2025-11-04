@@ -2,7 +2,7 @@
 layout: note_with_toc
 title: 1. 门控循环单元（GRU）
 description: Gated Recurrent Unit - advanced RNN architecture with reset and update gates
-category: Deep Learning - Advanced RNN
+category: Machine Learning
 tags: [RNN, GRU, Gated Networks, Deep Learning, Neural Networks]
 permalink: /notes/gated-recurrent-unit/
 redirect_from:
