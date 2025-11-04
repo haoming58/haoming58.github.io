@@ -49,28 +49,35 @@ nav_order: 3
         
         {% comment %} Group by subcategory if exists {% endcomment %}
         {% assign subcategories = category.items | group_by: 'subcategory' | sort: 'name' %}
+        {% assign has_subcategories = false %}
+        {% for subcategory in subcategories %}
+          {% if subcategory.name != blank and subcategory.name != "" %}
+            {% assign has_subcategories = true %}
+            {% break %}
+          {% endif %}
+        {% endfor %}
         
-        {% if subcategories.size > 1 or subcategories.first.name != blank %}
+        {% if has_subcategories %}
           {% comment %} Has subcategories, show them {% endcomment %}
           {% for subcategory in subcategories %}
-            {% if subcategory.name != blank %}
+            {% if subcategory.name != blank and subcategory.name != "" %}
               <h2 class="subcategory-title">{{ subcategory.name }}</h2>
+              <ul class="notes-list">
+                {% for note in subcategory.items %}
+                <li class="note-item">
+                  <a href="{{ note.url | relative_url }}" onclick="storeCurrentCategory('{{ category.name | slugify }}')">{{ note.title }}</a>
+                  {% if note.description %}<span class="note-description"> — {{ note.description }}</span>{% endif %}
+                  {% if note.tags %}
+                    <div class="note-tags">
+                      {% for tag in note.tags %}
+                        <span class="tag">{{ tag }}</span>
+                      {% endfor %}
+                    </div>
+                  {% endif %}
+                </li>
+                {% endfor %}
+              </ul>
             {% endif %}
-            <ul class="notes-list">
-              {% for note in subcategory.items %}
-              <li class="note-item">
-                <a href="{{ note.url | relative_url }}" onclick="storeCurrentCategory('{{ category.name | slugify }}')">{{ note.title }}</a>
-                {% if note.description %}<span class="note-description"> — {{ note.description }}</span>{% endif %}
-                {% if note.tags %}
-                  <div class="note-tags">
-                    {% for tag in note.tags %}
-                      <span class="tag">{{ tag }}</span>
-                    {% endfor %}
-                  </div>
-                {% endif %}
-              </li>
-              {% endfor %}
-            </ul>
           {% endfor %}
         {% else %}
           {% comment %} No subcategories, show flat list {% endcomment %}
