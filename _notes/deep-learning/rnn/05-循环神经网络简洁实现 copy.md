@@ -3,6 +3,7 @@ layout: note_with_toc
 title: 5. 循环神经网络简洁实现
 description: Concise RNN implementation using PyTorch high-level API
 category: Machine Learning
+subcategory: RNN Basics
 tags: [RNN, Deep Learning, Neural Networks, PyTorch, Implementation]
 permalink: /notes/rnn-concise-implementation/
 redirect_from:
