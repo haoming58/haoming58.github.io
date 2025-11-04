@@ -21,7 +21,11 @@ RNN的挑战：
 3. 梯度消失和爆炸
 4. 序列的不同部份的逻辑不一定对：
 
-章节一： 讲述了一个人物的童年经历，设定了故事背景。模型内部的隐状态 $H_{\text{old}}$ 此时充满了关于人物、地点、童年情绪等的信息。章节二： 故事发生时间跳转到二十年后，人物、地点、甚至主题都发生了巨大变化。逻辑中断： 章节一和章节二之间就是一次逻辑中断。需要快速遗忘或者快速接纳。
+**章节一**：讲述了一个人物的童年经历，设定了故事背景。模型内部的隐状态 $H_{\text{old}}$ 此时充满了关于人物、地点、童年情绪等的信息。
+
+**章节二**：故事发生时间跳转到二十年后，人物、地点、甚至主题都发生了巨大变化。
+
+**逻辑中断**：章节一和章节二之间就是一次逻辑中断。需要快速遗忘或者快速接纳。
 
 ## 1.2 门机制
 
@@ -78,7 +82,12 @@ $$\tilde{H}_t = \text{tanh}(X_t W_{xh} + \underbrace{(R_t \odot H_{t-1})}_{\text
 
 为了针对长期，跳过 $X_t$，并保持 $H_{t-1}$ 中的长期信息不变：
 
-$$H_t = Z_t \odot H_{t-1} + (1 - Z_t) \odot \tilde{H}_t$$逻辑：目标： 保持 $H_t \approx H_{t-1}$，即让长期记忆接管。门控设置： 模型会学习设置 $Z_t$ 接近 $\mathbf{1}$。结果： $H_t \approx \mathbf{1} \odot H_{t-1} + \mathbf{0} \odot \tilde{H}_t \approx H_{t-1}$。
+$$H_t = Z_t \odot H_{t-1} + (1 - Z_t) \odot \tilde{H}_t$$
+
+**逻辑分析**：
+- **目标**：保持 $H_t \approx H_{t-1}$，即让长期记忆接管。
+- **门控设置**：模型会学习设置 $Z_t$ 接近 $\mathbf{1}$。
+- **结果**：$H_t \approx \mathbf{1} \odot H_{t-1} + \mathbf{0} \odot \tilde{H}_t \approx H_{t-1}$。
 
 
 # 2. 代码实践
@@ -97,8 +106,7 @@ train_iter, vocab = d2l.load_data_time_machine(batch_size, num_steps)
 def get_params(vocab_size, num_hiddens, device):
     num_inputs = num_outputs = vocab_size
 
-    同样延续
-
+    # 参数初始化函数
     def normal(shape):
         return torch.randn(size=shape, device=device)*0.01
 
