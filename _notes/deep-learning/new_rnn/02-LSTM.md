@@ -113,6 +113,8 @@ $$H_t = O_t \odot \tanh(C_t)$$
 
 ## 2.3 代码实践
 
+基本库加载
+
 ```python
 
 import torch
@@ -124,13 +126,19 @@ train_iter, vocab = d2l.load_data_time_machine(batch_size, num_steps)
 
 ```
 
+同样参数的基本初始化
+
 ```python
 
 def get_lstm_params(vocab_size, num_hiddens, device):
     num_inputs = num_outputs = vocab_size
-
+    '''
+    还是一样的输入和输出维度，one hot 向量
+    '''
     def normal(shape):
         return torch.randn(size=shape, device=device)*0.01
+
+    类似GRU的，每个门都有三组参数
 
     def three():
         return (normal((num_inputs, num_hiddens)),
@@ -152,3 +160,195 @@ def get_lstm_params(vocab_size, num_hiddens, device):
     return params
 
 ```
+
+
+```python
+
+def init_lstm_state(batch_size, num_hiddens, device):
+    return (torch.zeros((batch_size, num_hiddens), device=device),
+            torch.zeros((batch_size, num_hiddens), device=device))
+
+```
+$H$ (隐状态): $(N, H)$
+
+$C$ (记忆元): $(N, H)$
+
+下面一步，进行维度计算:
+
+批量大小 (Batch Size): $N$
+输入特征数 (Input Features): $D$, 这里应该是词表的大小
+隐藏单元数 (Hidden Units): $H$
+
+X (输入): 在循环内，X 是当前时间步的输入，维度为 $(N, D)$
+
+| 参数         | 形状 (Shape) | 作用                |
+| :--------- | :--------- | :---------------- |
+| $W_{x*}$   | $(D, H)$   | 输入 $X$ → 门/候选记忆元  |
+| $W_{h*}$   | $(H, H)$   | 隐状态 $H$ → 门/候选记忆元 |
+| $W_{hq}$   | $(H, Q)$   | 隐状态 $H$ → 输出层     |
+| $b_*, b_c$ | $(H)$      | 门或候选记忆元的偏置        |
+| $b_q$      | $(Q)$      | 输出层偏置             |
+
+
+
+```python
+
+def lstm(inputs, state, params):
+    [W_xi, W_hi, b_i, W_xf, W_hf, b_f, W_xo, W_ho, b_o, W_xc, W_hc, b_c,
+     W_hq, b_q] = params
+    (H, C) = state
+    outputs = []
+    for X in inputs:
+        I = torch.sigmoid((X @ W_xi) + (H @ W_hi) + b_i)
+        F = torch.sigmoid((X @ W_xf) + (H @ W_hf) + b_f)
+        O = torch.sigmoid((X @ W_xo) + (H @ W_ho) + b_o)
+        C_tilda = torch.tanh((X @ W_xc) + (H @ W_hc) + b_c)
+        C = F * C + I * C_tilda
+        H = O * torch.tanh(C)
+        Y = (H @ W_hq) + b_q
+        outputs.append(Y)
+    return torch.cat(outputs, dim=0), (H, C)
+```  
+
+
+```python
+vocab_size, num_hiddens, device = len(vocab), 256, d2l.try_gpu()
+num_epochs, lr = 500, 1
+model = d2l.RNNModelScratch(len(vocab), num_hiddens, device, get_lstm_params,
+                            init_lstm_state, lstm)
+d2l.train_ch8(model, train_iter, vocab, lr, num_epochs, device)
+```  
+
+
+![alt text](../../../assets/img/notes/new_rnn/LSTM.png) 
+
+
+```python
+num_inputs = vocab_size
+lstm_layer = nn.LSTM(num_inputs, num_hiddens)
+model = d2l.RNNModel(lstm_layer, len(vocab))
+model = model.to(device)
+d2l.train_ch8(model, train_iter, vocab, lr, num_epochs, device)
+```  
+![alt text](../../../assets/img/notes/new_rnn/LSTM1.png)
+
+
+## 2.4 问题
+
+### 2.4.1 调整和分析超参数对运行时间、困惑度和输出顺序的影响。
+
+![ ](../../../assets/img/notes/new_rnn/超参数.png)
+
+隐藏单元数	num_hiddens	模型容量	决定了模型能“记住”多少信息。
+
+太小会导致欠拟合（学不会），太大会导致过拟合（死记硬背）且计算极慢。
+
+时间步数	num_steps	记忆长度	决定了模型往回看多远。
+
+越大能捕捉越长的依赖关系，但计算量和内存消耗线性增加，且可能导致梯度问题。
+
+学习率	lr	收敛速度	决定了梯度下降的步长。太大容易震荡甚至发散（NaN），太小收敛极慢。
+
+批量大小	batch_size	训练稳定性	决定了梯度估计的准确性。
+
+越大训练越快（并行度高）但可能陷入局部最优；越小噪声越大但有时能带来更好的泛化。
+
+
+### 2.4.2 如何更改模型以生成适当的单词，而不是字符序列？
+
+我的理解是有个函数可以：
+
+```python
+def load_corpus_time_machine(max_tokens=-1):  #@save
+    """返回时光机器数据集的词元索引列表和词表"""
+    lines = read_time_machine()
+    tokens = tokenize(lines, 'char')
+    vocab = Vocab(tokens)
+
+    # 将所有文本行展平到一个列表中
+    corpus = [vocab[token] for line in tokens for token in line]
+
+    if max_tokens > 0:
+        corpus = corpus[:max_tokens]
+    return corpus, vocab
+```
+
+把这个需要调整为  tokens = tokenize(lines, 'word'), 这个下面就跟着改
+
+```python
+class SeqDataLoader:  #@save
+    """加载序列数据的迭代器"""
+    def __init__(self, batch_size, num_steps, use_random_iter, max_tokens):
+        if use_random_iter:
+            self.data_iter_fn = d2l.seq_data_iter_random
+        else:
+            self.data_iter_fn = d2l.seq_data_iter_sequential
+        self.corpus, self.vocab = d2l.load_corpus_time_machine(max_tokens)
+        self.batch_size, self.num_steps = batch_size, num_steps
+
+    def __iter__(self):
+        return self.data_iter_fn(self.corpus, self.batch_size, self.num_steps)
+
+
+def load_data_time_machine(batch_size, num_steps,  #@save
+                           use_random_iter=False, max_tokens=10000):
+    """返回时光机器数据集的迭代器和词表"""
+    data_iter = SeqDataLoader(
+        batch_size, num_steps, use_random_iter, max_tokens)
+    return data_iter, data_iter.vocab
+```
+
+### 2.4.4 在给定隐藏层维度的情况下，比较门控循环单元、长短期记忆网络和常规循环神经网络的计算成本。要特别注意训练和推断成本。
+
+![alt text](<../../../assets/img/notes/new_rnn/rnn vs lstm.png>)
+
+
+### 2.4.5 既然候选记忆元通过使用函数来确保值范围在之间，那么为什么隐状态需要再次使用函数来确保输出值范围在之间呢？ ？。
+
+答案的核心在于：虽然**候选记忆元 $\tilde{C}_t$** 的值确实被限制在 $[-1, 1]$ 之间，但真正的**记忆元 $C_t$** 的值**并没有**被限制在这个范围内，它可能会累积得非常大。
+
+让我们逐步剖析这个原因：
+
+
+请重新看记忆元的更新公式：
+
+$$C_t = F_t \odot C_{t-1} + I_t \odot \tilde{C}_t$$
+
+* **$\tilde{C}_t$ 是受限的**：确实，由于 $\text{tanh}$ 的存在，当前这一步想写入的新信息 $I_t \odot \tilde{C}_t$ 最大只能是 $1$（或最小是 $-1$）。
+* **但 $C_t$ 是累积的**：注意公式中的第一项 $F_t \odot C_{t-1}$。这是一种**线性自连接**（Linear Self-Connection）。
+    * 如果遗忘门 $F_t$ 一直保持打开状态（接近 $1$），那么过去的信息 $C_{t-1}$ 就会几乎无损地保留下来。
+    * 如果网络在多个时间步连续收到正向输入（$\tilde{C}_t > 0$），记忆元 $C_t$ 的值就会不断叠加。
+
+> **举个例子：**
+> 假设 $F_t$ 始终为 $1.0$，$I_t$ 始终为 $1.0$，而输入每次都让 $\tilde{C}_t$ 为 $0.5$。
+> * $t=1: C_1 = 1.0 \times 0 + 1.0 \times 0.5 = 0.5$
+> * $t=2: C_2 = 1.0 \times 0.5 + 1.0 \times 0.5 = 1.0$
+> * $t=3: C_3 = 1.0 \times 1.0 + 1.0 \times 0.5 = 1.5$
+> * ...
+> * $t=100: C_{100} = 50.0$
+>
+> 看到了吗？**$C_t$ 的值可以远远超出 $[-1, 1]$ 的范围。** 这正是 LSTM 能够记住长距离信息的关键——它像一个计数器一样，可以不受干扰地不断累积信息。
+
+
+既然 $C_t$ 可以变得很大（例如 $50.0$ 或 $-100.0$），如果我们直接把它传给下一层或下一个时间步：
+
+$$H_t = O_t \odot C_t \quad (\text{假设没有第二个 tanh})$$
+
+那么 $H_t$ 的值也会变得巨大。这会带来两个严重问题：
+1.  **数值不稳定**：巨大的值传入后续的网络层，容易导致梯度爆炸，使得训练难以收敛。
+2.  **不匹配**：神经网络的其他部分（如其他门的输入）通常期望接收范围在 $[-1, 1]$ 或 $[0, 1]$ 左右的标准化输入。
+
+因此，我们需要第二个 $\text{tanh}$ 在输出之前对 $C_t$ 进行**“挤压”（Squashing）**：
+
+$$H_t = O_t \odot \tanh(C_t)$$
+
+无论 $C_t$ 累积到多大（比如 $50.0$），$\tanh(50.0)$ 都会把它稳稳地限制回 $\approx 1.0$。
+这确保了**隐状态 $H_t$ 始终保持在 $[-1, 1]$ 的稳定范围内**，可以安全地传递给网络的其他部分。
+
+
+* **第一个 $\tanh$ (在 $\tilde{C}_t$ 中)**：是为了规范化**当前步的新输入**，确保每次写入的信息量是受控的。
+* **记忆元 $C_t$**：是一个**无界的累积器**，负责长距离携带信息，它的值可以很大。
+* **第二个 $\tanh$ (在 $H_t$ 中)**：是为了规范化**最终输出**，防止累积过大的记忆值破坏后续计算的稳定性。
+
+
+### 2.4.5 实现一个能够基于时间序列进行预测而不是基于字符序列进行预测的长短期记忆网络模型。
