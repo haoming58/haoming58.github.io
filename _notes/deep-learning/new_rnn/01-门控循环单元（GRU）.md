@@ -21,7 +21,7 @@ RNN的挑战：
 3. 梯度消失和爆炸
 4. 序列的不同部份的逻辑不一定对：
 
-**章节一**：讲述了一个人物的童年经历，设定了故事背景。模型内部的隐状态 $H_{\text{old}}$ 此时充满了关于人物、地点、童年情绪等的信息。
+**章节一**：讲述了一个人物的童年经历，设定了故事背景。模型内部的隐状态 $$H_{\text{old}}$$ 此时充满了关于人物、地点、童年情绪等的信息。
 
 **章节二**：故事发生时间跳转到二十年后，人物、地点、甚至主题都发生了巨大变化。
 
@@ -33,7 +33,7 @@ RNN的挑战：
 
 引入了两个Gates进行控制隐状态，一个叫重置门，一个叫更新门。
 
-![alt text](../../../assets/img/notes/new_rnn/在门控循环单元模型中计算重置门和更新门.png)
+![alt text]({{ '/assets/img/notes/new_rnn/在门控循环单元模型中计算重置门和更新门.png' | relative_url }})
 
 
 $$R_t = \sigma(X_t W_{xr} + H_{t-1} W_{hr} + b_r)$$
@@ -46,25 +46,26 @@ $$Z_t = \sigma(X_t W_{xz} + H_{t-1} W_{hz} + b_z)$$
 
 $$\tilde{H}_t = \text{tanh}(X_t W_{xh} + (R_t \odot H_{t-1}) W_{hh} + b_h)$$
 
-$\odot$ 是 Hadamard 积（按元素相乘）
+$$\odot$$ 是 Hadamard 积（按元素相乘）
 
-重点就在于  $R_t \odot H_{t-1}$
-$R_t$ 接近 $1$： $R_t \odot H_{t-1} \approx H_{t-1}$。模型行为类似于普通的 RNN，保留所有过去的隐状态信息。
-$R_t$ 接近 $0$： $R_t \odot H_{t-1} \approx 0$。模型忽略了过去的隐状态 $H_{t-1}$ 的大部分信息。
+重点就在于  $$R_t \odot H_{t-1}$$
+
+- $$R_t$$ 接近 $$1$$： $$R_t \odot H_{t-1} \approx H_{t-1}$$。模型行为类似于普通的 RNN，保留所有过去的隐状态信息。
+- $$R_t$$ 接近 $$0$$： $$R_t \odot H_{t-1} \approx 0$$。模型忽略了过去的隐状态 $$H_{t-1}$$ 的大部分信息。
 
 
-![alt text](../../../assets/img/notes/new_rnn/在门控循环单元模型中计算候选隐状态.png)
+![alt text]({{ '/assets/img/notes/new_rnn/在门控循环单元模型中计算候选隐状态.png' | relative_url }})
 
 
 ### 1.2.3 最终隐状态
 
 $$H_t = Z_t \odot H_{t-1} + (1 - Z_t) \odot \tilde{H}_t$$
 
-$Z_t$ 接近 $1$： $H_t \approx 1 \odot H_{t-1} + 0 \odot \tilde{H}_t$。新状态 $H_t$ 倾向于保留旧状态 $H_{t-1}$，并忽略新计算的候选状态 $\tilde{H}_t$。这有助于信息长期传递。
-$Z_t$ 接近 $0$： $H_t \approx 0 \odot H_{t-1} + 1 \odot \tilde{H}_t$。新状态 $H_t$ 倾向于采纳候选状态 $\tilde{H}_t$，并忽略旧状态 $H_{t-1}$。这相当于重置了状态，用于应对逻辑中断。
+- $$Z_t$$ 接近 $$1$$： $$H_t \approx 1 \odot H_{t-1} + 0 \odot \tilde{H}_t$$。新状态 $$H_t$$ 倾向于保留旧状态 $$H_{t-1}$$，并忽略新计算的候选状态 $$\tilde{H}_t$$。这有助于信息长期传递。
+- $$Z_t$$ 接近 $$0$$： $$H_t \approx 0 \odot H_{t-1} + 1 \odot \tilde{H}_t$$。新状态 $$H_t$$ 倾向于采纳候选状态 $$\tilde{H}_t$$，并忽略旧状态 $$H_{t-1}$$。这相当于重置了状态，用于应对逻辑中断。
 
 
-![alt text](../../../assets/img/notes/new_rnn/计算门控循环单元模型中的隐状态.png)
+![alt text]({{ '/assets/img/notes/new_rnn/计算门控循环单元模型中的隐状态.png' | relative_url }})
 
 
 ### 1.2.4 整体思路梳理
@@ -78,16 +79,16 @@ $$h_t = h_{t-1} W_{h} + x_t W_{x}$$
 
 $$\tilde{H}_t = \text{tanh}(X_t W_{xh} + \underbrace{(R_t \odot H_{t-1})}_{\text{重置后的旧状态}} W_{hh} + b_h)$$
 
-当 $R_t$ 接近 $\mathbf{0}$ 时： $(R_t \odot H_{t-1}) \to \mathbf{0}$。这意味着，旧状态 $H_{t-1}$ 对 $\tilde{H}_t$ 的影响被完全清除了。此时 $\tilde{H}_t$ 的计算几乎完全依赖于当前输入 $X_t$。
+当 $$R_t$$ 接近 $$\mathbf{0}$$ 时： $$(R_t \odot H_{t-1}) \to \mathbf{0}$$。这意味着，旧状态 $$H_{t-1}$$ 对 $$\tilde{H}_t$$ 的影响被完全清除了。此时 $$\tilde{H}_t$$ 的计算几乎完全依赖于当前输入 $$X_t$$。
 
-为了针对长期，跳过 $X_t$，并保持 $H_{t-1}$ 中的长期信息不变：
+为了针对长期，跳过 $$X_t$$，并保持 $$H_{t-1}$$ 中的长期信息不变：
 
 $$H_t = Z_t \odot H_{t-1} + (1 - Z_t) \odot \tilde{H}_t$$
 
 **逻辑分析**：
-- **目标**：保持 $H_t \approx H_{t-1}$，即让长期记忆接管。
-- **门控设置**：模型会学习设置 $Z_t$ 接近 $\mathbf{1}$。
-- **结果**：$H_t \approx \mathbf{1} \odot H_{t-1} + \mathbf{0} \odot \tilde{H}_t \approx H_{t-1}$。
+- **目标**：保持 $$H_t \approx H_{t-1}$$，即让长期记忆接管。
+- **门控设置**：模型会学习设置 $$Z_t$$ 接近 $$\mathbf{1}$$。
+- **结果**：$$H_t \approx \mathbf{1} \odot H_{t-1} + \mathbf{0} \odot \tilde{H}_t \approx H_{t-1}$$。
 
 
 # 2. 代码实践
@@ -107,63 +108,63 @@ train_iter, vocab = d2l.load_data_time_machine(batch_size, num_steps)
 
 ### 1. 输入数据的维度
 
-输入张量的整体形状为：$(N, T_{\text{max}}, V)$
+输入张量的整体形状为：$$(N, T_{\text{max}}, V)$$
 
-- $N$：批次大小（batch size）
-- $T_{\text{max}}$：窗口大小（序列长度）
-- $V$：输入维度（词向量或词表大小）
+- $$N$$：批次大小（batch size）
+- $$T_{\text{max}}$$：窗口大小（序列长度）
+- $$V$$：输入维度（词向量或词表大小）
 
 多个窗口组成完整序列，通过批次训练，每次的训练固定为若干窗口。
 
 ### 2. 时间步与输入向量
 
-取某个时间步 $t$：
+取某个时间步 $$t$$：
 
 $$\mathbf{X}_t = \mathbf{X}_{\text{batch}}[:, t, :]$$
 
-此时 $\mathbf{X}_t$ 的维度是 $(N, V)$，对应一个时间步的输入（即一个词）。
+此时 $$\mathbf{X}_t$$ 的维度是 $$(N, V)$$，对应一个时间步的输入（即一个词）。
 
 ### 3. GRU 各部分参数与维度推导
 
-假设隐藏单元个数为 $H$。
+假设隐藏单元个数为 $$H$$。
 
 #### 3.1 更新门（Update Gate）
 
 $$\mathbf{Z}_t = \sigma(\mathbf{X}_t \mathbf{W}_{xz} + \mathbf{H}_{t-1} \mathbf{W}_{hz} + \mathbf{b}_z)$$
 
-要求 $\mathbf{Z}_t$ 的维度为 $(N, H)$。
+要求 $$\mathbf{Z}_t$$ 的维度为 $$(N, H)$$。
 
 **推导：**
-- $\mathbf{X}_t \mathbf{W}_{xz}$：$(N, V) \times (V, H) \rightarrow (N, H)$
-- $\mathbf{H}_{t-1} \mathbf{W}_{hz}$：$(N, H) \times (H, H) \rightarrow (N, H)$
+- $$\mathbf{X}_t \mathbf{W}_{xz}$$：$$(N, V) \times (V, H) \rightarrow (N, H)$$
+- $$\mathbf{H}_{t-1} \mathbf{W}_{hz}$$：$$(N, H) \times (H, H) \rightarrow (N, H)$$
 
-**结论：** $\mathbf{W}_{xz}$ 维度为 $(V, H)$，$\mathbf{W}_{hz}$ 维度为 $(H, H)$，$\mathbf{b}_z$ 维度为 $(H)$。
+**结论：** $$\mathbf{W}_{xz}$$ 维度为 $$(V, H)$$，$$\mathbf{W}_{hz}$$ 维度为 $$(H, H)$$，$$\mathbf{b}_z$$ 维度为 $$(H)$$。
 
 #### 3.2 重置门（Reset Gate）
 
 $$\mathbf{R}_t = \sigma(\mathbf{X}_t \mathbf{W}_{xr} + \mathbf{H}_{t-1} \mathbf{W}_{hr} + \mathbf{b}_r)$$
 
-要求 $\mathbf{R}_t$ 的维度为 $(N, H)$。
+要求 $$\mathbf{R}_t$$ 的维度为 $$(N, H)$$。
 
-**结论：** $\mathbf{W}_{xr}$ 维度为 $(V, H)$，$\mathbf{W}_{hr}$ 维度为 $(H, H)$，$\mathbf{b}_r$ 维度为 $(H)$。
+**结论：** $$\mathbf{W}_{xr}$$ 维度为 $$(V, H)$$，$$\mathbf{W}_{hr}$$ 维度为 $$(H, H)$$，$$\mathbf{b}_r$$ 维度为 $$(H)$$。
 
 #### 3.3 候选隐藏状态（Candidate Hidden State）
 
 $$\tilde{\mathbf{H}}_t = \tanh(\mathbf{X}_t \mathbf{W}_{xh} + (\mathbf{R}_t \odot \mathbf{H}_{t-1}) \mathbf{W}_{hh} + \mathbf{b}_h)$$
 
-**分析：** $(\mathbf{R}_t \odot \mathbf{H}_{t-1})$ 维度为 $(N, H)$，与 $\mathbf{W}_{hh}$ (维度 $(H, H)$) 相乘得到 $(N, H)$。
+**分析：** $$(\mathbf{R}_t \odot \mathbf{H}_{t-1})$$ 维度为 $$(N, H)$$，与 $$\mathbf{W}_{hh}$$ (维度 $$(H, H)$$) 相乘得到 $$(N, H)$$。
 
-**结论：** $\mathbf{W}_{xh}$ 维度为 $(V, H)$，$\mathbf{W}_{hh}$ 维度为 $(H, H)$，$\mathbf{b}_h$ 维度为 $(H)$。
+**结论：** $$\mathbf{W}_{xh}$$ 维度为 $$(V, H)$$，$$\mathbf{W}_{hh}$$ 维度为 $$(H, H)$$，$$\mathbf{b}_h$$ 维度为 $$(H)$$。
 
 ### 4. 输出层的维度推导
 
-最终输出 $\mathbf{Q}_t = \mathbf{H}_t \mathbf{W}_{hq} + \mathbf{b}_q$。
+最终输出 $$\mathbf{Q}_t = \mathbf{H}_t \mathbf{W}_{hq} + \mathbf{b}_q$$。
 
-其中 $\mathbf{H}_t$ 维度为 $(N, H)$，输出 $\mathbf{Q}_t$ 维度为 $(N, V)$。
+其中 $$\mathbf{H}_t$$ 维度为 $$(N, H)$$，输出 $$\mathbf{Q}_t$$ 维度为 $$(N, V)$$。
 
-**推导：** $(N, H) \times (H, V) \rightarrow (N, V)$。
+**推导：** $$(N, H) \times (H, V) \rightarrow (N, V)$$。
 
-**结论：** $\mathbf{W}_{hq}$ 维度为 $(H, V)$，$\mathbf{b}_q$ 维度为 $(V)$。
+**结论：** $$\mathbf{W}_{hq}$$ 维度为 $$(H, V)$$，$$\mathbf{b}_q$$ 维度为 $$(V)$$。
 
 ```python
 def get_params(vocab_size, num_hiddens, device):
@@ -294,7 +295,7 @@ model = d2l.RNNModelScratch(len(vocab), num_hiddens, device, get_params,
 d2l.train_ch8(model, train_iter, vocab, lr, num_epochs, device)
      
 ```
- ![alt text](../../../assets/img/notes/new_rnn/GRU.png)
+ ![alt text]({{ '/assets/img/notes/new_rnn/GRU.png' | relative_url }})
 
 
 下面是简洁实现，速度更快：它将整个时间序列的计算下沉到了底层高度优化的 C++/CUDA 代码中执行，而极大减少了 Python 层面的开销和 GPU 内核启动次数
@@ -309,17 +310,17 @@ model = model.to(device)
 d2l.train_ch8(model, train_iter, vocab, lr, num_epochs, device)
      
 ```
-![alt text](../../../assets/img/notes/new_rnn/GRU_1.png)
+![alt text]({{ '/assets/img/notes/new_rnn/GRU_1.png' | relative_url }})
 
 # 3. 问题
 
 ### 3.1 假设我们只想使用当前时间步的输入来预测下一步时间步的输出，对于每个时间步，重置门和更新门的最佳值是什么？
 
-仅使用当前时间步的输入 $X_t$ 来预测当前输出，这意味着我们需要完全忽略历史信息 $H_{t-1}$。
+仅使用当前时间步的输入 $$X_t$$ 来预测当前输出，这意味着我们需要完全忽略历史信息 $$H_{t-1}$$。
 
-更新门 (Update Gate) $Z_t$ 应该趋近于 0。
+更新门 (Update Gate) $$Z_t$$ 应该趋近于 0。
 
-重置门 (Reset Gate) $R_t$ 应该趋近于 0。
+重置门 (Reset Gate) $$R_t$$ 应该趋近于 0。
 
 $$H_t = \tanh(\mathbf{X}_t \mathbf{W}_{xh} + \mathbf{b}_h)$$
 
@@ -340,11 +341,11 @@ $$H_t = \tanh(\mathbf{X}_t \mathbf{W}_{xh} + \mathbf{b}_h)$$
 
 
 
-![alt text](../../../assets/img/notes/new_rnn/COMPARISION_GRU.png) 
+![alt text]({{ '/assets/img/notes/new_rnn/COMPARISION_GRU.png' | relative_url }}) 
 
 ### 3.3 比较 nn.RNN 和 nn.GRU 的不同实现对运行时间、困惑度和输出字符串的影响
 
-![alt text](../../../assets/img/notes/new_rnn/RNN.png)
+![alt text]({{ '/assets/img/notes/new_rnn/RNN.png' | relative_url }})
 
 
 ### 3.4 如果仅实现门控循环单元的一部分，例如只有一个重置门或一个更新门会怎样？
@@ -423,7 +424,7 @@ d2l.train_ch8(model, train_iter, vocab, lr, num_epochs, device)
 
 ```
 
-![alt text](../../../assets/img/notes/new_rnn/no_z.png)
+![alt text]({{ '/assets/img/notes/new_rnn/no_z.png' | relative_url }})
 
 
 
@@ -500,4 +501,4 @@ model = d2l.RNNModelScratch(len(vocab), num_hiddens, device, get_params,
 d2l.train_ch8(model, train_iter, vocab, lr, num_epochs, device)
 
 ```
-![alt text](../../../assets/img/notes/new_rnn/no_r.png) 
+![alt text]({{ '/assets/img/notes/new_rnn/no_r.png' | relative_url }}) 
