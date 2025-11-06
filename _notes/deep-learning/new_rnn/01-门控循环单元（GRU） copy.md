@@ -501,4 +501,5 @@ model = d2l.RNNModelScratch(len(vocab), num_hiddens, device, get_params,
 d2l.train_ch8(model, train_iter, vocab, lr, num_epochs, device)
 
 ```
+
 ![alt text]({{ '/assets/img/notes/new_rnn/no_r.png' | relative_url }}) 
