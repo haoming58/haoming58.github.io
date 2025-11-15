@@ -248,7 +248,7 @@ let transTheme = () => {
   document.documentElement.classList.add("transition");
   window.setTimeout(() => {
     document.documentElement.classList.remove("transition");
-  }, 500);
+  }, 750);
 };
 
 // Determine the expected state of the theme toggle, which can be "dark", "light", or

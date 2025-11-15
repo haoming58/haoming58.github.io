@@ -61,13 +61,13 @@ layout: default
   width: 280px;
   height: 100vh;
   overflow-y: auto;
-  background: linear-gradient(180deg, var(--global-bg-color) 0%, rgba(71, 85, 105, 0.02) 100%);
-  border-right: 2px solid rgba(71, 85, 105, 0.1);
+  background: var(--global-bg-color);
+  border-right: 2px solid var(--global-divider-color);
   z-index: 100;
   padding-top: 80px;
   scrollbar-width: thin;
   scrollbar-color: var(--global-theme-color) transparent;
-  box-shadow: 2px 0 12px rgba(71, 85, 105, 0.05);
+  box-shadow: 2px 0 12px var(--global-divider-color);
 }
 
 .note-sidebar::-webkit-scrollbar {
@@ -151,7 +151,7 @@ layout: default
 }
 
 .note-toc a:hover {
-  background: rgba(71, 85, 105, 0.08);
+  background: var(--global-divider-color);
   color: var(--global-theme-color);
   transform: translateX(4px);
   border-left-color: var(--global-theme-color);
@@ -162,7 +162,7 @@ layout: default
 }
 
 .note-toc a.active {
-  background: linear-gradient(90deg, rgba(71, 85, 105, 0.12) 0%, rgba(71, 85, 105, 0.05) 100%);
+  background: var(--global-divider-color);
   color: var(--global-theme-color);
   font-weight: 600;
   border-left-color: var(--global-theme-color);
@@ -342,7 +342,7 @@ layout: default
     transition: left 0.3s ease;
     z-index: 1000;
     padding-top: 70px;
-    box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+    box-shadow: 2px 0 10px var(--global-divider-color);
   }
   
   .note-sidebar.open {
@@ -377,7 +377,7 @@ layout: default
     cursor: pointer;
     display: block;
     font-size: 0.9rem;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    box-shadow: 0 2px 8px var(--global-divider-color);
   }
   
   .mobile-toc-toggle.hidden {
