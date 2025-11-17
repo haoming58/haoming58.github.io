@@ -318,7 +318,6 @@ model = model.to(device)
 # 训练模型
 num_epochs, lr = 500, 1
 d2l.train_ch8(model, train_iter, vocab, lr, num_epochs, device)
-
 ```
 
 
