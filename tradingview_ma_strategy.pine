@@ -1,0 +1,151 @@
+//@version=5
+strategy("移动平均线交易策略 MA Strategy", overlay=true, default_qty_type=strategy.percent_of_equity, default_qty_value=100)
+
+// ==================== 参数设置 ====================
+// 均线周期
+ma5_length = input.int(5, "MA5周期", minval=1)
+ma10_length = input.int(10, "MA10周期", minval=1)
+ma20_length = input.int(20, "MA20周期", minval=1)
+ma60_length = input.int(60, "MA60周期", minval=1)
+
+// 显示设置
+show_ma5 = input.bool(true, "显示MA5")
+show_ma10 = input.bool(true, "显示MA10")
+show_ma20 = input.bool(true, "显示MA20")
+show_ma60 = input.bool(true, "显示MA60")
+
+// 信号设置
+enable_golden_cross = input.bool(true, "启用金叉信号", group="买入信号")
+enable_price_cross_up = input.bool(true, "启用价格上穿MA10信号", group="买入信号")
+enable_bullish_alignment = input.bool(true, "启用多头排列信号", group="买入信号")
+
+enable_death_cross = input.bool(true, "启用死叉信号", group="卖出信号")
+enable_price_cross_down = input.bool(true, "启用价格下穿MA10信号", group="卖出信号")
+enable_bearish_alignment = input.bool(true, "启用空头排列信号", group="卖出信号")
+
+// ==================== 计算均线 ====================
+ma5 = ta.sma(close, ma5_length)
+ma10 = ta.sma(close, ma10_length)
+ma20 = ta.sma(close, ma20_length)
+ma60 = ta.sma(close, ma60_length)
+
+// ==================== 绘制均线 ====================
+plot(show_ma5 ? ma5 : na, "MA5", color=color.new(color.red, 0), linewidth=2)
+plot(show_ma10 ? ma10 : na, "MA10", color=color.new(color.orange, 0), linewidth=2)
+plot(show_ma20 ? ma20 : na, "MA20", color=color.new(color.blue, 0), linewidth=2)
+plot(show_ma60 ? ma60 : na, "MA60", color=color.new(color.purple, 0), linewidth=2)
+
+// ==================== 买入信号检测 ====================
+
+// 1. 金叉信号：MA5向上突破MA10
+golden_cross_5_10 = ta.crossover(ma5, ma10)
+// MA10向上突破MA20
+golden_cross_10_20 = ta.crossover(ma10, ma20)
+
+// 2. 价格从下向上穿越MA10，且MA5在MA10上方
+price_cross_up = ta.crossover(close, ma10) and ma5 > ma10
+
+// 3. 多头排列：MA5 > MA10 > MA20 > MA60
+bullish_alignment = ma5 > ma10 and ma10 > ma20 and ma20 > ma60
+
+// 综合买入条件 - 需要更强的信号组合
+buy_signal = false
+
+// 强买入信号：金叉 + 多头排列
+strong_buy = (golden_cross_5_10 or golden_cross_10_20) and bullish_alignment
+
+// 中等买入信号：价格上穿MA10 + MA5在MA10上方 + 多头排列
+medium_buy = price_cross_up and bullish_alignment
+
+// 只在强信号或中等信号时才买入
+if enable_golden_cross and strong_buy
+    buy_signal := true
+if enable_price_cross_up and medium_buy
+    buy_signal := true
+
+// ==================== 卖出信号检测 ====================
+
+// 1. 死叉信号：MA5向下跌破MA10
+death_cross_5_10 = ta.crossunder(ma5, ma10)
+// MA10向下跌破MA20
+death_cross_10_20 = ta.crossunder(ma10, ma20)
+
+// 2. 价格从上向下穿越MA10，且MA5在MA10下方
+price_cross_down = ta.crossunder(close, ma10) and ma5 < ma10
+
+// 3. 空头排列：MA5 < MA10 < MA20 < MA60
+bearish_alignment = ma5 < ma10 and ma10 < ma20 and ma20 < ma60
+
+// 综合卖出条件 - 需要更强的信号组合
+sell_signal = false
+
+// 强卖出信号：死叉 + 空头排列
+strong_sell = (death_cross_5_10 or death_cross_10_20) and bearish_alignment
+
+// 中等卖出信号：价格下穿MA10 + MA5在MA10下方 + 空头排列
+medium_sell = price_cross_down and bearish_alignment
+
+// 只在强信号或中等信号时才卖出
+if enable_death_cross and strong_sell
+    sell_signal := true
+if enable_price_cross_down and medium_sell
+    sell_signal := true
+
+// ==================== 执行交易 ====================
+if buy_signal
+    strategy.entry("买入", strategy.long)
+    
+if sell_signal
+    strategy.close("买入")
+
+// ==================== 绘制信号 ====================
+// 只显示主要买卖信号，标记更清晰
+plotshape(buy_signal, title="买入信号", location=location.belowbar, color=color.new(color.green, 0), style=shape.triangleup, text="买", textcolor=color.white, size=size.normal)
+
+plotshape(sell_signal, title="卖出信号", location=location.abovebar, color=color.new(color.red, 0), style=shape.triangledown, text="卖", textcolor=color.white, size=size.normal)
+
+// ==================== 背景颜色 ====================
+// 多头排列时背景淡绿色
+bgcolor(bullish_alignment ? color.new(color.green, 95) : na, title="多头排列背景")
+// 空头排列时背景淡红色
+bgcolor(bearish_alignment ? color.new(color.red, 95) : na, title="空头排列背景")
+
+// ==================== 信息面板 ====================
+var table infoTable = table.new(position.top_right, 2, 7, border_width=1)
+
+if barstate.islast
+    // 标题
+    table.cell(infoTable, 0, 0, "指标", text_color=color.white, bgcolor=color.gray)
+    table.cell(infoTable, 1, 0, "状态", text_color=color.white, bgcolor=color.gray)
+    
+    // MA值
+    table.cell(infoTable, 0, 1, "MA5", text_color=color.white, bgcolor=color.red)
+    table.cell(infoTable, 1, 1, str.tostring(ma5, "#.##"), text_color=color.white, bgcolor=color.red)
+    
+    table.cell(infoTable, 0, 2, "MA10", text_color=color.white, bgcolor=color.orange)
+    table.cell(infoTable, 1, 2, str.tostring(ma10, "#.##"), text_color=color.white, bgcolor=color.orange)
+    
+    table.cell(infoTable, 0, 3, "MA20", text_color=color.white, bgcolor=color.blue)
+    table.cell(infoTable, 1, 3, str.tostring(ma20, "#.##"), text_color=color.white, bgcolor=color.blue)
+    
+    table.cell(infoTable, 0, 4, "MA60", text_color=color.white, bgcolor=color.purple)
+    table.cell(infoTable, 1, 4, str.tostring(ma60, "#.##"), text_color=color.white, bgcolor=color.purple)
+    
+    // 排列状态
+    alignment_text = bullish_alignment ? "多头排列 📈" : bearish_alignment ? "空头排列 📉" : "无明确排列"
+    alignment_color = bullish_alignment ? color.green : bearish_alignment ? color.red : color.gray
+    table.cell(infoTable, 0, 5, "排列", text_color=color.white, bgcolor=color.gray)
+    table.cell(infoTable, 1, 5, alignment_text, text_color=color.white, bgcolor=alignment_color)
+    
+    // 当前信号
+    current_signal = buy_signal ? "买入 🚀" : sell_signal ? "卖出 ⚠️" : "观望 ⏸️"
+    signal_color = buy_signal ? color.green : sell_signal ? color.red : color.gray
+    table.cell(infoTable, 0, 6, "信号", text_color=color.white, bgcolor=color.gray)
+    table.cell(infoTable, 1, 6, current_signal, text_color=color.white, bgcolor=signal_color)
+
+// ==================== 警报条件 ====================
+// 只保留重要的买卖信号警报
+alertcondition(buy_signal, title="买入信号", message="🚀 出现强烈买入信号！金叉+多头排列")
+alertcondition(sell_signal, title="卖出信号", message="⚠️ 出现强烈卖出信号！死叉+空头排列")
+alertcondition(bullish_alignment and not bullish_alignment[1], title="多头排列形成", message="📈 均线系统形成多头排列")
+alertcondition(bearish_alignment and not bearish_alignment[1], title="空头排列形成", message="📉 均线系统形成空头排列")
