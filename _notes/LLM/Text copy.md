@@ -1,14 +1,11 @@
 ---
 layout: note_with_toc
-title: 3. 
-description: Gated Recurrent Unit - advanced RNN architecture with reset and update gates
-category: Deep Learning
-subcategory: Advanced RNN
-tags: [RNN, GRU, Gated Networks, Deep Learning, Neural Networks]
-permalink: /notes/gated-recurrent-unit/
-redirect_from:
-  - /notes/门控循环单元（）/
-  - /notes/sequence-modeling-basics/
+title: 2. 文本数据处理
+description: Text data processing and tokenization for LLMs
+category: LLM
+subcategory: Text Processing
+tags: [LLM, Tokenization, Word Embedding, Text Processing]
+permalink: /notes/llm-text-processing/
 ---
 
 # 2. 文本数据处理

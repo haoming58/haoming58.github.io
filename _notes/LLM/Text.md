@@ -1,13 +1,11 @@
 ---
 layout: note_with_toc
 title: 3. 编码注意力机制
-description: Gated Recurrent Unit - advanced RNN architecture with reset and update gates
-category: Deep Learning
-subcategory: Advanced RNN
-tags: [RNN, GRU, Gated Networks, Deep Learning, Neural Networks]
-permalink: /notes/gated-recurrent-unit/
-redirect_from:
-  - /
+description: Understanding attention mechanisms in transformers and self-attention
+category: LLM
+subcategory: Attention
+tags: [LLM, Attention, Self-Attention, Transformer, Deep Learning]
+permalink: /notes/attention-mechanism/
 ---
 
 # 3 编码注意力机制
