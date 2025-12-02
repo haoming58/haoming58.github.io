@@ -1,14 +1,13 @@
 ---
 layout: note_with_toc
 title: 4. 双向循环神经网络
-description: Gated Recurrent Unit - advanced RNN architecture with reset and update gates
+description: Bidirectional Recurrent Neural Networks - processing sequences in both forward and backward directions using dynamic programming
 category: Deep Learning
 subcategory: Advanced RNN
-tags: [RNN, GRU, Gated Networks, Deep Learning, Neural Networks]
-permalink: /notes/gated-recurrent-unit/
+tags: [RNN, BiRNN, BiLSTM, Bidirectional Networks, Deep Learning]
+permalink: /notes/bidirectional-rnn/
 redirect_from:
-  - /notes/长短期记忆网络（LSTM）/
-  - /notes/sequence-modeling-basics/
+  - /notes/双向循环神经网络/
 ---
 
 # 4. 双向循环神经网络

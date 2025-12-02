@@ -1,14 +1,13 @@
 ---
 layout: note_with_toc
 title: 2. 长短期记忆网络（LSTM）
-description: Gated Recurrent Unit - advanced RNN architecture with reset and update gates
+description: Long Short-Term Memory (LSTM) - advanced RNN with input, forget, and output gates for capturing long-range dependencies
 category: Deep Learning
 subcategory: Advanced RNN
-tags: [RNN, GRU, Gated Networks, Deep Learning, Neural Networks]
-permalink: /notes/gated-recurrent-unit/
+tags: [RNN, LSTM, Gated Networks, Deep Learning, Neural Networks]
+permalink: /notes/long-short-term-memory/
 redirect_from:
   - /notes/长短期记忆网络（LSTM）/
-  - /notes/sequence-modeling-basics/
 ---
 
 # 2. 长短期记忆网络（LSTM）
@@ -22,7 +21,7 @@ redirect_from:
 
 ## 2.2 设计
 
-![alt text](../../../assets/img/notes/new_rnn/长短期记忆模型中的输入门、遗忘门和输出门.png)
+![长短期记忆模型中的输入门、遗忘门和输出门]({{ '/assets/img/notes/new_rnn/长短期记忆模型中的输入门、遗忘门和输出门.png' | relative_url }})
 
 ### 2.2.1 门
 
@@ -75,7 +74,7 @@ $$H_t = O_t \odot \tanh(C_t)$$
 如果 $O_t$ 接近 $1$，有效地将所有记忆信息传递给预测部分；接近 $0$，则隐状态几乎不包含记忆信息，只保留记忆元内部的信息。
 
 
-![alt text](../../../assets/img/notes/new_rnn/在长短期记忆模型中计算隐状态.png)
+![在长短期记忆模型中计算隐状态]({{ '/assets/img/notes/new_rnn/在长短期记忆模型中计算隐状态.png' | relative_url }})
 
 
 ### 2.2.5 总结
@@ -220,7 +219,7 @@ d2l.train_ch8(model, train_iter, vocab, lr, num_epochs, device)
 ```  
 
 
-![alt text](../../../assets/img/notes/new_rnn/LSTM.png) 
+![LSTM训练结果]({{ '/assets/img/notes/new_rnn/LSTM.png' | relative_url }}) 
 
 
 ```python
@@ -230,14 +229,14 @@ model = d2l.RNNModel(lstm_layer, len(vocab))
 model = model.to(device)
 d2l.train_ch8(model, train_iter, vocab, lr, num_epochs, device)
 ```  
-![alt text](../../../assets/img/notes/new_rnn/LSTM1.png)
+![LSTM简洁实现]({{ '/assets/img/notes/new_rnn/LSTM1.png' | relative_url }})
 
 
 ## 2.4 问题
 
 ### 2.4.1 调整和分析超参数对运行时间、困惑度和输出顺序的影响。
 
-![ ](../../../assets/img/notes/new_rnn/超参数.png)
+![超参数影响]({{ '/assets/img/notes/new_rnn/超参数.png' | relative_url }})
 
 隐藏单元数	num_hiddens	模型容量	决定了模型能“记住”多少信息。
 
@@ -300,7 +299,7 @@ def load_data_time_machine(batch_size, num_steps,  #@save
 
 ### 2.4.4 在给定隐藏层维度的情况下，比较门控循环单元、长短期记忆网络和常规循环神经网络的计算成本。要特别注意训练和推断成本。
 
-![alt text](<../../../assets/img/notes/new_rnn/rnn vs lstm.png>)
+![RNN vs LSTM对比]({{ '/assets/img/notes/new_rnn/rnn vs lstm.png' | relative_url }})
 
 
 ### 2.4.5 既然候选记忆元通过使用函数来确保值范围在之间，那么为什么隐状态需要再次使用函数来确保输出值范围在之间呢？ ？。

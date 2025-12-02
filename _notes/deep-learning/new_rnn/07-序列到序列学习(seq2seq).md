@@ -1,14 +1,13 @@
 ---
 layout: note_with_toc
 title: 7. 序列到序列学习（seq2seq）
-description: Gated Recurrent Unit - advanced RNN architecture with reset and update gates
+description: Sequence to Sequence Learning - RNN-based encoder-decoder model for machine translation and sequence generation
 category: Deep Learning
 subcategory: Advanced RNN
-tags: [RNN, GRU, Gated Networks, Deep Learning, Neural Networks]
-permalink: /notes/gated-recurrent-unit/
+tags: [Seq2Seq, Machine Translation, Encoder-Decoder, Deep Learning, BLEU]
+permalink: /notes/sequence-to-sequence-learning/
 redirect_from:
-  - /notes/长短期记忆网络（LSTM）/
-  - /notes/sequence-modeling-basics/
+  - /notes/序列到序列学习/
 ---
 
 # 7. 序列到序列学习
