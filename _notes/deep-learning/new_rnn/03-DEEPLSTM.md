@@ -8,8 +8,6 @@ tags: [RNN, Deep RNN, Multi-layer RNN, Deep Learning, Neural Networks]
 permalink: /notes/deep-recurrent-neural-networks/
 redirect_from:
   - /notes/深度循环神经网络/
-  - /notes/长短期记忆网络（LSTM）/
-  - /notes/sequence-modeling-basics/
 ---
 
 # 3. 深度循环神经网络

@@ -8,7 +8,6 @@ tags: [RNN, GRU, Gated Networks, Deep Learning, Neural Networks]
 permalink: /notes/gated-recurrent-unit/
 redirect_from:
   - /notes/门控循环单元（GRU）/
-  - /notes/sequence-modeling-basics/
 ---
 
 # 1. 门控循环单元（GRU）
