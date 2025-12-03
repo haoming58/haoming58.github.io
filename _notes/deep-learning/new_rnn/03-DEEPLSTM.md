@@ -1,14 +1,13 @@
 ---
 layout: note_with_toc
 title: 3. 深度循环神经网络
-description: Gated Recurrent Unit - advanced RNN architecture with reset and update gates
+description: Deep Recurrent Neural Networks - stacking multiple RNN layers for better representation learning
 category: Deep Learning
 subcategory: Advanced RNN
-tags: [RNN, GRU, Gated Networks, Deep Learning, Neural Networks]
-permalink: /notes/gated-recurrent-unit/
+tags: [RNN, Deep RNN, Multi-layer RNN, Deep Learning, Neural Networks]
+permalink: /notes/deep-recurrent-neural-networks/
 redirect_from:
-  - /notes/长短期记忆网络（LSTM）/
-  - /notes/sequence-modeling-basics/
+  - /notes/深度循环神经网络/
 ---
 
 # 3. 深度循环神经网络
