@@ -60,7 +60,7 @@ def __init__(self, ...):
     self.dense = nn.Linear(...)
 ```
 
-
+### 4.2.1 定义注意力解码器
 
 ```python
 def __init__(self, vocab_size, embed_size, num_hiddens, num_layers, dropout=0, **kwargs):
@@ -198,4 +198,143 @@ def forward(self, X, state):
     return outputs.permute(1, 0, 2), [enc_outputs, hidden_state, enc_valid_lens]
 
 ```
+
+### 4.2.2 训练
+
+简单样本测试
+
+```python
+
+encoder = d2l.Seq2SeqEncoder(vocab_size=10, embed_size=8, num_hiddens=16,
+                             num_layers=2)
+encoder.eval()
+decoder = Seq2SeqAttentionDecoder(vocab_size=10, embed_size=8, num_hiddens=16,
+                                  num_layers=2)
+decoder.eval()
+X = torch.zeros((4, 7), dtype=torch.long)  # (batch_size,num_steps)
+state = decoder.init_state(encoder(X), None)
+output, state = decoder(X, state)
+output.shape, len(state), state[0].shape, len(state[1]), state[1][0].shape
+```
+
+训练
+
+```python
+
+# 基本的超参数
+
+embed_size, num_hiddens, num_layers, dropout = 32, 32, 2, 0.1
+batch_size, num_steps = 64, 10
+lr, num_epochs, device = 0.005, 250, d2l.try_gpu()
+
+# 数据加载 。来源于法国和中国的字典
+
+train_iter, src_vocab, tgt_vocab = d2l.load_data_nmt(batch_size, num_steps)
+encoder = d2l.Seq2SeqEncoder(
+    len(src_vocab), embed_size, num_hiddens, num_layers, dropout)
+decoder = Seq2SeqAttentionDecoder(
+    len(tgt_vocab), embed_size, num_hiddens, num_layers, dropout)
+net = d2l.EncoderDecoder(encoder, decoder)
+d2l.train_seq2seq(net, train_iter, lr, num_epochs, tgt_vocab, device)
+```
+![alt text](image.png)
+
+测试
+
+```python
+engs = ['go .', "i lost .", 'he\'s calm .', 'i\'m home .']
+fras = ['va !', 'j\'ai perdu .', 'il est calme .', 'je suis chez moi .']
+for eng, fra in zip(engs, fras):
+    translation, dec_attention_weight_seq = d2l.predict_seq2seq(
+        net, eng, src_vocab, tgt_vocab, num_steps, device, True)
+    print(f'{eng} => {translation}, ',
+          f'bleu {d2l.bleu(translation, fra, k=2):.3f}')
+
+attention_weights = torch.cat([step[0][0][0] for step in dec_attention_weight_seq], 0).reshape((
+    1, 1, -1, num_steps))
+
+```
+![alt text](image-2.png)
+
+```python
+# 加上一个包含序列结束词元
+d2l.show_heatmaps(
+    attention_weights[:, :, :, :len(engs[-1].split()) + 1].cpu(),
+    xlabel='Key positions', ylabel='Query positions')
+```
+![alt text](image-1.png)
+## 4.3 问题
+
+### 4.3.1 使用LSTM
+
+```python
+import torch
+from torch import nn
+from d2l import torch as d2l
+
+class Seq2SeqAttentionDecoderLSTM(d2l.AttentionDecoder):
+    def __init__(self, vocab_size, embed_size, num_hiddens, num_layers,
+                 dropout=0, **kwargs):
+        super(Seq2SeqAttentionDecoderLSTM, self).__init__(**kwargs)
+        
+        # 【改动 1】使用缩放点积注意力 (无参数，计算更快)
+        self.attention = d2l.DotProductAttention(dropout)
+        
+        self.embedding = nn.Embedding(vocab_size, embed_size)
+        
+        # 【改动 2】使用 LSTM 替换 GRU
+        # 输入维度是 embed_size + num_hiddens (因为拼接了上下文向量)
+        self.rnn = nn.LSTM(embed_size + num_hiddens, num_hiddens, num_layers,
+                          dropout=dropout)
+        self.dense = nn.Linear(num_hiddens, vocab_size)
+
+    def init_state(self, enc_outputs, enc_valid_lens, *args):
+        # 假设编码器也换成了 LSTM，这里 outputs 是 (h, c) 的元组
+        # enc_outputs[0] 是所有时间步的输出
+        # enc_outputs[1] 是最终状态 (h, c)
+        outputs, hidden_state = enc_outputs
+        return [outputs, hidden_state, enc_valid_lens]
+
+    def forward(self, X, state):
+        # state[0]: 编码器所有时间步输出 (batch, seq_len, num_hiddens)
+        # state[1]: LSTM 的隐藏状态，是一个元组 ((num_layers, batch, num_hiddens), (c_state))
+        # state[2]: 有效长度
+        enc_outputs, hidden_state, enc_valid_lens = state
+        
+        X = self.embedding(X).permute(1, 0, 2)
+        outputs, self._attention_weights = [], []
+        
+        for x in X:
+            # 【关键改动 3】处理 LSTM 状态
+            # hidden_state 是 (H, C)，作为 Query 我们只需要 H
+            # 取最后一层的 hidden state: hidden_state[0][-1]
+            # 维度调整为 (batch, 1, num_hiddens) 以便与 Keys 匹配
+            query = torch.unsqueeze(hidden_state[0][-1], dim=1)
+            
+            # 使用缩放点积注意力计算上下文
+            context = self.attention(query, enc_outputs, enc_outputs, enc_valid_lens)
+            
+            # 拼接输入和上下文向量
+            x = torch.cat((context, torch.unsqueeze(x, dim=1)), dim=-1)
+            
+            # 此时 x 的形状: (batch, 1, embed_size + num_hiddens)
+            # 转换为 LSTM 需要的 (seq_len=1, batch, input_size)
+            out, hidden_state = self.rnn(x.permute(1, 0, 2), hidden_state)
+            
+            outputs.append(out)
+            self._attention_weights.append(self.attention.attention_weights)
+            
+        outputs = self.dense(torch.cat(outputs, dim=0))
+        return outputs.permute(1, 0, 2), [enc_outputs, hidden_state, enc_valid_lens]
+```
+
+
+
+### 4.3.2 修改实验以将加性注意力打分函数替换为缩放点积注意力，它如何影响训练效率？
+
+虽然将 GRU 换成 LSTM 会轻微增加参数量和计算量（LSTM 有 4 个门，GRU 只有 3 个），但注意力机制的替换通常能抵消这一影响，特别是在序列较长、隐藏层维度较大时，点积注意力的计算优势会非常明显。
+
+A. 计算复杂度的降低 (Computational Complexity)
+
+B. 显存占用的减少 (Memory Efficiency)
 
