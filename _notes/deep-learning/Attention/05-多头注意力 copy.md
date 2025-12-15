@@ -1,0 +1,278 @@
+---
+layout: note_with_toc
+title: 5. 多头注意力
+description: Gated Recurrent Unit - advanced RNN architecture with reset and update gates
+category: Deep Learning
+subcategory: Advanced RNN
+tags: [RNN, GRU, Gated Networks, Deep Learning, Neural Networks]
+permalink: /notes/gated-recurrent-unit/
+redirect_from:
+  - /notes/门控循环单元（GRU）/
+  - /notes/sequence-modeling-basics/
+---
+
+# 5. 多头注意力
+
+在普通的（单头）注意力机制中，模型在同一时间只能关注一种类型的特征。这就像你读一本书，如果你只关注“语法错误”，你可能就会忽略“故事情节”。
+
+因此， 我们不仅仅用一组参数来计算注意力，而是用 多组独立 的参数（即多个“头”）来并行计算。
+
+## 5.1 机制
+
+- 线性投影
+
+输入是查询（Query）、键（Key）和值（Value）。
+
+可学习的全连接层（线性变换） 将它们映射到不同的子空间。
+
+- 独立地计算每一个头
+
+$$h_i = f(W_i^{(q)}\mathbf{q}, W_i^{(k)}\mathbf{k}, W_i^{(v)}\mathbf{v})$$
+
+$i$：代表第 $i$ 个头。
+
+$W_i^{(q)}, W_i^{(k)}, W_i^{(v)}$：这是第 $i$ 个头独有的权重矩阵（参数）。它们负责把原始输入投影到该头特定的子空间。
+
+$f$：代表注意力函数（例如缩放点积注意力）。它接收投影后的 $q, k, v$ 并计算结果。
+
+$h_i$：这是第 $i$ 个头的输出结果。
+
+- 进行拼接
+
+多头的融合：
+
+$$\mathbf{o} = W_o \begin{bmatrix} h_1 \\ \vdots \\ h_h \end{bmatrix}$$
+
+在特征维度上进行拼接，$W_o$：这是输出投影矩阵，$\mathbf{o}$：这是多头注意力机制最终的输出。
+
+
+- 最后进行线性变换
+
+## 5.2 代码实现
+
+为了实现避免计算代价和参数代价的大幅增长， 我们设定$p_q = p_k = p_v = p_o / h$ 
+
+这里需要稍微留意的是
+
+```python
+#@save
+class MultiHeadAttention(nn.Module):
+    """多头注意力"""
+    def __init__(self, key_size, query_size, value_size, num_hiddens,
+                 num_heads, dropout, bias=False, **kwargs):
+        super(MultiHeadAttention, self).__init__(**kwargs)
+        self.num_heads = num_heads
+        self.attention = d2l.DotProductAttention(dropout)
+        self.W_q = nn.Linear(query_size, num_hiddens, bias=bias)
+        self.W_k = nn.Linear(key_size, num_hiddens, bias=bias)
+        self.W_v = nn.Linear(value_size, num_hiddens, bias=bias)
+        self.W_o = nn.Linear(num_hiddens, num_hiddens, bias=bias)
+
+    def forward(self, queries, keys, values, valid_lens):
+        # queries，keys，values的形状:
+        # (batch_size，查询或者“键－值”对的个数，num_hiddens)
+        # valid_lens　的形状:
+        # (batch_size，)或(batch_size，查询的个数)
+        # 经过变换后，输出的queries，keys，values　的形状:
+        # (batch_size*num_heads，查询或者“键－值”对的个数，
+        # num_hiddens/num_heads)
+        queries = transpose_qkv(self.W_q(queries), self.num_heads)
+        keys = transpose_qkv(self.W_k(keys), self.num_heads)
+        values = transpose_qkv(self.W_v(values), self.num_heads)
+
+        if valid_lens is not None:
+            # 在轴0，将第一项（标量或者矢量）复制num_heads次，
+            # 然后如此复制第二项，然后诸如此类。
+            valid_lens = torch.repeat_interleave(
+                valid_lens, repeats=self.num_heads, dim=0)
+
+        # output的形状:(batch_size*num_heads，查询的个数，
+        # num_hiddens/num_heads)
+        output = self.attention(queries, keys, values, valid_lens)
+
+        # output_concat的形状:(batch_size，查询的个数，num_hiddens)
+        output_concat = transpose_output(output, self.num_heads)
+        return self.W_o(output_concat)
+```
+- 案例解释：
+
+虽然在逻辑上来说是多头，但是，并不是多个小的线性层，创建了一个巨大的线性层。
+先算完大的，在进行切分到每一个头。
+
+基础分解为特征向量：num_hiddens， 这里是因为，有100个神经元，就会有长度为100的特征向量出现。
+
+切分与并行化： transpose_qkv ，将 num_hiddens 分割为num_heads
+
+(Batch, Seq, 100) -->  (Batch * 5, Seq, 20)
+
+GPU 不知道什么是“多头”，它只知道并行处理 Batch。通过把头乘到 Batch 上，我们就能一次性并行计算所有头，而不需要写 for 循环。
+
+
+输入/输出形状: (Batch * Heads, Seq, Hidden/Heads)
+
+output = self.attention(queries, keys, values, valid_lens)
+
+此时 output 里装着 5 个专家的独立分析结果，但它们还是散落在 Batch 维度里的。
+
+transpose_qkv 再次变回到 (Batch, Seq, 100)
+
+然后进行最终的融合。
+
+| 步骤 | 代码位置              | 形状 (Batch, Seq, Feature) | 含义 |
+|----|---------------------|---------------------------|----|
+| 1 | 输入 | `queries` | `(2, 10, 100)` | 原始特征 |
+| 2 | 投影 | `W_q(queries)` | `(2, 10, 100)` | 线性变换 |
+| 3 | 拆头 | `transpose_qkv` | `(10, 10, 20)` | 拆分特征，堆叠 Batch（并行准备） |
+| 4 | 计算 | `attention(...)` | `(10, 10, 20)` | 5 个头独立计算注意力 |
+| 5 | 还原 | `transpose_output` | `(2, 10, 100)` | 还原 Batch，拼接特征（结果收集） |
+| 6 | 融合 | `W_o(...)` | `(2, 10, 100)` | 信息混合，最终输出 |
+   
+核心重点的理解是，将其原先很长的向量，切分为不同的头。
+
+
+
+同样在这里进行案例解释：
+
+设定场景
+Batch Size (批量) = 2
+Seq Len (序列长) = 3 (比如 "I love AI")
+Num Hiddens (总特征) = 4
+Num Heads (头数) = 2
+Head Dim (每个头的特征) = $4 / 2 = 2
+$输入数据 X 的形状一开始是：(2, 3, 4)
+
+
+```python
+# 这个模块就是针对，切分进行下详细的解释
+#@save 
+def transpose_qkv(X, num_heads):
+    # 输入 X: (2, 3, 4) -> (Batch, Seq, Hiddens)
+    
+    # ---------------------------
+    # 第一步：物理切分 (Reshape)
+    # ---------------------------
+    # 我们要把最后的 4 拆成 2(头数) * 2(每头特征)
+    X = X.reshape(X.shape[0], X.shape[1], num_heads, -1)
+    # 形状变身: (2, 3, 2, 2) 
+    # 含义: (Batch, Seq, Heads, Head_Dim)
+    # 直觉: 每个词的4个特征，现在被看作是 [头1的2个, 头2的2个]
+    
+    # ---------------------------
+    # 第二步：维度大挪移 (Permute) —— 关键！
+    # ---------------------------
+    # 我们要把 Heads(索引2) 挪到 Seq(索引1) 前面
+    X = X.permute(0, 2, 1, 3)
+    # 形状变身: (2, 2, 3, 2)
+    # 含义: (Batch, Heads, Seq, Head_Dim)
+    # 直觉: 原来是“按句子排词”，现在变成了“按头排句子”。
+    # 这一步把“属于同一个头”的所有词的数据聚在了一起。
+    
+    # ---------------------------
+    # 第三步：降维堆叠 (Reshape)
+    # ---------------------------
+    # 把 Batch(2) 和 Heads(2) 捏在一起，变成 4
+    return X.reshape(-1, X.shape[2], X.shape[3])
+    # 最终形状: (4, 3, 2)
+    # 含义: (Batch * Heads, Seq, Head_Dim)s
+    
+    # 为了并行。 现在的形状是 (4, 3, 2)。
+    #对于 PyTorch/GPU 来说，它看到的是 “4 个独立的样本”。
+    # 它不知道其实这是“2个样本 x 2个头”    
+
+
+#@save
+def transpose_output(X, num_heads):
+    """逆转transpose_qkv函数的操作"""
+    X = X.reshape(-1, num_heads, X.shape[1], X.shape[2])
+    X = X.permute(0, 2, 1, 3)
+    return X.reshape(X.shape[0], X.shape[1], -1)
+```
+
+为了更好的理解加入一下数据进行演示：
+
+```python
+Batch Size = 2 (两句话：第1句用 10 开头，第2句用 20 开头)
+
+Seq Length = 2 (每句只有两个词)
+
+Num Hiddens = 4 (每个词有4个特征：0, 1, 2, 3)
+
+Num Heads = 2 (分两个头：头1拿前两个数，头2拿后两个数)
+
+X = [
+    # ---- 第一句话 (Batch 0) ----
+    [
+        [10, 11, 12, 13],  # 第1个词 (词A)
+        [14, 15, 16, 17]   # 第2个词 (词B)
+    ],
+    # ---- 第二句话 (Batch 1) ----
+    [
+        [20, 21, 22, 23],  # 第1个词 (词C)
+        [24, 25, 26, 27]   # 第2个词 (词D)
+    ]
+]
+
+X_reshaped = [
+    # Batch 0
+    [
+        [[10, 11], [12, 13]], # 词A被拆开了：[头1], [头2]
+        [[14, 15], [16, 17]]  # 词B被拆开了：[头1], [头2]
+    ],
+    # Batch 1
+    [
+        [[20, 21], [22, 23]], # 词C被拆开了
+        [[24, 25], [26, 27]]  # 词D被拆开了
+    ]
+]
+
+X_permuted = [
+    # Batch 0
+    [
+        # --- Batch 0 的 头 1 ---
+        [[10, 11],   # 词A 的 头1部分
+         [14, 15]],  # 词B 的 头1部分 (注意：12,13不见了，被挪走了)
+
+        # --- Batch 0 的 头 2 ---
+        [[12, 13],   # 词A 的 头2部分
+         [16, 17]]   # 词B 的 头2部分
+    ],
+    # Batch 1
+    [
+        # --- Batch 1 的 头 1 ---
+        [[20, 21],
+         [24, 25]],
+
+        # --- Batch 1 的 头 2 ---
+        [[22, 23],
+         [26, 27]]
+    ]
+]
+
+X_final = [
+    # 任务 1: 第一句话，用头 1 看 (Batch 0, Head 1)
+    [[10, 11], [14, 15]], 
+
+    # 任务 2: 第一句话，用头 2 看 (Batch 0, Head 2)
+    [[12, 13], [16, 17]], 
+
+    # 任务 3: 第二句话，用头 1 看 (Batch 1, Head 1)
+    [[20, 21], [24, 25]], 
+
+    # 任务 4: 第二句话，用头 2 看 (Batch 1, Head 2)
+    [[22, 23], [26, 27]]  
+]
+```
+最后，恢复了2个batch，但是 其中的顺序已经变了。
+
+我在针对样本 batch size 和 number 产生了疑惑：
+
+为什么电脑可以同时算 32 个样本： CPU 思维（循环/串行），
+
+样本的思维是一个算好，在算下一个。重复32次
+
+方式二：GPU 思维（矩阵/并行）：
+
+将32个样本叠在一起：
+
+
+
