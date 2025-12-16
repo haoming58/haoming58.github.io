@@ -5,7 +5,7 @@ description: Gated Recurrent Unit - advanced RNN architecture with reset and upd
 category: Deep Learning
 subcategory: Advanced RNN
 tags: [RNN, GRU, Gated Networks, Deep Learning, Neural Networks]
-permalink: /notes/gated-recurrent-unit/
+permalink: /notes/attention/multi-head-attention/
 redirect_from:
   - /notes/门控循环单元（GRU）/
   - /notes/sequence-modeling-basics/
@@ -274,5 +274,24 @@ X_final = [
 
 将32个样本叠在一起：
 
+GPU 是多个简单的CPU，它先将其分配好，然后显卡喊一声：“开始算！”，1 个单位时间理论上。
+
+另外的疑惑是单变量到多变量的理解。
+
+```python
+# 多头注意力输出的形状是（batch_size，num_queries，num_hiddens）。
+
+num_hiddens, num_heads = 100, 5
+# Transformer 的经典设定就是：Q、K、V、输出维度全部相同
+attention = MultiHeadAttention(num_hiddens, num_hiddens, num_hiddens,
+                               num_hiddens, num_heads, 0.5)
+attention.eval()
+
+batch_size, num_queries = 2, 4
+num_kvpairs, valid_lens =  6, torch.tensor([3, 2])
+X = torch.ones((batch_size, num_queries, num_hiddens))
+Y = torch.ones((batch_size, num_kvpairs, num_hiddens))
+attention(X, Y, Y, valid_lens).shape
+```
 
 

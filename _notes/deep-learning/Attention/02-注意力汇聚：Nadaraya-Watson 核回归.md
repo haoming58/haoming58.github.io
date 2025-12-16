@@ -5,7 +5,7 @@ description: Gated Recurrent Unit - advanced RNN architecture with reset and upd
 category: Deep Learning
 subcategory: Advanced RNN
 tags: [RNN, GRU, Gated Networks, Deep Learning, Neural Networks]
-permalink: /notes/gated-recurrent-unit/
+permalink: /notes/attention/nadaraya-watson/
 redirect_from:
   - /notes/门控循环单元（GRU）/
   - /notes/sequence-modeling-basics/
