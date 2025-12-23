@@ -1,17 +1,14 @@
 ---
 layout: note_with_toc
-title: 4. ahdanau 注意力
-description: Gated Recurrent Unit - advanced RNN architecture with reset and update gates
+title: 4. Bahdanau 注意力
+description: Bahdanau attention mechanism - attention-based encoder-decoder for sequence-to-sequence learning
 category: Deep Learning
-subcategory: Advanced RNN
-tags: [RNN, GRU, Gated Networks, Deep Learning, Neural Networks]
+subcategory: Attention
+tags: [Attention, Bahdanau Attention, Seq2Seq, Encoder-Decoder, Deep Learning]
 permalink: /notes/attention/bahdanau-attention/
-redirect_from:
-  - /notes/门控循环单元（GRU）/
-  - /notes/sequence-modeling-basics/
 ---
 
-# 4. ahdanau 注意力
+# 4. Bahdanau 注意力
 
 ## 4.1 基本机制
 
@@ -237,7 +234,7 @@ decoder = Seq2SeqAttentionDecoder(
 net = d2l.EncoderDecoder(encoder, decoder)
 d2l.train_seq2seq(net, train_iter, lr, num_epochs, tgt_vocab, device)
 ```
-![alt text](image.png)
+![alt text](../../../assets/img/notes/Attention/image.png)
 
 测试
 
@@ -254,7 +251,7 @@ attention_weights = torch.cat([step[0][0][0] for step in dec_attention_weight_se
     1, 1, -1, num_steps))
 
 ```
-![alt text](image-2.png)
+![alt text](../../../assets/img/notes/Attention/image-2.png)
 
 ```python
 # 加上一个包含序列结束词元
@@ -262,7 +259,7 @@ d2l.show_heatmaps(
     attention_weights[:, :, :, :len(engs[-1].split()) + 1].cpu(),
     xlabel='Key positions', ylabel='Query positions')
 ```
-![alt text](image-1.png)
+![alt text](../../../assets/img/notes/Attention/image-1.png)
 ## 4.3 问题
 
 ### 4.3.1 使用LSTM

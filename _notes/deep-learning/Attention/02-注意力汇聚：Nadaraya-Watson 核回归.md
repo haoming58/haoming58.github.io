@@ -1,14 +1,11 @@
 ---
 layout: note_with_toc
 title: 2. 注意力汇聚：Nadaraya-Watson 核回归
-description: Gated Recurrent Unit - advanced RNN architecture with reset and update gates
+description: Nadaraya-Watson kernel regression - understanding attention pooling through weighted averaging
 category: Deep Learning
-subcategory: Advanced RNN
-tags: [RNN, GRU, Gated Networks, Deep Learning, Neural Networks]
+subcategory: Attention
+tags: [Attention, Kernel Regression, Nadaraya-Watson, Deep Learning]
 permalink: /notes/attention/nadaraya-watson/
-redirect_from:
-  - /notes/门控循环单元（GRU）/
-  - /notes/sequence-modeling-basics/
 ---
 
 # 2. 注意力汇聚：Nadaraya-Watson 核回归
