@@ -128,17 +128,13 @@ train_iter, vocab = d2l.load_data_time_machine(batch_size, num_steps)
 同样参数的基本初始化
 
 ```python
-
 def get_lstm_params(vocab_size, num_hiddens, device):
     num_inputs = num_outputs = vocab_size
-    '''
-    还是一样的输入和输出维度，one hot 向量
-    '''
+    # 还是一样的输入和输出维度，one hot 向量
     def normal(shape):
         return torch.randn(size=shape, device=device)*0.01
 
-    类似GRU的，每个门都有三组参数
-
+    # 类似GRU的，每个门都有三组参数
     def three():
         return (normal((num_inputs, num_hiddens)),
                 normal((num_hiddens, num_hiddens)),

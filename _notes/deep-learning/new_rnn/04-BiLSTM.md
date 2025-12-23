@@ -268,13 +268,12 @@ train_iter, vocab = d2l.load_data_time_machine(batch_size, num_steps)
 vocab_size, num_hiddens, num_layers = len(vocab), 256, 2
 num_inputs = vocab_size
 lstm_layer = nn.LSTM(num_inputs, num_hiddens, num_layers, bidirectional=True)
-关键点在这个，设置双向循环神经网络 = True
+# 关键点在这个，设置双向循环神经网络 = True
 model = d2l.RNNModel(lstm_layer, len(vocab))
 model = model.to(device)
 # 训练模型
 num_epochs, lr = 500, 1
 d2l.train_ch8(model, train_iter, vocab, lr, num_epochs, device)
-
 ```
 
 ![alt text](../../../assets/img/notes/new_rnn/biLSTM.png)
@@ -296,7 +295,6 @@ d2l.train_ch8(model, train_iter, vocab, lr, num_epochs, device)
 
 自己设计，有点过于麻烦，因此，我直接使用之前创建好的模块去设计
 
-
 ```python
 import torch
 from torch import nn
@@ -308,7 +306,7 @@ train_iter, vocab = d2l.load_data_time_machine(batch_size, num_steps)
 # 通过设置“bidirective=True”来定义双向LSTM模型
 vocab_size, num_hiddens, num_layers = len(vocab), 256, 2
 
-重点修改这里的神经网络层数
+# 重点修改这里的神经网络层数
 
 num_inputs = vocab_size
 lstm_layer = nn.LSTM(num_inputs, num_hiddens, num_layers, bidirectional=True)
