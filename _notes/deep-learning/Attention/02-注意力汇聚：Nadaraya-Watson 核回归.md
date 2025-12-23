@@ -178,6 +178,9 @@ class AdditiveAttentionReg(nn.Module):
         # values shape: (n_train, 1) -> (1, n_train, 1)
         # weights shape: (batch_size, n_train) -> (batch_size, n_train, 1)
         # 结果形状: (batch_size, 1)
-        return torch.bmm(self.attention_weights.unsqueeze(1), values.unsqueeze(0).expand(len(queries), -1, -1)).squeeze(1)
+        return torch.bmm(
+            self.attention_weights.unsqueeze(1), 
+            values.unsqueeze(0).expand(len(queries), -1, -1)
+        ).squeeze(1)
 ```
 

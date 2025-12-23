@@ -63,7 +63,7 @@ model = d2l.RNNModel(lstm_layer, len(vocab))
 model = model.to(device)
 
 num_epochs, lr = 500, 2
-d2l.train_ch8(model, train_iter, vocab, lr*1.0, num_epochs, device)
+d2l.train_ch8(model, train_iter, vocab, lr, num_epochs, device)
 
 ```
 
@@ -263,7 +263,7 @@ model = model.to(device)
 # --- 5. 定义训练超参数并开始训练 ---
 num_epochs, lr = 500, 2
 print(f"开始在 {device} 上训练 GRU 模型...")
-d2l.train_ch8(model, train_iter, vocab, lr*1.0, num_epochs, device)
+d2l.train_ch8(model, train_iter, vocab, lr, num_epochs, device)
 
 ```
 

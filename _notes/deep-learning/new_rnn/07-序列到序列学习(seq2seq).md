@@ -868,8 +868,7 @@ class Seq2SeqEncoder(d2l.Encoder):
         super(Seq2SeqEncoder, self).__init__(**kwargs)
         # 嵌入层
         self.embedding = nn.Embedding(vocab_size, embed_size)
-        # self.rnn = nn.GRU(embed_size, num_hiddens, num_layers,
-                          dropout=dropout)
+        # self.rnn = nn.GRU(embed_size, num_hiddens, num_layers, dropout=dropout)
         # 【修改 1】：使用 LSTM
         self.rnn = nn.LSTM(embed_size, num_hiddens, num_layers,
                           dropout=dropout)
