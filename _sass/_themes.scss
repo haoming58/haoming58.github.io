@@ -85,34 +85,45 @@ html[data-theme="dark"] {
   --global-theme-color: #{$cyan-color};
   --global-hover-color: #{$cyan-color};
   --global-hover-text-color: #{$white-color};
-  --global-footer-bg-color: #{$grey-color-light};
-  --global-footer-text-color: #{$grey-color-dark};
-  --global-footer-link-color: #{$black-color};
+  --global-footer-bg-color: #{$grey-color-dark};
+  --global-footer-text-color: #{$grey-color-light};
+  --global-footer-link-color: #{$white-color};
   --global-distill-app-color: #{$grey-color-light};
   --global-divider-color: #424246;
   --global-card-bg-color: #{$grey-900};
-  --global-back-to-top-bg-color: rgba(
-    #{red($white-color)},
-    #{green($white-color)},
-    #{blue($white-color)},
-    0.5
-  );
-  --global-back-to-top-text-color: #{$black-color};
-  --global-newsletter-bg-color: #{$grey-color-light};
-  --global-newsletter-text-color: #{$grey-color-dark};
+  --global-back-to-top-bg-color: rgba(255, 255, 255, 0.3);
+  --global-back-to-top-text-color: #{$white-color};
+  --global-newsletter-bg-color: #{$grey-900};
+  --global-newsletter-text-color: #{$grey-color-light};
 
   --global-tip-block: #42b983;
-  --global-tip-block-bg: #e2f5ec;
-  --global-tip-block-text: #215d42;
-  --global-tip-block-title: #359469;
+  --global-tip-block-bg: #1a3a2a;
+  --global-tip-block-text: #a8e6cf;
+  --global-tip-block-title: #42b983;
   --global-warning-block: #e7c000;
-  --global-warning-block-bg: #fff8d8;
-  --global-warning-block-text: #6b5900;
-  --global-warning-block-title: #b29400;
-  --global-danger-block: #c00;
-  --global-danger-block-bg: #ffe0e0;
-  --global-danger-block-text: #600;
-  --global-danger-block-title: #c00;
+  --global-warning-block-bg: #3a3520;
+  --global-warning-block-text: #ffe066;
+  --global-warning-block-title: #e7c000;
+  --global-danger-block: #ff6b6b;
+  --global-danger-block-bg: #3a2020;
+  --global-danger-block-text: #ffaaaa;
+  --global-danger-block-title: #ff6b6b;
+
+  // Force dark background on all elements
+  body,
+  main,
+  .page-content,
+  .container,
+  .row,
+  article,
+  section,
+  .card,
+  .modal-content,
+  .dropdown-menu,
+  .popover,
+  .tooltip-inner {
+    background-color: var(--global-bg-color) !important;
+  }
 
   .only-light {
     display: none;

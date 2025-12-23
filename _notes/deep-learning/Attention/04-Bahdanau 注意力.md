@@ -260,6 +260,7 @@ d2l.show_heatmaps(
     xlabel='Key positions', ylabel='Query positions')
 ```
 ![alt text](../../../assets/img/notes/Attention/image-1.png)
+
 ## 4.3 问题
 
 ### 4.3.1 使用LSTM
@@ -324,8 +325,6 @@ class Seq2SeqAttentionDecoderLSTM(d2l.AttentionDecoder):
         outputs = self.dense(torch.cat(outputs, dim=0))
         return outputs.permute(1, 0, 2), [enc_outputs, hidden_state, enc_valid_lens]
 ```
-
-
 
 ### 4.3.2 修改实验以将加性注意力打分函数替换为缩放点积注意力，它如何影响训练效率？
 

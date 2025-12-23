@@ -12,8 +12,6 @@ permalink: /notes/attention/nadaraya-watson/
 
 Nadaraya-Watson 核回归（Nadaraya-Watson Kernel Regression）虽然是一个 1964 年提出的古老统计学模型，但它在数学结构上完美对应了现代深度学习中的 Attention(Q, K, V) 机制。
 
-
-
 ## 2.1 机制
 
 基本场景：
@@ -51,11 +49,10 @@ $$f(q) = \sum_{i=1}^{n} \alpha(q, k_i) v_i$$
 
 
 ## 2.2 基本汇聚
-有一些基本的核心公式
+
+有一些基本的核心公式：
 
 ### 2.2.1 平均汇聚
-
-
 
 ### 2.2.2 非参数注意力汇聚
 
@@ -183,11 +180,4 @@ class AdditiveAttentionReg(nn.Module):
         # 结果形状: (batch_size, 1)
         return torch.bmm(self.attention_weights.unsqueeze(1), values.unsqueeze(0).expand(len(queries), -1, -1)).squeeze(1)
 ```
-
-
-
-
-
-
-
 
