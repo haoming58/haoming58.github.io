@@ -34,7 +34,6 @@ RNN的挑战：
 
 ![alt text]({{ '/assets/img/notes/new_rnn/在门控循环单元模型中计算重置门和更新门.png' | relative_url }})
 
-
 $$R_t = \sigma(X_t W_{xr} + H_{t-1} W_{hr} + b_r)$$
 
 $$Z_t = \sigma(X_t W_{xz} + H_{t-1} W_{hz} + b_z)$$
@@ -52,9 +51,7 @@ $$\odot$$ 是 Hadamard 积（按元素相乘）
 - $$R_t$$ 接近 $$1$$： $$R_t \odot H_{t-1} \approx H_{t-1}$$。模型行为类似于普通的 RNN，保留所有过去的隐状态信息。
 - $$R_t$$ 接近 $$0$$： $$R_t \odot H_{t-1} \approx 0$$。模型忽略了过去的隐状态 $$H_{t-1}$$ 的大部分信息。
 
-
 ![alt text]({{ '/assets/img/notes/new_rnn/在门控循环单元模型中计算候选隐状态.png' | relative_url }})
-
 
 ### 1.2.3 最终隐状态
 
@@ -63,9 +60,7 @@ $$H_t = Z_t \odot H_{t-1} + (1 - Z_t) \odot \tilde{H}_t$$
 - $$Z_t$$ 接近 $$1$$： $$H_t \approx 1 \odot H_{t-1} + 0 \odot \tilde{H}_t$$。新状态 $$H_t$$ 倾向于保留旧状态 $$H_{t-1}$$，并忽略新计算的候选状态 $$\tilde{H}_t$$。这有助于信息长期传递。
 - $$Z_t$$ 接近 $$0$$： $$H_t \approx 0 \odot H_{t-1} + 1 \odot \tilde{H}_t$$。新状态 $$H_t$$ 倾向于采纳候选状态 $$\tilde{H}_t$$，并忽略旧状态 $$H_{t-1}$$。这相当于重置了状态，用于应对逻辑中断。
 
-
 ![alt text]({{ '/assets/img/notes/new_rnn/计算门控循环单元模型中的隐状态.png' | relative_url }})
-
 
 ### 1.2.4 整体思路梳理
 
@@ -74,7 +69,6 @@ $$h_t = h_{t-1} W_{h} + x_t W_{x}$$
 希望下一代的模块，能够克服上述提到的挑战以及长期依赖。
 
 模型能够选择性地忽略某些不重要的信息，引入了重置门
-
 
 $$\tilde{H}_t = \text{tanh}(X_t W_{xh} + \underbrace{(R_t \odot H_{t-1})}_{\text{重置后的旧状态}} W_{hh} + b_h)$$
 
@@ -88,7 +82,6 @@ $$H_t = Z_t \odot H_{t-1} + (1 - Z_t) \odot \tilde{H}_t$$
 - **目标**：保持 $$H_t \approx H_{t-1}$$，即让长期记忆接管。
 - **门控设置**：模型会学习设置 $$Z_t$$ 接近 $$\mathbf{1}$$。
 - **结果**：$$H_t \approx \mathbf{1} \odot H_{t-1} + \mathbf{0} \odot \tilde{H}_t \approx H_{t-1}$$。
-
 
 # 2. 代码实践
 
@@ -253,7 +246,7 @@ def gru(inputs, state, params):
 
 **输出拼接示例：**
 
-```
+```text
 tensor([[ 1.1,  1.2,  1.3 ],   <- 样本1 (t=1)
         [ 2.1,  2.2,  2.3 ]])  <- 样本2 (t=1)
 
@@ -296,7 +289,6 @@ d2l.train_ch8(model, train_iter, vocab, lr, num_epochs, device)
 ```
  ![alt text]({{ '/assets/img/notes/new_rnn/GRU.png' | relative_url }})
 
-
 下面是简洁实现，速度更快：它将整个时间序列的计算下沉到了底层高度优化的 C++/CUDA 代码中执行，而极大减少了 Python 层面的开销和 GPU 内核启动次数
 
 nn.GRU: 它使用了算子融合技术。它会将上述多个操作合并成极少数的几个大型 GPU 内核。
@@ -325,7 +317,6 @@ $$H_t = \tanh(\mathbf{X}_t \mathbf{W}_{xh} + \mathbf{b}_h)$$
 
 就变成了仅仅取决于当前时间步
 
-
 ### 3.2 调整和分析超参数对运行时间、困惑度和输出顺序的影响
 
 **对比实验：**
@@ -338,17 +329,13 @@ $$H_t = \tanh(\mathbf{X}_t \mathbf{W}_{xh} + \mathbf{b}_h)$$
 | 批量大小 | `batch_size` | 32 | 决定"并行度"和梯度稳定性。越大训练越快（GPU利用率高），梯度估计越准确，但可能陷入局部最优。 |
 | 时间步数 | `num_steps` | 35 | 决定"看多远"。即模型一次能往回看多少个词的历史。太短学不到长距离依赖，太长计算开销大且可能梯度衰减。 |
 
-
-
 ![alt text]({{ '/assets/img/notes/new_rnn/COMPARISION_GRU.png' | relative_url }}) 
 
 ### 3.3 比较 nn.RNN 和 nn.GRU 的不同实现对运行时间、困惑度和输出字符串的影响
 
 ![alt text]({{ '/assets/img/notes/new_rnn/RNN.png' | relative_url }})
 
-
 ### 3.4 如果仅实现门控循环单元的一部分，例如只有一个重置门或一个更新门会怎样？
-
 
 ```python
 import torch
@@ -424,8 +411,6 @@ d2l.train_ch8(model, train_iter, vocab, lr, num_epochs, device)
 ```
 
 ![alt text]({{ '/assets/img/notes/new_rnn/no_z.png' | relative_url }})
-
-
 
 ```python
 import torch

@@ -18,13 +18,11 @@ redirect_from:
 
 它的总体设计有三个门，灵感来源于计算机的逻辑门。
 
-
 ## 2.2 设计
 
 ![长短期记忆模型中的输入门、遗忘门和输出门]({{ '/assets/img/notes/new_rnn/长短期记忆模型中的输入门、遗忘门和输出门.png' | relative_url }})
 
 ### 2.2.1 门
-
 
 输入门（Input Gate）：决定何时将新数据读入记忆元。
 
@@ -40,17 +38,13 @@ $$I_t = \sigma(X_t W_{xi} + H_{t-1} W_{hi} + b_i)$$
 
 $$O_t = \sigma(X_t W_{xo} + H_{t-1} W_{ho} + b_o)$$
 
-
 ### 2.2.3 候选记忆门
 
 候选记忆元 $\tilde{C}_t$ 代表了当前时间步可能添加到记忆元的新信息。它使用 $\tanh$ 激活函数，将值约束在 $(-1, 1)$ 范围内：$$\tilde{C}_t = \tanh(X_t W_{xc} + H_{t-1} W_{hc} + b_c)$$
 
-
 ### 2.2.4 记忆元
 
-
 记忆元 $C_t$ 的更新是 LSTM 最核心的部分，它结合了旧记忆和新信息，并由遗忘门和输入门精确控制：$$C_t = F_t \odot C_{t-1} + I_t \odot \tilde{C}_t$$
-
 
 遗忘门 ($F_t$) $\odot$ 旧记忆 ($C_{t-1}$): 决定保留多少过去的记忆元 $C_{t-1}$ 的内容。
 
@@ -62,8 +56,7 @@ $$O_t = \sigma(X_t W_{xo} + H_{t-1} W_{ho} + b_o)$$
 
 这种机制使得信息可以长久地保存在记忆元中（如果 $F_t \approx 1$ 且 $I_t \approx 0$），有效缓解了传统 RNN 中的梯度消失问题，从而捕获长距离依赖关系。
 
-
-### 2.2.4 记忆元
+### 2.2.5 隐状态
 
 最终的隐状态 $H_t$ 是模型的输出之一:
 
@@ -73,11 +66,9 @@ $$H_t = O_t \odot \tanh(C_t)$$
 
 如果 $O_t$ 接近 $1$，有效地将所有记忆信息传递给预测部分；接近 $0$，则隐状态几乎不包含记忆信息，只保留记忆元内部的信息。
 
-
 ![在长短期记忆模型中计算隐状态]({{ '/assets/img/notes/new_rnn/在长短期记忆模型中计算隐状态.png' | relative_url }})
 
-
-### 2.2.5 总结
+### 2.2.6 总结
 
 LSTM 的核心在于其**双轨机制**：一条用于存储**长期信息（记忆元 $C_t$）**，另一条用于处理**短期信息（隐状态 $H_t$）**。在每一个时间步，网络的目标是精确地控制这两种信息。
 
@@ -106,9 +97,6 @@ $$C_t = F_t \odot C_{t-1} + I_t \odot \tilde{C}_t$$
 $$H_t = O_t \odot \tanh(C_t)$$
 
 这个过程在每个时间步周而复始，使得 LSTM 能够高效地决定何时遗忘、何时输入、以及何时输出信息。
-
-
-
 
 ## 2.3 代码实践
 
@@ -156,7 +144,6 @@ def get_lstm_params(vocab_size, num_hiddens, device):
 
 ```
 
-
 ```python
 
 def init_lstm_state(batch_size, num_hiddens, device):
@@ -184,8 +171,6 @@ X (输入): 在循环内，X 是当前时间步的输入，维度为 $(N, D)$
 | $b_*, b_c$ | $(H)$      | 门或候选记忆元的偏置        |
 | $b_q$      | $(Q)$      | 输出层偏置             |
 
-
-
 ```python
 
 def lstm(inputs, state, params):
@@ -205,7 +190,6 @@ def lstm(inputs, state, params):
     return torch.cat(outputs, dim=0), (H, C)
 ```  
 
-
 ```python
 vocab_size, num_hiddens, device = len(vocab), 256, d2l.try_gpu()
 num_epochs, lr = 500, 1
@@ -214,9 +198,7 @@ model = d2l.RNNModelScratch(len(vocab), num_hiddens, device, get_lstm_params,
 d2l.train_ch8(model, train_iter, vocab, lr, num_epochs, device)
 ```  
 
-
 ![LSTM训练结果]({{ '/assets/img/notes/new_rnn/LSTM.png' | relative_url }}) 
-
 
 ```python
 num_inputs = vocab_size
@@ -226,7 +208,6 @@ model = model.to(device)
 d2l.train_ch8(model, train_iter, vocab, lr, num_epochs, device)
 ```  
 ![LSTM简洁实现]({{ '/assets/img/notes/new_rnn/LSTM1.png' | relative_url }})
-
 
 ## 2.4 问题
 
@@ -247,7 +228,6 @@ d2l.train_ch8(model, train_iter, vocab, lr, num_epochs, device)
 批量大小	batch_size	训练稳定性	决定了梯度估计的准确性。
 
 越大训练越快（并行度高）但可能陷入局部最优；越小噪声越大但有时能带来更好的泛化。
-
 
 ### 2.4.2 如何更改模型以生成适当的单词，而不是字符序列？
 
@@ -297,13 +277,11 @@ def load_data_time_machine(batch_size, num_steps,  #@save
 
 ![RNN vs LSTM对比]({{ '/assets/img/notes/new_rnn/rnn vs lstm.png' | relative_url }})
 
-
 ### 2.4.5 既然候选记忆元通过使用函数来确保值范围在之间，那么为什么隐状态需要再次使用函数来确保输出值范围在之间呢？ ？。
 
 答案的核心在于：虽然**候选记忆元 $\tilde{C}_t$** 的值确实被限制在 $[-1, 1]$ 之间，但真正的**记忆元 $C_t$** 的值**并没有**被限制在这个范围内，它可能会累积得非常大。
 
 让我们逐步剖析这个原因：
-
 
 请重新看记忆元的更新公式：
 
@@ -324,7 +302,6 @@ $$C_t = F_t \odot C_{t-1} + I_t \odot \tilde{C}_t$$
 >
 > 看到了吗？**$C_t$ 的值可以远远超出 $[-1, 1]$ 的范围。** 这正是 LSTM 能够记住长距离信息的关键——它像一个计数器一样，可以不受干扰地不断累积信息。
 
-
 既然 $C_t$ 可以变得很大（例如 $50.0$ 或 $-100.0$），如果我们直接把它传给下一层或下一个时间步：
 
 $$H_t = O_t \odot C_t \quad (\text{假设没有第二个 tanh})$$
@@ -340,13 +317,11 @@ $$H_t = O_t \odot \tanh(C_t)$$
 无论 $C_t$ 累积到多大（比如 $50.0$），$\tanh(50.0)$ 都会把它稳稳地限制回 $\approx 1.0$。
 这确保了**隐状态 $H_t$ 始终保持在 $[-1, 1]$ 的稳定范围内**，可以安全地传递给网络的其他部分。
 
-
 * **第一个 $\tanh$ (在 $\tilde{C}_t$ 中)**：是为了规范化**当前步的新输入**，确保每次写入的信息量是受控的。
 * **记忆元 $C_t$**：是一个**无界的累积器**，负责长距离携带信息，它的值可以很大。
 * **第二个 $\tanh$ (在 $H_t$ 中)**：是为了规范化**最终输出**，防止累积过大的记忆值破坏后续计算的稳定性。
 
-
-### 2.4.5 实现一个能够基于时间序列进行预测而不是基于字符序列进行预测的长短期记忆网络模型。
+### 2.4.6 实现一个能够基于时间序列进行预测而不是基于字符序列进行预测的长短期记忆网络模型。
 
 ```python
 
