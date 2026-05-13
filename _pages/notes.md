@@ -311,6 +311,19 @@ document.addEventListener('DOMContentLoaded', function() {
    Uses theme CSS variables so dark/light switching just works.
    ============================================================ */
 
+/* Chinese-friendly font stack for the whole notes index */
+.notes {
+  font-family:
+    -apple-system, BlinkMacSystemFont,
+    "PingFang SC", "Microsoft YaHei", "HarmonyOS Sans SC",
+    "Noto Sans SC", "Source Han Sans CN", "Hiragino Sans GB",
+    "Segoe UI", "Roboto", "Helvetica Neue", Arial,
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
 /* Overview header */
 .notes-overview-header {
   margin-bottom: 2rem;
@@ -396,13 +409,15 @@ document.addEventListener('DOMContentLoaded', function() {
 }
 
 .category-card-count {
-  font-size: 0.8rem;
-  font-weight: 500;
-  color: var(--global-text-color-light);
-  background: var(--global-divider-color);
-  padding: 0.15rem 0.55rem;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--global-theme-color);
+  background: transparent;
+  border: 1px solid var(--global-theme-color);
+  padding: 0.1rem 0.55rem;
   border-radius: 999px;
   white-space: nowrap;
+  line-height: 1.5;
 }
 
 .category-card-subs {
@@ -418,18 +433,20 @@ document.addEventListener('DOMContentLoaded', function() {
   font-size: 0.8rem;
   padding: 0.2rem 0.6rem;
   border-radius: 5px;
-  background: var(--global-divider-color);
-  color: var(--global-text-color-light);
+  background: transparent;
+  border: 1px solid var(--global-divider-color);
+  color: var(--global-text-color);
 }
 
 .sub-chip em {
   font-style: normal;
   font-size: 0.72rem;
-  opacity: 0.7;
+  color: var(--global-text-color-light);
+  font-weight: 500;
 }
 
 .sub-chip-misc {
-  opacity: 0.7;
+  color: var(--global-text-color-light);
 }
 
 /* Subcategory sticky nav inside a category */
@@ -454,7 +471,7 @@ document.addEventListener('DOMContentLoaded', function() {
   padding: 0.35rem 0.75rem;
   border-radius: 6px;
   text-decoration: none;
-  color: var(--global-text-color-light);
+  color: var(--global-text-color);
   background: transparent;
   border: 1px solid var(--global-divider-color);
   transition: all 0.15s ease;
@@ -463,7 +480,8 @@ document.addEventListener('DOMContentLoaded', function() {
 .subcat-tab em {
   font-style: normal;
   font-size: 0.75rem;
-  opacity: 0.7;
+  color: var(--global-text-color-light);
+  font-weight: 500;
 }
 
 .subcat-tab:hover,
