@@ -403,7 +403,8 @@ layout: default
 .note-article h4,
 .note-article h5,
 .note-article h6 {
-  scroll-margin-top: 2rem;
+  /* Offset for fixed site navbar (~70px) when jumped to via TOC anchor */
+  scroll-margin-top: 5rem;
   font-weight: 600;
   line-height: 1.4;
 }

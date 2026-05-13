@@ -165,19 +165,21 @@ function showCategory(categoryId) {
   sections.forEach(section => {
     section.style.display = 'none';
   });
-  
+
   // Hide categories overview
   const toc = document.querySelector('.notes-toc');
   if (toc) {
     toc.style.display = 'none';
   }
-  
+
   // Show selected category
   const categorySection = document.getElementById(categoryId);
   if (categorySection) {
     categorySection.style.display = 'block';
     // Update TOC for this category
     updateCategoryTOC(categoryId);
+    // Scroll to top so user sees the category header
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 }
 
@@ -187,15 +189,18 @@ function showCategories() {
   sections.forEach(section => {
     section.style.display = 'none';
   });
-  
+
   // Show categories overview
   const toc = document.querySelector('.notes-toc');
   if (toc) {
     toc.style.display = 'block';
   }
-  
+
   // Reset TOC to categories view
   generateNotesTOC();
+
+  // Scroll to top so user sees the categories grid
+  window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
 // Add click event listeners to category links
@@ -354,10 +359,12 @@ document.addEventListener('DOMContentLoaded', function() {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
   gap: 1rem;
+  align-items: stretch;
 }
 
 .category-card {
-  display: block;
+  display: flex;
+  flex-direction: column;
   padding: 1.25rem 1.35rem;
   background: var(--global-card-bg-color, var(--global-bg-color));
   border: 1px solid var(--global-divider-color);
@@ -367,6 +374,8 @@ document.addEventListener('DOMContentLoaded', function() {
   position: relative;
   overflow: hidden;
   transition: transform 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+  cursor: pointer;
+  min-height: 110px;
 }
 
 .category-card::before {
@@ -449,10 +458,10 @@ document.addEventListener('DOMContentLoaded', function() {
   color: var(--global-text-color-light);
 }
 
-/* Subcategory sticky nav inside a category */
+/* Subcategory sticky nav inside a category - sticks below site navbar */
 .subcategory-nav {
   position: sticky;
-  top: 0;
+  top: 70px;
   z-index: 5;
   display: flex;
   flex-wrap: wrap;
@@ -501,7 +510,8 @@ document.addEventListener('DOMContentLoaded', function() {
   padding-bottom: 0.4rem;
   border-bottom: 1px solid var(--global-divider-color);
   color: var(--global-text-color);
-  scroll-margin-top: 5rem;
+  /* Offset for fixed site navbar (70px) + sticky subcat-nav (~50px) */
+  scroll-margin-top: 8rem;
 }
 
 .subcategory-title:first-of-type {
