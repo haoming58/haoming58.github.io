@@ -89,9 +89,10 @@ nav_order: 3
 
           {% for subcategory in subcategories %}
             {% if subcategory.name != blank and subcategory.name != "" %}
+              {% assign sorted_notes = subcategory.items | sort: 'path' %}
               <h2 class="subcategory-title" id="sub-{{ subcategory.name | slugify }}">{{ subcategory.name }}</h2>
               <ul class="notes-list">
-                {% for note in subcategory.items %}
+                {% for note in sorted_notes %}
                 <li class="note-item">
                   <a href="{{ note.url | relative_url }}" onclick="storeCurrentCategory('{{ category.name | slugify }}')">{{ note.title }}</a>
                   {% if note.description %}<span class="note-description"> — {{ note.description }}</span>{% endif %}
@@ -108,8 +109,9 @@ nav_order: 3
             {% endif %}
           {% endfor %}
         {% else %}
+          {% assign sorted_notes = category.items | sort: 'path' %}
           <ul class="notes-list">
-            {% for note in category.items %}
+            {% for note in sorted_notes %}
             <li class="note-item">
               <a href="{{ note.url | relative_url }}" onclick="storeCurrentCategory('{{ category.name | slugify }}')">{{ note.title }}</a>
               {% if note.description %}<span class="note-description"> — {{ note.description }}</span>{% endif %}
@@ -136,8 +138,9 @@ nav_order: 3
         <h1>未分类笔记</h1>
         <p class="notes-description">{{ uncategorized.size }} 篇笔记</p>
       </div>
+      {% assign sorted_uncat = uncategorized | sort: 'path' %}
       <ul class="notes-list">
-        {% for note in uncategorized %}
+        {% for note in sorted_uncat %}
         <li class="note-item">
           <a href="{{ note.url | relative_url }}">{{ note.title }}</a>
           {% if note.description %}<span class="note-description"> — {{ note.description }}</span>{% endif %}
