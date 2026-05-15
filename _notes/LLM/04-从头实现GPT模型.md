@@ -401,14 +401,8 @@ plt.tight_layout()
 plt.show()
 ```
 
-    ---------------------------------------------------------------------------
-
-    TypeError                                 Traceback (most recent call last)
-
-    Cell In[31], line 12
          10 for i, (y, label) in enumerate(zip([y_gelu, y_relu], ["GELU", "ReLU"]), 1):
          11     plt.subplot(1, 2, i)
-    ---> 12     plt.plot(x, y)
          13     plt.title(f"{label} activation")
          14     plt.xlabel("x")
     
@@ -416,7 +410,6 @@ plt.show()
     File C:\envs\d2l\lib\site-packages\matplotlib\pyplot.py:2988, in plot(scalex, scaley, data, *args, **kwargs)
        2986 @_copy_docstring_and_deprecators(Axes.plot)
        2987 def plot(*args, scalex=True, scaley=True, data=None, **kwargs):
-    -> 2988     return gca().plot(
        2989         *args, scalex=scalex, scaley=scaley,
        2990         **({"data": data} if data is not None else {}), **kwargs)
     
@@ -424,7 +417,6 @@ plt.show()
     File C:\envs\d2l\lib\site-packages\matplotlib\axes\_axes.py:1607, in Axes.plot(self, scalex, scaley, data, *args, **kwargs)
        1605 lines = [*self._get_lines(*args, data=data, **kwargs)]
        1606 for line in lines:
-    -> 1607     self.add_line(line)
        1608 self._request_autoscale_view(scalex=scalex, scaley=scaley)
        1609 return lines
     
@@ -432,7 +424,6 @@ plt.show()
     File C:\envs\d2l\lib\site-packages\matplotlib\axes\_base.py:2105, in _AxesBase.add_line(self, line)
        2102 if line.get_clip_path() is None:
        2103     line.set_clip_path(self.patch)
-    -> 2105 self._update_line_limits(line)
        2106 if not line.get_label():
        2107     line.set_label('_line%d' % len(self.lines))
     
@@ -442,7 +433,6 @@ plt.show()
        2124     """
        2125     Figures out the data limit of the given line, updating self.dataLim.
        2126     """
-    -> 2127     path = line.get_path()
        2128     if path.vertices.size == 0:
        2129         return
     
@@ -453,34 +443,17 @@ plt.show()
        1019 with this line.
        1020 """
        1021 if self._invalidy or self._invalidx:
-    -> 1022     self.recache()
        1023 return self._path
     
 
     File C:\envs\d2l\lib\site-packages\matplotlib\lines.py:663, in Line2D.recache(self, always)
         661 if always or self._invalidx:
         662     xconv = self.convert_xunits(self._xorig)
-    --> 663     x = _to_unmasked_float_array(xconv).ravel()
         664 else:
         665     x = self._x
     
 
-    File C:\envs\d2l\lib\site-packages\matplotlib\cbook\__init__.py:1333, in _to_unmasked_float_array(x)
-       1331     return np.ma.asarray(x, float).filled(np.nan)
-       1332 else:
-    -> 1333     return np.asarray(x, float)
-    
-
-    File C:\envs\d2l\lib\site-packages\torch\_tensor.py:1228, in Tensor.__array__(self, dtype)
-       1226     return self.numpy()
-       1227 else:
-    -> 1228     return self.numpy().astype(dtype, copy=False)
-    
-
-    TypeError: Cannot interpret 'dtype('float64')' as a data type
-
-    
-![GELU vs ReLU]({% '/assets/img/notes/LLM/3.GPT_19_1.png' | relative_url %})
+![GELU vs ReLU]({{ '/assets/img/notes/LLM/3.GPT_19_1.png' | relative_url }})
     
 
 ```python
@@ -946,40 +919,12 @@ total_params_gpt2 = (
 print(f"Number of trainable parameters considering weight tying: {total_params_gpt2:,}")
 ```
 
-    ---------------------------------------------------------------------------
-
-    NameError                                 Traceback (most recent call last)
-
-    Cell In[33], line 4
-          1 # Weight Tying：tok_emb 与 out_head 共享权重，减少 50257×768 ≈ 3860万参数
-          2 # 实际可训练参数 = 总参数 - out_head 参数
-          3 total_params_gpt2 = (
-    ----> 4     total_params - sum(p.numel() for p in model.out_head.parameters())
-          5 )
-          6 print(f"Number of trainable parameters considering weight tying: {total_params_gpt2:,}")
-    
-
-    NameError: name 'total_params' is not defined
-
 ```python
 # 每个参数占 4 字节（float32），换算为 MB
 total_size_bytes = total_params * 4
 total_size_mb = total_size_bytes / (1024 * 1024)
 print(f"Total size of the model: {total_size_mb:.2f} MB")
 ```
-
-    ---------------------------------------------------------------------------
-
-    NameError                                 Traceback (most recent call last)
-
-    Cell In[34], line 2
-          1 # 每个参数占 4 字节（float32），换算为 MB
-    ----> 2 total_size_bytes = total_params * 4
-          3 total_size_mb = total_size_bytes / (1024 * 1024)
-          4 print(f"Total size of the model: {total_size_mb:.2f} MB")
-    
-
-    NameError: name 'total_params' is not defined
 
 ## 模块八：文本生成（Text Generation）
 
