@@ -52,7 +52,6 @@ Output 形状: $(T, N, H)$
 
 State 形状: $(L, N, H)$
 
-
 ## 7.3 解码器
 
 这里就有一个很大的变化，或者说值得注意的就是将上下文进行拼接
@@ -105,7 +104,6 @@ $$(N, H) \times (H, V') \rightarrow (N, V')$$
 
 有效长度 (valid_len)：[3, 1]
 
-
 - PyTorch 的 CrossEntropyLoss(reduction='none') 会给每个位置打分。
 
 样本 1：样本 1 原始 Loss 向量：[0.1, 0.1, 2.5]
@@ -121,9 +119,6 @@ $$(N, H) \times (H, V') \rightarrow (N, V')$$
 样本 1 (长度3)：[1, 1, 1] （全都算分）
 
 样本 2 (长度1)：[1, 0, 0] （只有第1个算分，后面免单），最终就做了正确的损失函数计算。
-
-
-
 
 ## 7.5 训练
 
@@ -370,7 +365,6 @@ $X_l$ 是前向传播时的输入值。
 
 模型可能会震荡
 
-
 ### 7.5.1 梯度例子
 
 我们可以把这件事简化为**“有钱人”**和**“精打细算”**的两种玩法：
@@ -392,7 +386,6 @@ $X_l$ 是前向传播时的输入值。
     * 攒够了 64 个的量，才敢去更新一次参数。
 * **本质**：**这就是梯度累加。**
 
-
 ```python
 
 embed_size, num_hiddens, num_layers, dropout = 32, 64, 2, 0.1
@@ -412,7 +405,6 @@ train_seq2seq(net, train_iter, lr, num_epochs, tgt_vocab, device)
 ```
 
 ![alt text](../../../assets/img/notes/new_rnn/编码器－解码器训练.png)
-
 
 ## 7.7 预测
 
@@ -526,7 +518,6 @@ BLEU, Bilingual Evaluation Understudy,
 
 BLEU 分数就是**老师（真实标签）给学生（模型预测）**的作业打的一个分数，范围是 0 到 1。
 
-
 1. 核心逻辑一：N-gram 精确度 ($p_n$) —— 查重机制
 
 例子： 
@@ -554,9 +545,7 @@ $p_2$ (2-gram)：预测的词对：AB, BB, BC, CD (共4个)。真实标签的词
 
 $$BLEU = \underbrace{\exp(\min(0, 1 - \frac{len_{label}}{len_{pred}}))}_{\text{过短惩罚项}} \times \underbrace{\prod_{n=1}^k p_n^{1/2^n}}_{\text{N-gram加权几何平均}}$$这个公式把上面两点结合起来了：先算N-gram 精确度（通常算到 4-gram），把它们乘起来开方（几何平均）。再算长度惩罚系数。两者相乘，得到最终分数。
 
-
 - 1.0 表示完美（完全一样），0.0 表示完全不沾边。
-
 
 ```python
 def bleu(pred_seq, label_seq, k):  #@save
@@ -655,7 +644,6 @@ def bleu(pred_seq, label_seq, k):  #@save
     return score
 ```
 
-
 ```python
 
 engs = ['go .', "i lost .", 'he\'s calm .', 'i\'m home .']
@@ -668,8 +656,6 @@ for eng, fra in zip(engs, fras):
 ```
 
 ![bull](../../../assets/img/notes/new_rnn/bull.png)
-
-
 
 ## 7.9 问题
 
@@ -694,7 +680,6 @@ train_seq2seq(net, train_iter, lr, num_epochs, tgt_vocab, device)
 ```
 
 ![bull1](../../../assets/img/notes/new_rnn/bull1.png)
-
 
 ### 7.9.2 重新运行实验并在计算损失时不使用遮蔽，可以观察到什么结果？为什么会有这个结果？
 
@@ -737,9 +722,7 @@ print("不带 Mask 的 Loss:", l)
 
 ![mask](../../../assets/img/notes/new_rnn/non_mask.png)
 
-
 ### 7.9.3 如果编码器和解码器的层数或者隐藏单元数不同，那么如何初始化解码器的隐状态？
-
 
 ```python
 class MismatchedSeq2Seq(nn.Module):
@@ -832,7 +815,6 @@ train_seq2seq(net, train_iter, lr, num_epochs, tgt_vocab, device)
 
 ![mask](../../../assets/img/notes/new_rnn/编码器和解码器的层数或者隐藏单元数.png)
 
-
 ### 7.9.4 在训练中，如果用前一时间步的预测输入到解码器来代替强制教学，对性能有何影响？
 
 在 Seq2Seq 模型的训练中，如果完全放弃强制教学 (Teacher Forcing)，直接使用前一时间步的预测（Sampling）作为当前步的输入，通常会产生灾难性的影响，但在特定策略下也能带来长期的好处。
@@ -854,7 +836,6 @@ train_seq2seq(net, train_iter, lr, num_epochs, tgt_vocab, device)
 因为输入是已知的，模型不需要等（不用等猜出 A 才能输 B），它同时算出 4 个位置的预测结果
 
 毫无疑问的是误差累积，但是潜在的好处是面对错误会鲁棒性更好。
-
 
 ### 7.9.5 用长短期记忆网络替换门控循环单元重新运行实验。
 
@@ -926,7 +907,6 @@ class Seq2SeqLSTMDecoder(d2l.Decoder):
 ```
 代码修改的核心陷阱在于 state 变成了元组 (h, c)。在 Decoder 中使用 context 时，一定要记得取 state[0] (也就是 $h$)，不要错把 $c$ 拿去拼接了。
 
-
 ![mask](../../../assets/img/notes/new_rnn/长短期记忆网络替换门控循环.png)
 
 ### 7.9.6 有没有其他方法来设计解码器的输出层？
@@ -943,7 +923,6 @@ $$P(y_t) = \text{Softmax}(W \cdot h_t + b)$$
 
 解码器加一个“开关” $p_{gen}$。生成模式：从词表中选词（传统的 Softmax）。复制模式：直接从源句子中“拷贝”一个词过来（基于 Attention 权重）。
 
-
 2. 方法二：权重绑定 (Weight Tying)
 
 让输出层的权重矩阵共享 Embedding 层的权重矩阵：mbedding 层矩阵是 $(V, D)$，输出层 Linear 矩阵是 $(D, V)$
@@ -953,19 +932,3 @@ $$P(y_t) = \text{Softmax}(W \cdot h_t + b)$$
 高频词（Head）：放在一个小列表里（比如前 2000 个词），每次都算。
 
 低频词（Tail）：分成几个簇（Cluster）。只有当模型认为大概率是低频词时，才去那个簇里细算。
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

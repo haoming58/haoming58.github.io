@@ -25,7 +25,6 @@ permalink: /notes/attention/bahdanau-attention/
 
 最终的公式就是
 
-
 $$c_{t'} = \sum_{t=1}^{T} \alpha(s_{t'-1}, h_t) h_t$$
 
 模型拿出解码器上一步的状态 $s_{t'-1}$ (Query)，去和编码器所有的状态 $h_1, h_2, ... h_T$ (Keys) 一一进行加性注意力计算，然后进行归一化。在去使用编码器的ht进行加权求和。
@@ -125,12 +124,9 @@ def init_state(self, enc_outputs, enc_valid_lens, *args):
 
 通过全连接层，预测出这一步的单词是法语的 "Je" (我)。
 
-
 4. 总结
 
 Encoder： 把句子变成一排 $h$ (Keys)。$\downarrow$Attention： 拿当前状态 (Query) 去找最匹配的 $h$，算出 Context。$\downarrow$Decoder： 把 Context 和输入拼起来，算出下一个字，并更新状态 (变成新的 Query)。$\downarrow$(回到第2步，周而复始)
-
-
 
 ```python
 def forward(self, X, state):
@@ -333,4 +329,3 @@ class Seq2SeqAttentionDecoderLSTM(d2l.AttentionDecoder):
 A. 计算复杂度的降低 (Computational Complexity)
 
 B. 显存占用的减少 (Memory Efficiency)
-

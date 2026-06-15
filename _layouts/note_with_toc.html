@@ -16,6 +16,19 @@ layout: default
     </div>
     
     <div class="note-content">
+      {% if page.category or page.subcategory %}
+        <nav class="note-breadcrumb" aria-label="breadcrumb">
+          <a href="{{ '/notes/' | relative_url }}">笔记</a>
+          {% if page.category %}
+            <span class="crumb-sep">/</span>
+            <a href="{{ '/notes/' | relative_url }}" onclick="sessionStorage.setItem('currentCategory','{{ page.category | slugify }}')">{{ page.category }}</a>
+          {% endif %}
+          {% if page.subcategory %}
+            <span class="crumb-sep">/</span>
+            <span class="crumb-current">{{ page.subcategory }}</span>
+          {% endif %}
+        </nav>
+      {% endif %}
       <article class="note-article">
         {{ content }}
       </article>
@@ -93,25 +106,14 @@ layout: default
 }
 
 .note-toc h3 {
-  margin: 0 0 1.5rem 0;
-  color: var(--global-theme-color);
-  font-size: 1.15rem;
-  font-weight: 700;
-  border-bottom: 2px solid var(--global-theme-color);
-  padding-bottom: 0.75rem;
-  letter-spacing: -0.01em;
-  position: relative;
-}
-
-.note-toc h3::after {
-  content: '';
-  position: absolute;
-  bottom: -2px;
-  left: 0;
-  width: 50px;
-  height: 2px;
-  background: var(--global-theme-color);
-  box-shadow: 0 0 8px rgba(71, 85, 105, 0.5);
+  margin: 0 0 1rem 0;
+  color: var(--global-text-color-light);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid var(--global-divider-color);
 }
 
 .note-toc ul {
@@ -126,82 +128,66 @@ layout: default
 
 .note-toc a {
   display: block;
-  padding: 0.65rem 0.85rem;
-  color: var(--global-text-color);
+  padding: 0.4rem 0.75rem;
+  color: var(--global-text-color-light);
   text-decoration: none;
-  border-radius: 8px;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  font-size: 0.9rem;
+  border-radius: 4px;
+  transition: color 0.15s ease, background 0.15s ease, border-color 0.15s ease;
+  font-size: 0.88rem;
   line-height: 1.5;
   position: relative;
-  border-left: 3px solid transparent;
-}
-
-.note-toc a::before {
-  content: '';
-  position: absolute;
-  left: 0;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 3px;
-  height: 0;
-  background: var(--global-theme-color);
-  transition: height 0.3s ease;
-  border-radius: 0 2px 2px 0;
+  border-left: 2px solid transparent;
 }
 
 .note-toc a:hover {
+  color: var(--global-text-color);
   background: var(--global-divider-color);
-  color: var(--global-theme-color);
-  transform: translateX(4px);
-  border-left-color: var(--global-theme-color);
-}
-
-.note-toc a:hover::before {
-  height: 100%;
+  text-decoration: none;
 }
 
 .note-toc a.active {
-  background: var(--global-divider-color);
   color: var(--global-theme-color);
   font-weight: 600;
   border-left-color: var(--global-theme-color);
-}
-
-.note-toc a.active::before {
-  height: 100%;
+  background: transparent;
 }
 
 .note-toc .toc-level-1 {
   padding-left: 0.75rem;
+  font-size: 0.92rem;
+  color: var(--global-text-color);
+  font-weight: 500;
 }
 
 .note-toc .toc-level-2 {
   padding-left: 1.5rem;
   font-size: 0.85rem;
-  color: var(--global-text-color-light);
 }
 
 .note-toc .toc-level-3 {
   padding-left: 2.25rem;
+  font-size: 0.82rem;
+}
+
+.note-toc .toc-level-4,
+.note-toc .toc-level-5,
+.note-toc .toc-level-6 {
+  padding-left: 3rem;
   font-size: 0.8rem;
-  color: var(--global-text-color-light);
+  opacity: 0.85;
 }
 
 /* Back link styles */
 .note-toc .back-link {
-  color: var(--global-theme-color) !important;
-  font-weight: 600 !important;
-  border-bottom: 1px solid var(--global-theme-color);
-  padding-bottom: 0.2rem;
+  color: var(--global-text-color-light) !important;
+  font-weight: 500 !important;
+  margin-bottom: 0.75rem;
+  border-left: 2px solid transparent;
 }
 
 .note-toc .back-link:hover {
-  background: var(--global-theme-color) !important;
-  color: white !important;
-  border-radius: 4px;
-  padding: 0.3rem 0.5rem;
-  margin: -0.3rem -0.5rem;
+  color: var(--global-theme-color) !important;
+  background: var(--global-divider-color);
 }
 
 .note-content {
@@ -217,17 +203,158 @@ layout: default
   overflow-x: hidden;
 }
 
+/* Breadcrumb */
+.note-breadcrumb {
+  max-width: 1200px;
+  width: 100%;
+  margin: 0 auto 0.5rem auto;
+  padding: 0 2rem;
+  font-size: 0.85rem;
+  color: var(--global-text-color-light);
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.note-breadcrumb a {
+  color: var(--global-text-color-light);
+  text-decoration: none;
+  transition: color 0.15s ease;
+}
+
+.note-breadcrumb a:hover {
+  color: var(--global-theme-color);
+}
+
+.note-breadcrumb .crumb-sep {
+  color: var(--global-text-color-light);
+  opacity: 0.5;
+}
+
+.note-breadcrumb .crumb-current {
+  color: var(--global-text-color);
+  font-weight: 500;
+}
+
 .note-article {
   background: var(--global-bg-color);
   border-radius: 0;
-  padding: 2rem;
+  padding: 1.5rem 2rem 2rem 2rem;
   box-shadow: none;
   max-width: 1200px !important;
   width: 100% !important;
   margin: 0 auto !important;
   box-sizing: border-box;
-  font-size: 18px;
+  font-size: 17px;
   line-height: 1.85;
+  letter-spacing: 0.02em;
+  /* Chinese-friendly font stack: system → web fallback */
+  font-family:
+    -apple-system, BlinkMacSystemFont,
+    "PingFang SC", "Microsoft YaHei", "HarmonyOS Sans SC",
+    "Noto Sans SC", "Source Han Sans CN", "Hiragino Sans GB",
+    "Segoe UI", "Roboto", "Helvetica Neue", Arial,
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+/* Reading typography */
+.note-article p {
+  margin: 1em 0;
+}
+
+.note-article ul,
+.note-article ol {
+  margin: 1em 0;
+  padding-left: 1.5em;
+}
+
+.note-article li {
+  margin: 0.4em 0;
+}
+
+.note-article li > p {
+  margin: 0.4em 0;
+}
+
+.note-article strong {
+  color: var(--global-text-color);
+  font-weight: 600;
+}
+
+.note-article blockquote {
+  margin: 1.25em 0;
+  padding: 0.85em 1.25em;
+  border-left: 3px solid var(--global-theme-color);
+  background: var(--global-card-bg-color, var(--global-code-bg-color));
+  color: var(--global-text-color-light);
+  border-radius: 0 6px 6px 0;
+}
+
+.note-article blockquote p {
+  margin: 0.4em 0;
+}
+
+.note-article hr {
+  margin: 2.5em 0;
+  border: none;
+  border-top: 1px solid var(--global-divider-color);
+}
+
+/* Inline code */
+.note-article code {
+  font-size: 0.88em;
+  padding: 0.15em 0.4em;
+  border-radius: 4px;
+  font-feature-settings: "calt" 0; /* disable ligatures for inline code */
+}
+
+/* Block code (fenced) */
+.note-article pre {
+  margin: 1.25em 0;
+  padding: 1em 1.25em;
+  border-radius: 8px;
+  border: 1px solid var(--global-divider-color);
+  font-feature-settings: "calt" 1; /* enable ligatures in code blocks */
+  font-variant-ligatures: contextual;
+  line-height: 1.65;
+  font-size: 0.9em;
+  tab-size: 4;
+  -moz-tab-size: 4;
+}
+
+.note-article pre code {
+  border: none;
+  background: transparent;
+  padding: 0;
+  font-size: 1em;
+}
+
+/* Tables */
+.note-article table {
+  display: table;
+  border-collapse: collapse;
+  margin: 1.5em 0;
+  font-size: 0.9em;
+}
+
+.note-article table th,
+.note-article table td {
+  padding: 0.6em 1em;
+  border: 1px solid var(--global-divider-color);
+  text-align: left;
+}
+
+.note-article table thead th {
+  background: var(--global-card-bg-color, var(--global-code-bg-color));
+  font-weight: 600;
+}
+
+.note-article table tbody tr:nth-child(even) {
+  background: var(--global-card-bg-color, transparent);
 }
 
 /* Text content should have comfortable reading width */
@@ -263,13 +390,11 @@ layout: default
   margin: 1rem auto;
 }
 
-/* Tables should be responsive */
+/* Tables: keep table layout. For long tables, container is allowed to scroll horizontally. */
 .note-article table {
-  width: 100%;
+  border-collapse: collapse;
+  width: auto;
   max-width: 100%;
-  table-layout: auto;
-  overflow-x: auto;
-  display: block;
 }
 
 .note-article h1,
@@ -278,7 +403,8 @@ layout: default
 .note-article h4,
 .note-article h5,
 .note-article h6 {
-  scroll-margin-top: 2rem;
+  /* Offset for fixed site navbar (~70px) when jumped to via TOC anchor */
+  scroll-margin-top: 5rem;
   font-weight: 600;
   line-height: 1.4;
 }
@@ -417,6 +543,25 @@ body {
 @media (min-width: 769px) {
   .mobile-toc-toggle {
     display: none !important;
+  }
+}
+
+/* Mobile responsive */
+@media (max-width: 768px) {
+  .note-breadcrumb {
+    padding: 0 1rem;
+    font-size: 0.8rem;
+  }
+
+  .note-article {
+    font-size: 16px;
+    line-height: 1.8;
+    padding: 1rem 0.5rem;
+  }
+
+  .note-article pre {
+    padding: 0.85em 1em;
+    font-size: 0.85em;
   }
 }
 </style>

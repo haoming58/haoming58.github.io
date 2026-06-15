@@ -14,26 +14,21 @@ redirect_from:
 
 ## 3.1 机制
 
-
 之前讨论的只是单向隐藏层的循环神经网络，其中。隐变量和观测值的交互是随机的，这里就开始加入深层。
 
 ![alt text](../../../assets/img/notes/new_rnn/深度循环神经网络结构.png)
 
-
-
 $$H_t^{(l)} = \phi_l(H_t^{(l-1)} W_{xh}^{(l)} + H_{t-1}^{(l)} W_{hh}^{(l)} + b_h^{(l)})$$
 
 这里请看 H2（2） 作为一个案例，去解释:
- 
+
 1. 同一层，上一个时间步的状态继承
 
 2. 上一层，相同时间步的状态继承
 
 3. 这里
 
-
 ## 3.2 代码实践
-
 
 ```python
 
@@ -70,7 +65,6 @@ d2l.train_ch8(model, train_iter, vocab, lr, num_epochs, device)
 我这里设置的是 10层
 
 ![alt text](../../../assets/img/notes/new_rnn/10layer.png)
-
 
 ## 3.3 问题
 
@@ -234,9 +228,7 @@ d2l.train_ch8(model, train_iter, vocab, lr, num_epochs, device)
 
 ![alt text](../../../assets/img/notes/new_rnn/2_RNN.png)
 
-
 ### 3.3.2 在本节训练模型中，比较使用门控循环单元替换长短期记忆网络后模型的精确度和训练速度。
-
 
 ```python
 
@@ -267,18 +259,15 @@ d2l.train_ch8(model, train_iter, vocab, lr, num_epochs, device)
 
 ```
 
-
 ![LSTM](<../../../assets/img/notes/new_rnn/LSTM VS GRU.png>) 
 
 ![GRU](<../../../assets/img/notes/new_rnn/GRU VS LSTM.png>)
-
 
 ### 3.3.3 如果增加训练数据，能够将困惑度降到多低？
 
 我的理解是困惑度以及下降到了1.0， PPL 接近 1.0 意味着什么？ 意味着模型对下一个词的预测几乎是 100% 确定的。
 
 它不太可能会在降低，是因为因为《时光机器》这个数据集太小了（大约只有 3 万个单词）。而是在**“死记硬背”**整个文本
-
 
 ### 3.3.4 在为文本建模时，是否可以将不同作者的源数据合并？有何优劣呢？
 
@@ -287,7 +276,6 @@ d2l.train_ch8(model, train_iter, vocab, lr, num_epochs, device)
 1. 极大地增加数据量
 2. 提升模型的泛化能力
 3. 学习更深层次的语言表示
-
 
 缺点：
 

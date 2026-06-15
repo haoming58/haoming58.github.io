@@ -32,7 +32,6 @@ Nadaraya-Watson 核回归（Nadaraya-Watson Kernel Regression）虽然是一个 
 
 $$f(q) = \sum_{i=1}^{n} \underbrace{\frac{K(q - k_i)}{\sum_{j=1}^{n} K(q - k_j)}}_{\alpha(q, k_i)} v_i$$
 
-
 $$K(q - k_i)$$
 
 这里 $K$ 是一个核函数（Kernel），通常是高斯核（Gaussian Kernel）,衡量 $q$ 和 $k_i$ 有多近,这相当于计算 $Q \cdot K^T$（点积相似度）
@@ -44,9 +43,6 @@ $$\alpha(q, k_i) = \frac{K(q - k_i)}{\sum_{j=1}^{n} K(q - k_j)}$$
 $$f(q) = \sum_{i=1}^{n} \alpha(q, k_i) v_i$$
 
 这里就是加权求和，对应深度学习：这就是 $Attention(Q, K, V) = \text{softmax}(\dots) V$
-
-
-
 
 ## 2.2 基本汇聚
 
@@ -80,13 +76,11 @@ $$f(q) = \sum_{i=1}^{n} \alpha(q, k_i) v_i$$
 
 我是数值最小的，所以我坐在 Y 轴第 0 排。 他是数值最小的，所以他坐在 X 轴第 0 排。
 
-
 ## 2.4 问题
 
 ### 2.4.1 加训练数据的样本数量，能否得到更好的非参数的Nadaraya-Watson核回归模型？
 
 毫无疑问的是肯定可以提升，就像估算某一地区的房价，你知道得越多，算出来得平均值就越接近真实情况，降低方差。
-
 
 ### 2.4.2 在带参数的注意力汇聚的实验中学习得到的参数的价值是什么？为什么在可视化注意力权重时，它会使加权区域更加尖锐？
 
@@ -98,15 +92,11 @@ $$f(q) = \sum_{i=1}^{n} \alpha(q, k_i) v_i$$
 
 $$K(u) = \exp\left(-\frac{1}{2} (distance \times \mathbf{w})^2\right)$$
 
-
-
 其实就是类似一个正态分布，参数的大小就是调整窄宽
 
 ![alt text](../../../assets/img/notes/Attention/带核函数的正态分布.png)
 
-
 这就是为什么这就是为什么在可视化时，你会看到对于某些数据，权重区域很宽（Blurry，大家都有份），而对于某些数据，权重区域很尖（Sharp，只有极少数点有份）。
-
 
 ### 2.4.3 如何将超参数添加到非参数的Nadaraya-Watson核回归中以实现更好地预测结果？
 
@@ -183,4 +173,3 @@ class AdditiveAttentionReg(nn.Module):
             values.unsqueeze(0).expand(len(queries), -1, -1)
         ).squeeze(1)
 ```
-

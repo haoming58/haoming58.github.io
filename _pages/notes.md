@@ -11,27 +11,46 @@ nav_order: 3
   {% comment %} Generate categories overview {% endcomment %}
   {% assign categories = site.notes | group_by: 'category' | sort: 'name' %}
   {% assign uncategorized = site.notes | where: 'category', blank %}
-  
+
   {% if categories.size > 0 or uncategorized.size > 0 %}
     <div class="notes-toc" id="categories">
-      <div class="toc-content">
+      <div class="notes-overview-header">
+        <h1>学习笔记</h1>
+        <p class="notes-overview-sub">{{ site.notes.size }} 篇笔记 · {{ categories.size }} 个分类</p>
+      </div>
+      <div class="categories-grid">
         {% for category in categories %}
           {% if category.name != blank %}
-            <div class="toc-category">
-              <a href="#" class="toc-link" data-category="{{ category.name | slugify }}">
-                <span class="toc-category-name">{{ category.name }}</span>
-                <span class="toc-count">({{ category.items.size }} notes)</span>
-              </a>
-            </div>
+            {% assign subs = category.items | group_by: 'subcategory' | sort: 'name' %}
+            <a href="#" class="category-card toc-link" data-category="{{ category.name | slugify }}">
+              <div class="category-card-header">
+                <h3 class="category-card-title">{{ category.name }}</h3>
+                <span class="category-card-count">{{ category.items.size }}</span>
+              </div>
+              <div class="category-card-subs">
+                {% for sub in subs %}
+                  {% if sub.name != blank and sub.name != "" %}
+                    <span class="sub-chip">{{ sub.name }} <em>{{ sub.items.size }}</em></span>
+                  {% endif %}
+                {% endfor %}
+                {% assign uncat_in_cat = category.items | where: 'subcategory', blank %}
+                {% if uncat_in_cat.size > 0 %}
+                  <span class="sub-chip sub-chip-misc">其他 <em>{{ uncat_in_cat.size }}</em></span>
+                {% endif %}
+              </div>
+            </a>
           {% endif %}
         {% endfor %}
         {% if uncategorized.size > 0 %}
-          <div class="toc-category">
-            <a href="#" class="toc-link" data-category="uncategorized">
-              <span class="toc-category-name">Uncategorized</span>
-              <span class="toc-count">({{ uncategorized.size }} notes)</span>
-            </a>
-          </div>
+          <a href="#" class="category-card toc-link" data-category="uncategorized">
+            <div class="category-card-header">
+              <h3 class="category-card-title">Uncategorized</h3>
+              <span class="category-card-count">{{ uncategorized.size }}</span>
+            </div>
+            <div class="category-card-subs">
+              <span class="sub-chip sub-chip-misc">未分类</span>
+            </div>
+          </a>
         {% endif %}
       </div>
     </div>
@@ -42,11 +61,11 @@ nav_order: 3
     {% if category.name != blank %}
       <div class="category-section" id="{{ category.name | slugify }}" style="display: none;">
         <div class="notes-header">
-          <h1>{{ category.name }} 笔记</h1>
-          <p class="notes-description">{{ category.name}}相关的学习笔记和教程</p>
-          <a href="#" class="back-link" onclick="showCategories()">← 返回分类列表</a>
+          <a href="#" class="back-link" onclick="showCategories()">← 返回分类</a>
+          <h1>{{ category.name }}</h1>
+          <p class="notes-description">{{ category.items.size }} 篇笔记</p>
         </div>
-        
+
         {% comment %} Group by subcategory if exists {% endcomment %}
         {% assign subcategories = category.items | group_by: 'subcategory' | sort: 'name' %}
         {% assign has_subcategories = false %}
@@ -56,14 +75,24 @@ nav_order: 3
             {% break %}
           {% endif %}
         {% endfor %}
-        
+
         {% if has_subcategories %}
-          {% comment %} Has subcategories, show them {% endcomment %}
+          <nav class="subcategory-nav">
+            {% for subcategory in subcategories %}
+              {% if subcategory.name != blank and subcategory.name != "" %}
+                <a href="#sub-{{ subcategory.name | slugify }}" class="subcat-tab">
+                  {{ subcategory.name }} <em>{{ subcategory.items.size }}</em>
+                </a>
+              {% endif %}
+            {% endfor %}
+          </nav>
+
           {% for subcategory in subcategories %}
             {% if subcategory.name != blank and subcategory.name != "" %}
-              <h2 class="subcategory-title">{{ subcategory.name }}</h2>
+              {% assign sorted_notes = subcategory.items | sort: 'path' %}
+              <h2 class="subcategory-title" id="sub-{{ subcategory.name | slugify }}">{{ subcategory.name }}</h2>
               <ul class="notes-list">
-                {% for note in subcategory.items %}
+                {% for note in sorted_notes %}
                 <li class="note-item">
                   <a href="{{ note.url | relative_url }}" onclick="storeCurrentCategory('{{ category.name | slugify }}')">{{ note.title }}</a>
                   {% if note.description %}<span class="note-description"> — {{ note.description }}</span>{% endif %}
@@ -80,9 +109,9 @@ nav_order: 3
             {% endif %}
           {% endfor %}
         {% else %}
-          {% comment %} No subcategories, show flat list {% endcomment %}
+          {% assign sorted_notes = category.items | sort: 'path' %}
           <ul class="notes-list">
-            {% for note in category.items %}
+            {% for note in sorted_notes %}
             <li class="note-item">
               <a href="{{ note.url | relative_url }}" onclick="storeCurrentCategory('{{ category.name | slugify }}')">{{ note.title }}</a>
               {% if note.description %}<span class="note-description"> — {{ note.description }}</span>{% endif %}
@@ -100,17 +129,18 @@ nav_order: 3
       </div>
     {% endif %}
   {% endfor %}
-  
+
   {% comment %} Show uncategorized notes {% endcomment %}
   {% if uncategorized.size > 0 %}
     <div class="category-section" id="uncategorized" style="display: none;">
       <div class="notes-header">
+        <a href="#" class="back-link" onclick="showCategories()">← 返回分类</a>
         <h1>未分类笔记</h1>
-        <p class="notes-description">没有特定分类的学习笔记</p>
-        <a href="#" class="back-link" onclick="showCategories()">← Back to Categories</a>
+        <p class="notes-description">{{ uncategorized.size }} 篇笔记</p>
       </div>
+      {% assign sorted_uncat = uncategorized | sort: 'path' %}
       <ul class="notes-list">
-        {% for note in uncategorized %}
+        {% for note in sorted_uncat %}
         <li class="note-item">
           <a href="{{ note.url | relative_url }}">{{ note.title }}</a>
           {% if note.description %}<span class="note-description"> — {{ note.description }}</span>{% endif %}
@@ -135,19 +165,21 @@ function showCategory(categoryId) {
   sections.forEach(section => {
     section.style.display = 'none';
   });
-  
+
   // Hide categories overview
   const toc = document.querySelector('.notes-toc');
   if (toc) {
     toc.style.display = 'none';
   }
-  
+
   // Show selected category
   const categorySection = document.getElementById(categoryId);
   if (categorySection) {
     categorySection.style.display = 'block';
     // Update TOC for this category
     updateCategoryTOC(categoryId);
+    // Scroll to top so user sees the category header
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 }
 
@@ -157,15 +189,18 @@ function showCategories() {
   sections.forEach(section => {
     section.style.display = 'none';
   });
-  
+
   // Show categories overview
   const toc = document.querySelector('.notes-toc');
   if (toc) {
     toc.style.display = 'block';
   }
-  
+
   // Reset TOC to categories view
   generateNotesTOC();
+
+  // Scroll to top so user sees the categories grid
+  window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
 // Add click event listeners to category links
@@ -194,8 +229,10 @@ function generateNotesTOC() {
   // Add category links
   const categoryLinks = document.querySelectorAll('.toc-link[data-category]');
   categoryLinks.forEach(link => {
-    const categoryName = link.querySelector('.toc-category-name').textContent;
-    const count = link.querySelector('.toc-count').textContent;
+    const titleEl = link.querySelector('.category-card-title');
+    const countEl = link.querySelector('.category-card-count');
+    const categoryName = titleEl ? titleEl.textContent.trim() : link.getAttribute('data-category');
+    const count = countEl ? `(${countEl.textContent.trim()})` : '';
     tocHTML += `<li><a href="#" class="toc-level-2" data-category="${link.getAttribute('data-category')}">${categoryName} ${count}</a></li>`;
   });
   
@@ -274,103 +311,231 @@ document.addEventListener('DOMContentLoaded', function() {
 </script>
 
 <style>
-/* Chirpy 主题风格 - 简洁清爽 */
+/* ============================================================
+   Notes index — Notion-style card grid
+   Uses theme CSS variables so dark/light switching just works.
+   ============================================================ */
 
-/* Table of contents styles */
-.notes-toc {
-  background: var(--global-bg-color);
-  border: 1px solid rgba(0, 0, 0, 0.08);
-  border-radius: 8px;
-  padding: 1.5rem 1.5rem;
-  margin-bottom: 2.5rem;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+/* Chinese-friendly font stack for the whole notes index */
+.notes {
+  font-family:
+    -apple-system, BlinkMacSystemFont,
+    "PingFang SC", "Microsoft YaHei", "HarmonyOS Sans SC",
+    "Noto Sans SC", "Source Han Sans CN", "Hiragino Sans GB",
+    "Segoe UI", "Roboto", "Helvetica Neue", Arial,
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
 }
 
-.toc-content {
+/* Overview header */
+.notes-overview-header {
+  margin-bottom: 2rem;
+  padding-bottom: 1.25rem;
+  border-bottom: 1px solid var(--global-divider-color);
+}
+
+.notes-overview-header h1 {
+  margin: 0 0 0.35rem 0;
+  font-size: 2rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: var(--global-text-color);
+}
+
+.notes-overview-sub {
+  margin: 0;
+  color: var(--global-text-color-light);
+  font-size: 0.95rem;
+}
+
+/* Categories grid */
+.notes-toc {
+  margin-bottom: 2.5rem;
+}
+
+.categories-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1rem;
+  align-items: stretch;
+}
+
+.category-card {
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
+  padding: 1.25rem 1.35rem;
+  background: var(--global-card-bg-color, var(--global-bg-color));
+  border: 1px solid var(--global-divider-color);
+  border-radius: 10px;
+  text-decoration: none;
+  color: inherit;
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+  cursor: pointer;
+  min-height: 110px;
 }
 
-.toc-category {
-  text-align: left;
+.category-card::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  background: var(--global-theme-color);
+  opacity: 0;
+  transition: opacity 0.15s ease;
 }
 
-.toc-link {
+.category-card:hover {
+  border-color: var(--global-theme-color);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 16px var(--global-divider-color);
+  text-decoration: none;
+}
+
+.category-card:hover::before {
+  opacity: 1;
+}
+
+.category-card-header {
   display: flex;
-  align-items: center;
+  align-items: baseline;
   justify-content: space-between;
-  padding: 1rem 1.25rem;
+  gap: 0.75rem;
+  margin-bottom: 0.85rem;
+}
+
+.category-card-title {
+  margin: 0;
+  font-size: 1.15rem;
+  font-weight: 600;
+  color: var(--global-text-color);
+  letter-spacing: -0.01em;
+}
+
+.category-card-count {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--global-theme-color);
+  background: transparent;
+  border: 1px solid var(--global-theme-color);
+  padding: 0.1rem 0.55rem;
+  border-radius: 999px;
+  white-space: nowrap;
+  line-height: 1.5;
+}
+
+.category-card-subs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.sub-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-size: 0.8rem;
+  padding: 0.2rem 0.6rem;
+  border-radius: 5px;
+  background: transparent;
+  border: 1px solid var(--global-divider-color);
+  color: var(--global-text-color);
+}
+
+.sub-chip em {
+  font-style: normal;
+  font-size: 0.72rem;
+  color: var(--global-text-color-light);
+  font-weight: 500;
+}
+
+.sub-chip-misc {
+  color: var(--global-text-color-light);
+}
+
+/* Subcategory sticky nav inside a category - sticks below site navbar */
+.subcategory-nav {
+  position: sticky;
+  top: 70px;
+  z-index: 5;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  padding: 0.85rem 0;
+  margin-bottom: 0.5rem;
   background: var(--global-bg-color);
-  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-bottom: 1px solid var(--global-divider-color);
+}
+
+.subcat-tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.85rem;
+  padding: 0.35rem 0.75rem;
   border-radius: 6px;
   text-decoration: none;
   color: var(--global-text-color);
-  transition: all 0.2s ease;
-  font-weight: 400;
-  font-family: 'Noto Sans', 'Roboto', sans-serif;
+  background: transparent;
+  border: 1px solid var(--global-divider-color);
+  transition: all 0.15s ease;
 }
 
-.toc-link:hover {
-  border-color: var(--global-theme-color);
-  background: var(--global-bg-color);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-}
-
-.toc-category-name {
-  font-size: 1.05rem;
-  font-weight: 500;
-  color: var(--global-text-color);
-}
-
-.toc-count {
-  font-size: 0.875rem;
+.subcat-tab em {
+  font-style: normal;
+  font-size: 0.75rem;
   color: var(--global-text-color-light);
-  opacity: 0.7;
+  font-weight: 500;
 }
 
-/* Category title styles */
-.category-title {
+.subcat-tab:hover,
+.subcat-tab.active {
   color: var(--global-theme-color);
-  border-bottom: 2px solid var(--global-theme-color);
-  padding-bottom: 0.5rem;
-  margin-top: 2rem;
-  margin-bottom: 1rem;
-  scroll-margin-top: 2rem; /* Provide offset for anchor links */
+  border-color: var(--global-theme-color);
+  background: var(--global-card-bg-color, transparent);
+  text-decoration: none;
 }
 
-/* Subcategory title styles */
+/* Subcategory section title */
 .subcategory-title {
-  color: var(--global-text-color);
-  font-size: 1.5rem;
+  font-size: 1.4rem;
   font-weight: 600;
   margin-top: 2.5rem;
-  margin-bottom: 1.25rem;
-  padding-bottom: 0.5rem;
+  margin-bottom: 1rem;
+  padding-bottom: 0.4rem;
   border-bottom: 1px solid var(--global-divider-color);
-  font-family: 'Noto Sans', 'Roboto', sans-serif;
+  color: var(--global-text-color);
+  /* Offset for fixed site navbar (70px) + sticky subcat-nav (~50px) */
+  scroll-margin-top: 8rem;
 }
 
 .subcategory-title:first-of-type {
-  margin-top: 1rem;
+  margin-top: 1.25rem;
 }
 
-/* Chirpy 风格笔记列表 */
+/* Notes list */
 .notes-list {
   list-style: none;
   padding-left: 0;
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  gap: 0.65rem;
+  margin: 0;
 }
 
 .note-item {
-  padding: 1.25rem 1.5rem;
-  background: var(--global-bg-color);
-  border: 1px solid rgba(0, 0, 0, 0.08);
-  border-radius: 6px;
-  transition: all 0.2s ease;
+  padding: 0.95rem 1.15rem;
+  background: var(--global-card-bg-color, var(--global-bg-color));
+  border: 1px solid var(--global-divider-color);
+  border-radius: 8px;
+  transition: border-color 0.15s ease, transform 0.15s ease, box-shadow 0.15s ease;
   position: relative;
+  overflow: hidden;
 }
 
 .note-item::before {
@@ -378,17 +543,17 @@ document.addEventListener('DOMContentLoaded', function() {
   position: absolute;
   left: 0;
   top: 0;
-  width: 3px;
-  height: 100%;
+  bottom: 0;
+  width: 2px;
   background: var(--global-theme-color);
   opacity: 0;
-  transition: opacity 0.2s ease;
-  border-radius: 6px 0 0 6px;
+  transition: opacity 0.15s ease;
 }
 
 .note-item:hover {
   border-color: var(--global-theme-color);
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+  transform: translateY(-1px);
+  box-shadow: 0 3px 12px var(--global-divider-color);
 }
 
 .note-item:hover::before {
@@ -399,184 +564,144 @@ document.addEventListener('DOMContentLoaded', function() {
   color: var(--global-text-color);
   text-decoration: none;
   font-weight: 500;
-  font-size: 1.05rem;
+  font-size: 1rem;
   display: block;
-  margin-bottom: 0.5rem;
-  transition: color 0.2s ease;
-  font-family: 'Noto Sans', 'Roboto', sans-serif;
+  margin-bottom: 0.3rem;
+  transition: color 0.15s ease;
 }
 
 .note-item a:hover {
   color: var(--global-theme-color);
+  text-decoration: none;
 }
 
 .note-description {
   color: var(--global-text-color-light);
-  font-size: 0.9rem;
-  line-height: 1.6;
-  margin-bottom: 0.5rem;
-  font-family: 'Noto Sans', 'Roboto', sans-serif;
+  font-size: 0.875rem;
+  line-height: 1.55;
 }
 
 .note-tags {
-  margin-top: 0.75rem;
+  margin-top: 0.55rem;
   display: flex;
   flex-wrap: wrap;
-  gap: 0.5rem;
+  gap: 0.35rem;
 }
 
 .tag {
   display: inline-flex;
   align-items: center;
-  background: var(--global-bg-color);
-  color: var(--global-theme-color);
-  padding: 0.25rem 0.65rem;
+  color: var(--global-text-color-light);
+  padding: 0.15rem 0.55rem;
   border-radius: 4px;
-  font-size: 0.8rem;
+  font-size: 0.75rem;
   font-weight: 400;
-  transition: all 0.2s ease;
   border: 1px solid var(--global-divider-color);
-  font-family: 'Noto Sans', 'Roboto', sans-serif;
+  transition: all 0.15s ease;
 }
 
 .tag:hover {
   background: var(--global-theme-color);
-  color: white;
+  color: var(--global-hover-text-color, #fff);
   border-color: var(--global-theme-color);
 }
 
-/* Chirpy 风格 header */
+/* Category page header */
 .notes-header {
-  text-align: left;
-  margin-bottom: 2.5rem;
-  padding: 1.5rem 0;
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--global-divider-color);
 }
 
 .notes-header h1 {
-  color: var(--global-text-color);
-  margin-bottom: 0.75rem;
-  font-size: 2rem;
+  margin: 0.4rem 0 0.35rem 0;
+  font-size: 1.85rem;
   font-weight: 600;
-  letter-spacing: -0.01em;
-  font-family: 'Noto Sans', 'Roboto', sans-serif;
+  letter-spacing: -0.02em;
+  color: var(--global-text-color);
 }
 
 .notes-description {
+  margin: 0;
   color: var(--global-text-color-light);
-  font-size: 1rem;
-  line-height: 1.7;
-  margin-bottom: 1.25rem;
-  font-family: 'Noto Sans', 'Roboto', sans-serif;
+  font-size: 0.9rem;
 }
 
 .back-link {
   display: inline-flex;
   align-items: center;
-  gap: 0.5rem;
-  color: var(--global-theme-color);
+  gap: 0.35rem;
+  font-size: 0.85rem;
+  color: var(--global-text-color-light);
   text-decoration: none;
-  font-weight: 500;
-  padding: 0.5rem 1rem;
-  border: 1px solid var(--global-theme-color);
-  border-radius: 6px;
-  transition: all 0.2s ease;
-  font-size: 0.95rem;
-  font-family: 'Noto Sans', 'Roboto', sans-serif;
+  transition: color 0.15s ease;
 }
 
 .back-link:hover {
-  background: var(--global-theme-color);
-  color: white;
+  color: var(--global-theme-color);
+  text-decoration: none;
 }
 
-.no-notes {
-  text-align: center;
-  padding: 2rem;
-  color: var(--global-text-color-light);
-}
-
-/* Chirpy 响应式设计 */
-@media (max-width: 768px) {
-  .notes-toc {
-    padding: 1.25rem 1rem;
-    margin-bottom: 2rem;
-  }
-  
-  .toc-title {
-    font-size: 1.5rem;
-    margin-bottom: 1.25rem;
-  }
-  
-  .toc-link {
-    padding: 0.875rem 1rem;
-    font-size: 0.95rem;
-  }
-  
-  .toc-category-name {
-    font-size: 1rem;
-  }
-  
-  .notes-header {
-    padding: 1rem 0;
-    margin-bottom: 2rem;
-  }
-  
-  .notes-header h1 {
-    font-size: 1.5rem;
-  }
-  
-  .notes-description {
-    font-size: 0.95rem;
-  }
-  
-  .note-item {
-    padding: 1rem 1.25rem;
-  }
-  
-  .note-item a {
-    font-size: 1rem;
-  }
-}
-
-/* Chirpy 简洁动画 */
+/* Fade-in animation for cards */
 @keyframes fadeIn {
   from {
     opacity: 0;
+    transform: translateY(4px);
   }
   to {
     opacity: 1;
+    transform: translateY(0);
   }
 }
 
-.toc-category {
-  animation: fadeIn 0.3s ease forwards;
+.category-card {
+  animation: fadeIn 0.25s ease both;
 }
 
-.toc-category:nth-child(1) { animation-delay: 0.05s; }
-.toc-category:nth-child(2) { animation-delay: 0.1s; }
-.toc-category:nth-child(3) { animation-delay: 0.15s; }
-.toc-category:nth-child(4) { animation-delay: 0.2s; }
-.toc-category:nth-child(5) { animation-delay: 0.25s; }
+.category-card:nth-child(1) { animation-delay: 0.02s; }
+.category-card:nth-child(2) { animation-delay: 0.06s; }
+.category-card:nth-child(3) { animation-delay: 0.10s; }
+.category-card:nth-child(4) { animation-delay: 0.14s; }
+.category-card:nth-child(5) { animation-delay: 0.18s; }
+.category-card:nth-child(6) { animation-delay: 0.22s; }
 
-/* 平滑滚动 */
+/* Responsive */
+@media (max-width: 768px) {
+  .categories-grid {
+    grid-template-columns: 1fr;
+    gap: 0.85rem;
+  }
+
+  .notes-overview-header h1 {
+    font-size: 1.55rem;
+  }
+
+  .notes-header h1 {
+    font-size: 1.4rem;
+  }
+
+  .subcategory-nav {
+    overflow-x: auto;
+    flex-wrap: nowrap;
+    margin-left: -0.5rem;
+    margin-right: -0.5rem;
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+  }
+
+  .subcat-tab {
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  .note-item {
+    padding: 0.85rem 1rem;
+  }
+}
+
+/* Smooth scroll for anchor jumps */
 html {
   scroll-behavior: smooth;
-}
-
-/* 暗色模式适配 */
-@media (prefers-color-scheme: dark) {
-  .notes-toc,
-  .note-item {
-    border-color: rgba(255, 255, 255, 0.1);
-  }
-  
-  .toc-link {
-    border-color: rgba(255, 255, 255, 0.1);
-  }
-  
-  .toc-link:hover {
-    box-shadow: 0 2px 8px rgba(255, 255, 255, 0.1);
-  }
 }
 </style>
 

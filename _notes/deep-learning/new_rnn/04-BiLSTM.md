@@ -14,9 +14,7 @@ redirect_from:
 
 ## 4.1 机制（隐马尔可夫模型中的动态规划）
 
-
 为了预测“下一个输出”或解释观测序列，可以使用概率模型，其中 **隐马尔可夫模型（Hidden Markov Model, HMM）** 是经典方法。
-
 
 例如：
 
@@ -29,7 +27,6 @@ redirect_from:
 * 上下文决定预测分布
 * 更多信息会改变模型判断
 * 未来信息有时也会反向影响对过去的理解
-
 
 HMM 假设观测序列由一组不可见的隐状态生成。
 
@@ -44,9 +41,7 @@ HMM 假设观测序列由一组不可见的隐状态生成。
 
  ### 4.1.1 核心假设
 
- 
 ![alt text](../../../assets/img/notes/new_rnn/隐马尔可夫模型.png)
-
 
 1. **马尔可夫性：**
    \[
@@ -71,7 +66,6 @@ P(X) = \sum_H P(X, H)
 \]
 
 但隐状态数为 (N) 时序列长度 (T)，可能路径为 (N^T)，直接计算不可行。
-
 
 ### 4.1.2 动态规划的精妙之处（DP 的本质）
 
@@ -116,7 +110,6 @@ $\pi_t = f(\pi_{t-1}, x_t)$
 
 这跟 RNN 的前向传递来说是一样的。
 
-
 反向递推 (从 $t+1$ $\to$ $t$):
 
 后向 $\rho_t$ (在“银行”处)： 假设完整的句子是 "我今天在 [银行] 河边 散步"。$\rho_t$ 就是在问：“假设你现在在‘银行’，你未来会看到‘河边/散步’的概率有多大？”如果 $h_t=$ “河岸 (River Bank)”，那么未来看到“河边/散步”的概率很高。$\rho_t(\text{河岸})$ 的值就高。如果 $h_t=$ “银行 (Financial Bank)”，那么未来看到“河边/散步”的概率很低。$\rho_t(\text{银行})$ 的值就低。
@@ -125,18 +118,14 @@ $\pi_t = f(\pi_{t-1}, x_t)$
 
 $$\rho_{t-1}(h_{t-1}) = \sum_{h_t} P(x_t | h_t) P(h_t | h_{t-1}) \rho_t(h_t)$$
 
-
 ## 4.3 结构设计
 
-
 ![alt text](../../../assets/img/notes/new_rnn/双向循环神经网络架构.png)
-
 
 $$\overrightarrow{\mathbf{H}}_t = \phi(\mathbf{X}_t \mathbf{W}_{xh}^{(f)} + \overrightarrow{\mathbf{H}}_{t-1} \mathbf{W}_{hh}^{(f)} + \mathbf{b}_h^{(f)})
 $$$\overrightarrow{\mathbf{H}}_t$：这是我们要计算的**“前向状态”**（$t$ 时刻对“过去”的总结）。
 $\mathbf{X}_t$：这是 $t$ 时刻的当前输入（即“银行”这个词的向量）。
 $\overrightarrow{\mathbf{H}}_{t-1}$：这是 $t-1$ 时刻的**“前向状态”**（即对“我今天在”的总结）。
-
 
 $$\overleftarrow{\mathbf{H}}_t = \phi(\mathbf{X}_t \mathbf{W}_{xh}^{(b)} + \overleftarrow{\mathbf{H}}_{t+1} \mathbf{W}_{hh}^{(b)} + \mathbf{b}_h^{(b)})$$
 
@@ -146,12 +135,9 @@ $\overleftarrow{\mathbf{H}}_{t+1}$：这是 $t+1$ 时刻的**“后向状态”*
 
 最后，合并，进行输出。
 
-
 $\mathbf{H}_t = [ \overrightarrow{\mathbf{H}}_t ; \overleftarrow{\mathbf{H}}_t ]$
 
-
 $\mathbf{O}_t = \mathbf{H}_t \mathbf{W}_{hq} + \mathbf{b}_q$
-
 
 ## 4.4 总结
 
@@ -250,8 +236,6 @@ HMM 模型的核心就是两个**假设**：
     * **结论：** 这个思想启发了**双向RNN (Bidirectional RNN)**。
     * **双向RNN = 1个前向RNN (学“过去”) + 1个后向RNN (学“未来”)**。这和HMM需要同时使用 $\pi_t$ (过去) 和 $\rho_t$ (未来) 来做最准确判断的思想，是完全一致的。
 
-
-
 ## 4.5 代码实践
 
 在实际的模型当中，训练期间，我们能够利用过去和未来的数据来估计现在空缺的词； 而在测试期间，我们只有过去的数据，因此精度将会很差。 下面的实验将说明这一点。此外，网络的传播还依赖前向传播的结果，计算量也特别大。
@@ -278,8 +262,6 @@ d2l.train_ch8(model, train_iter, vocab, lr, num_epochs, device)
 
 ![alt text](../../../assets/img/notes/new_rnn/biLSTM.png)
 
-
-
 ## 4.6 问题
 
 ### 4.6.1 如果不同方向使用不同数量的隐藏单位，形状会发生怎样的变化？
@@ -289,7 +271,6 @@ d2l.train_ch8(model, train_iter, vocab, lr, num_epochs, device)
 前向 RNN 的隐藏单元数量为 $h_f$。反向 RNN 的隐藏单元数量为 $h_b$。
 
 最终，$\mathbf{H}_t$ 的最终形状将是：\(n, h_f + h_b\) 
-
 
 ### 4.6.2 设计一个具有多个隐藏层的双向循环神经网络。
 
@@ -317,9 +298,7 @@ num_epochs, lr = 500, 1
 d2l.train_ch8(model, train_iter, vocab, lr, num_epochs, device)
 ```
 
-
 ![alt text](../../../assets/img/notes/new_rnn/10层bilstm.png)
-
 
 ### 4.6.3 静态词向量” (Static Embeddings) 进化到“上下文词向量” (Contextual Embeddings)
 
